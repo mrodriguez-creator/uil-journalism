@@ -25,25 +25,36 @@ export default async function handler(req, res) {
   try {
     const seed = Math.floor(Math.random() * 1000000);
 
-    // Randomize AP style topics to test
-    const apTopics = [
-      'number usage (spell out one-nine, use figures for 10+)',
-      'month abbreviations (Jan., Feb., Aug., Sept., Oct., Nov., Dec. with dates; spell out March, April, May, June, July)',
-      'title capitalization (capitalize before name, lowercase after or standalone)',
-      'time format (use figures with a.m./p.m., use noon/midnight not 12 p.m./12 a.m.)',
-      'state names (spell out in body text)',
-      'commas in a series (no Oxford comma in AP style)',
-      'ages (always use figures, hyphenate when used as adjective)',
-      'composition titles (use quotation marks, not italics)',
-      'abbreviations of street addresses (Ave., Blvd., St. with numbered address)',
-      'seasons (lowercase spring, summer, fall, winter)',
-      'academic degrees (lowercase general: bachelor\'s degree; capitalize formal: Bachelor of Science)',
-      'directions vs regions (capitalize South as region, lowercase southern as adjective)',
-      'percent (use figures with the word percent, not % symbol)',
-      'decades (1990s no apostrophe, \'90s with apostrophe)'
+    // Generate a realistic publication date (upcoming Friday)
+    const now = new Date();
+    const daysUntilFri = (5 - now.getDay() + 7) % 7 || 7;
+    const pubDate = new Date(now.getTime() + daysUntilFri * 86400000);
+    const months = ['Jan.', 'Feb.', 'March', 'April', 'May', 'June', 'July', 'Aug.', 'Sept.', 'Oct.', 'Nov.', 'Dec.'];
+    const pubDateStr = 'Friday, ' + months[pubDate.getMonth()] + ' ' + pubDate.getDate() + ', ' + pubDate.getFullYear();
+
+    // Randomize which AP style areas to focus on
+    const allTopics = [
+      'commonly confused words (its/it\'s, their/there/they\'re, affect/effect, principal/principle, than/then, fewer/less)',
+      'AP time format (figures with lowercase a.m./p.m., use noon/midnight not 12 p.m./12 a.m.)',
+      'AP number rules (spell out one-nine, figures for 10+, always figures for ages)',
+      'AP month abbreviations (Jan., Feb., Aug., Sept., Oct., Nov., Dec. with dates only; never abbreviate March, April, May, June, July)',
+      'title/job capitalization (capitalize formal title before name, lowercase after name or standalone)',
+      'AP state rules (spell out state names in text, no abbreviations)',
+      'composition titles (quotation marks not italics for books, movies, songs)',
+      'abbreviations (FBI not F.B.I., TV not T.V., U.S. as adjective)',
+      'subject-verb agreement',
+      'percent (figures + "percent" spelled out, not % symbol)',
+      'seasons lowercase (spring, summer, fall, winter)',
+      'AP comma rules (no Oxford comma in simple series)',
+      'court/government names (Fifth Circuit, City Council, board of regents)',
+      'academic terms (junior/senior lowercase, bachelor\'s degree lowercase)',
+      'spelling commonly misspelled words (cemetery, misspelling, occurred, judgment)',
+      'possessives (Texas\' or its, not it\'s for possessive)',
+      'nationwide/one-time/everyday vs every day compound words',
+      'AP date format (no -st, -nd, -rd, -th with dates)'
     ];
-    const shuffledTopics = apTopics.sort(() => Math.random() - 0.5);
-    const focusTopics = shuffledTopics.slice(0, 6).join(', ');
+    const shuffled = allTopics.sort(() => Math.random() - 0.5);
+    const focusAreas = shuffled.slice(0, 8).join('\n- ');
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -57,59 +68,73 @@ export default async function handler(req, res) {
         max_tokens: 6000,
         messages: [{
           role: 'user',
-          content: `[Generation seed: ${seed}] You are creating a UIL (University Interscholastic League) Copy Editing practice test for Texas high school journalism students. The test has THREE parts and must be completable in 15 minutes.
+          content: `[Seed: ${seed}] Create a UIL Copy Editing practice test matching the EXACT format of the real Texas UIL Copy Editing contest. Publication date: ${pubDateStr}.
 
-PART 1 — MULTIPLE CHOICE (15 questions, 1 point each)
-Create 15 multiple-choice questions testing AP style, grammar, punctuation, and word usage. Each question gives a sentence or phrase with 4 answer choices (A, B, C, D). Only ONE is correct.
+=== PART 1: CIRCLE THE CORRECT RESPONSE (15 questions, 1 point each) ===
 
-Focus on these AP style areas: ${focusTopics}
+Each question is a sentence or phrase with 2-4 INLINE answer options separated by " / ". The student circles the correct one. This is NOT traditional A/B/C/D format — the options appear WITHIN the sentence.
 
-Also include questions on:
-- Commonly confused words (its/it's, their/there/they're, affect/effect, who's/whose, lay/lie, principal/principle, than/then, fewer/less, who/whom)
-- Subject-verb agreement
-- Comma usage (introductory phrases, appositives, compound sentences)
-- Pronoun-antecedent agreement
-- Quotation mark placement with other punctuation
+REAL EXAMPLES of the exact format:
+- "The gratitude for veterans is clear in the cemetery / cemetary / cematary."
+- "Kamala Harris has a 3 AM / 3 A.M. / 3 a.m. / 3 o'clock in the morning meeting."
+- "Monday, Oct. 7 / October 7 / OCT 7, was the last day to register to vote."
+- "The F.B.I.'s / FBI's report showed 2,500 fewer homicides."
+- "The board of regents amended its / it's / its' free speech policy."
+- "Florida high school junior / Junior Holly Neher threw for a touchdown."
+- "For the 9th / ninth straight month, Earth obliterated heat records."
+- "The new high school principal / Principal / principle established a friendly culture."
+- "She was eliminated after mispelling / misspelling / misspeling 'orle.'"
+- "In Texas, the top 10 percent / Percent / % automatically get admitted."
+- "The production of Q-Tips / Q tips / Q-tips will now be in Puerto Rico."
+- "The book was titled / entitled 'We'll Prescribe You a Cat.'"
 
-PART 2 — SENTENCE EDITING (5 sentences, 2 points each = 10 points)
-Create 5 sentences, each containing EXACTLY 4 errors. Errors should be a mix of:
-- AP style violations
-- Grammar mistakes
-- Spelling errors
-- Punctuation errors
-- Wordiness that should be tightened
+Focus on these areas:
+- ${focusAreas}
 
-For each sentence, provide the original (with errors) and a corrected version.
+Create 15 NEW questions in this exact inline-options format. Use current events, real-world references, and school journalism contexts. Each must have exactly ONE correct answer.
 
-PART 3 — NEWS BRIEF EDITING (1 paragraph, tiebreaker)
-Create a short news brief (80-120 words) about a Leaguetown High School event. Embed 8-12 errors including AP style, grammar, spelling, punctuation, wordiness, and at least one factual consistency error (like a name spelled differently in two places, or a conflicting number).
+=== PART 2: EDIT THE SENTENCES (5 sentences, 4 points each = 20 points) ===
 
-Provide the original (with errors) and a fully corrected version.
+Create 5 sentences, each containing EXACTLY 4 errors. Mix of AP style, grammar, spelling, punctuation, and wordiness. Context: editing for the Leaguetown High School (Texas) Press, ${pubDateStr}.
 
-CRITICAL: Make all content feel like real high school newspaper writing about Leaguetown High School / Leaguetown Press.
+REAL EXAMPLES:
+- "Despite they're best efforts, neither the teacher or the students was able to finish the project on time because they had began too late" (their, nor, were, begun + period)
+- "She go to the store on indigenous peoples day too buy some milk, but it was closed." (went, Indigenous Peoples Day, to, the store→a store or remove wordiness)
+- "A grand jury indicted the school principles for allegedly using there school e-mails too encourage staff to vote" (principals, their, emails, to)
+
+Each sentence should be 1-3 lines, testing different error combinations. Provide the original WITH errors and a corrected version.
+
+=== PART 3: EDIT A NEWS BRIEF (tiebreaker, not scored by points) ===
+
+Create a news brief of 150-250 words based on a REAL-WORLD style Texas news story (NOT about Leaguetown — use a real Texas city). Include 10-15 embedded errors: AP style violations, grammar, spelling, punctuation, wordiness, and at least one factual consistency issue (name spelled two ways, conflicting numbers, wrong date logic based on publication date).
+
+Students edit the brief for publication in the Leaguetown High School (Texas) Press, ${pubDateStr}.
+
+REAL EXAMPLE STYLE: A modified Texas Tribune article about boil-water notices in Laredo, a police case in Eagle Pass, etc. The dateline should be a real Texas city.
 
 Return as JSON:
 {
+  "publicationDate": "${pubDateStr}",
   "part1": [
     {
-      "question": "Which sentence uses correct AP style?",
-      "choices": ["A) sentence...", "B) sentence...", "C) sentence...", "D) sentence..."],
-      "correct": 1,
-      "explanation": "Brief explanation of why this is correct"
+      "sentence": "The sentence with options / separated / like this.",
+      "options": ["option1", "option2", "option3"],
+      "correctIndex": 0,
+      "explanation": "Why this is correct"
     }
   ],
   "part2": [
     {
-      "original": "The sentence with 4 errors in it.",
-      "corrected": "The corrected sentence.",
-      "errors": ["error 1 description", "error 2 description", "error 3 description", "error 4 description"]
+      "original": "Sentence with exactly 4 errors in it.",
+      "corrected": "Corrected sentence.",
+      "errors": ["error 1: description", "error 2: description", "error 3: description", "error 4: description"]
     }
   ],
   "part3": {
-    "original": "The news brief with 8-12 errors...",
-    "corrected": "The fully corrected news brief...",
+    "original": "Full news brief with 10-15 errors embedded...",
+    "corrected": "Fully corrected news brief...",
     "errors": ["error 1", "error 2", "..."],
-    "errorCount": 10
+    "errorCount": 12
   }
 }`
         }]
@@ -128,7 +153,6 @@ Return as JSON:
     const jsonMatch = content.match(/\{[\s\S]*\}/);
     if (jsonMatch) {
       const testData = JSON.parse(jsonMatch[0]);
-      // Validate structure
       if (testData.part1 && testData.part2 && testData.part3 &&
           Array.isArray(testData.part1) && testData.part1.length === 15 &&
           Array.isArray(testData.part2) && testData.part2.length === 5) {

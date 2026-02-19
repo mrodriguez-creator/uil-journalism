@@ -41,28 +41,33 @@ export default async function handler(req, res) {
         max_tokens: 4000,
         messages: [{
           role: 'user',
-          content: `You are evaluating a student's UIL Copy Editing test. Score their Part 2 and Part 3 answers.
+          content: `You are a UIL Copy Editing judge scoring a student's test. Score Parts 2 and 3.
 
-PART 2 SCORING RULES:
-- Each sentence is worth 2 points maximum
+PART 2 SCORING (matches real UIL rules):
+- Each sentence is worth 4 points maximum (1 point per error corrected)
 - Each sentence has exactly 4 errors
-- Award 0.5 points per error correctly identified and fixed
-- If the student introduces NEW errors, deduct 0.5 points per new error (minimum 0 for that sentence)
-- Be generous: if the student's correction fixes the intent of the error even if worded slightly differently, give credit
+- Award 1 point per error correctly identified and fixed
+- Judges consider only the first 4 corrections. Extra corrections are ignored.
+- If fixing one error creates another, it counts as one correction
+- Be generous: if the student's fix addresses the error even if worded differently, give credit
+- Total possible: 20 points (5 sentences x 4 points)
 
-PART 2 ORIGINAL SENTENCES AND CORRECT ANSWERS:
-${testData.part2.map((s, i) => `Sentence ${i + 1}:\n  Original: "${s.original}"\n  Correct: "${s.corrected}"\n  Errors: ${s.errors.join('; ')}`).join('\n\n')}
+PART 2 ANSWER KEY:
+${testData.part2.map((s, i) => `Sentence ${i + 1}:\n  Original: "${s.original}"\n  Correct: "${s.corrected}"\n  4 Errors: ${s.errors.join('; ')}`).join('\n\n')}
 
 STUDENT'S PART 2 ANSWERS:
 ${part2Answers.map((a, i) => `Sentence ${i + 1}: "${a}"`).join('\n')}
 
-PART 3 SCORING RULES:
-- The news brief has ${testData.part3.errorCount} errors
-- Award 1 point per error correctly found and fixed
-- Deduct 0.5 points per new error introduced (minimum 0)
-- Maximum score: ${testData.part3.errorCount} points
+PART 3 SCORING (tiebreaker — rank holistically, no point total):
+- This is used only to break ties
+- Judge holistically at three levels:
+  1. Highest: Legal/ethical issues, dateline accuracy
+  2. Middle: Sources, story flow, factual consistency
+  3. Lowest: Grammar, spelling, punctuation, AP style
+- The brief has ${testData.part3.errorCount} errors
+- Report how many errors the student found and which they missed
 
-PART 3 ORIGINAL AND CORRECT:
+PART 3 ANSWER KEY:
 Original: "${testData.part3.original}"
 Correct: "${testData.part3.corrected}"
 Errors: ${testData.part3.errors.join('; ')}
@@ -75,25 +80,23 @@ Return JSON:
   "part2Scores": [
     {
       "sentence": 1,
-      "score": 1.5,
-      "maxScore": 2,
-      "errorsFound": ["error they found 1", "error they found 2"],
-      "errorsMissed": ["error they missed"],
-      "newErrors": [],
+      "score": 3,
+      "maxScore": 4,
+      "errorsFound": ["errors they correctly fixed"],
+      "errorsMissed": ["errors they missed"],
       "feedback": "Brief feedback"
     }
   ],
-  "part3Score": {
-    "score": 7,
-    "maxScore": ${testData.part3.errorCount},
+  "part3Result": {
     "errorsFound": ["list of errors they found"],
     "errorsMissed": ["list of errors they missed"],
-    "newErrors": [],
-    "feedback": "Brief overall feedback"
+    "errorsFoundCount": 8,
+    "totalErrors": ${testData.part3.errorCount},
+    "ranking": "Strong/Average/Weak",
+    "feedback": "Holistic feedback on their editing"
   },
-  "part2Total": 7.5,
-  "part3Total": 7,
-  "overallFeedback": "2-3 sentence summary of strengths and what to work on"
+  "part2Total": 16,
+  "overallFeedback": "2-3 sentence summary of strengths and areas to study"
 }`
         }]
       })
