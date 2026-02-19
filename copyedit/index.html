@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UIL Copy Editing Trainer</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh; padding: 20px;
+        }
+        .container {
+            max-width: 900px; margin: 0 auto; background: white;
+            border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #ad1457 0%, #e91e63 100%);
+            color: white; padding: 30px; text-align: center;
+        }
+        .header h1 { font-size: 2.2em; margin-bottom: 10px; }
+        .header p { font-size: 1.1em; opacity: 0.9; }
+        .header .back-link { color: rgba(255,255,255,0.8); font-size: 0.9em; margin-top: 8px; display: inline-block; text-decoration: none; }
+        .header .back-link:hover { color: white; }
+        .content { padding: 30px; }
+
+        /* Buttons */
+        .btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white; border: none; padding: 14px 28px; font-size: 16px;
+            border-radius: 6px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(245,87,108,0.4); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        /* Info box */
+        .info-box {
+            background: #fce4ec; border-radius: 8px; padding: 20px; margin-bottom: 25px;
+            border-left: 4px solid #e91e63; line-height: 1.6;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 0.95em; color: #555;
+        }
+
+        /* Timer */
+        .timer-bar {
+            background: #f8f9fa; padding: 12px 20px; text-align: center;
+            font-size: 1.3em; font-weight: bold; display: none;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            border-bottom: 2px solid #eee; color: #333;
+        }
+        .timer-bar.warning { background: #fff3cd; border-color: #ffc107; color: #856404; }
+        .timer-bar.danger { background: #f8d7da; border-color: #f5c6cb; color: #721c24; }
+
+        /* Mode selector */
+        .mode-selector {
+            display: flex; justify-content: center; gap: 10px; margin-bottom: 20px;
+        }
+        .mode-btn {
+            padding: 10px 20px; border: 2px solid #e0e0e0; background: #f8f9fa;
+            border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; color: #555;
+            transition: all 0.2s;
+        }
+        .mode-btn:hover { background: #eee; }
+        .mode-btn.active { background: #e91e63; color: white; border-color: #e91e63; }
+
+        /* Start section */
+        #start-section { text-align: center; }
+
+        /* Loading */
+        .loading { text-align: center; padding: 60px 20px; display: none; }
+        .spinner {
+            width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #e91e63;
+            border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Test sections */
+        .test-section { display: none; }
+        .part-header {
+            background: linear-gradient(135deg, #fce4ec, #f8f9fa);
+            padding: 15px 20px; border-radius: 8px; margin-bottom: 20px;
+            border-left: 4px solid #e91e63;
+        }
+        .part-header h2 {
+            color: #ad1457; font-size: 1.2em;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .part-header p {
+            color: #666; font-size: 0.9em; margin-top: 4px;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        /* Part 1: Multiple Choice */
+        .mc-question {
+            background: #f8f9fa; border-radius: 8px; padding: 18px; margin-bottom: 15px;
+            border: 1px solid #eee; transition: border-color 0.2s;
+        }
+        .mc-question.answered { border-color: #e91e63; }
+        .mc-number {
+            font-weight: bold; color: #ad1457; font-size: 0.85em; margin-bottom: 8px;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .mc-text {
+            font-size: 1em; margin-bottom: 12px; line-height: 1.5; color: #333;
+        }
+        .mc-choices { display: flex; flex-direction: column; gap: 6px; }
+        .mc-choice {
+            display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+            border: 2px solid #e0e0e0; border-radius: 6px; cursor: pointer;
+            transition: all 0.2s; font-size: 0.95em;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .mc-choice:hover { background: #fce4ec; border-color: #f48fb1; }
+        .mc-choice.selected { background: #fce4ec; border-color: #e91e63; font-weight: 600; }
+        .mc-choice input { display: none; }
+        .mc-choice .radio {
+            width: 20px; height: 20px; border: 2px solid #ccc; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .mc-choice.selected .radio {
+            border-color: #e91e63; background: #e91e63;
+        }
+        .mc-choice.selected .radio::after {
+            content: ''; width: 8px; height: 8px; background: white; border-radius: 50%;
+        }
+
+        /* Part 2: Sentence Editing */
+        .sentence-block {
+            background: #f8f9fa; border-radius: 8px; padding: 18px; margin-bottom: 15px;
+            border: 1px solid #eee;
+        }
+        .sentence-number {
+            font-weight: bold; color: #ad1457; font-size: 0.85em; margin-bottom: 8px;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .sentence-original {
+            font-size: 1em; line-height: 1.6; color: #333; margin-bottom: 12px;
+            background: white; padding: 12px; border-radius: 4px; border: 1px solid #ddd;
+        }
+        .sentence-label {
+            font-size: 0.85em; color: #888; margin-bottom: 6px; font-weight: 600;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .sentence-input {
+            width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px;
+            font-size: 1em; font-family: Georgia, serif; resize: vertical; min-height: 60px;
+            transition: border-color 0.2s; line-height: 1.5;
+        }
+        .sentence-input:focus { border-color: #e91e63; outline: none; }
+
+        /* Part 3: News Brief Editing */
+        .brief-original {
+            font-size: 1em; line-height: 1.8; color: #333; margin-bottom: 15px;
+            background: white; padding: 18px; border-radius: 6px; border: 1px solid #ddd;
+        }
+        .brief-input {
+            width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 6px;
+            font-size: 1em; font-family: Georgia, serif; resize: vertical; min-height: 150px;
+            transition: border-color 0.2s; line-height: 1.8;
+        }
+        .brief-input:focus { border-color: #e91e63; outline: none; }
+
+        /* Submit */
+        .submit-section { text-align: center; margin-top: 25px; padding: 20px 0; }
+
+        /* Tab navigation */
+        .part-tabs {
+            display: flex; justify-content: center; gap: 10px; margin-bottom: 25px;
+            position: sticky; top: 0; background: white; padding: 15px 0; z-index: 10;
+            border-bottom: 1px solid #eee;
+        }
+        .part-tab {
+            padding: 8px 20px; border: 2px solid #e0e0e0; background: #f8f9fa;
+            border-radius: 20px; cursor: pointer; font-size: 13px; font-weight: 600;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; color: #555;
+            transition: all 0.2s;
+        }
+        .part-tab:hover { background: #fce4ec; border-color: #f48fb1; }
+        .part-tab.active { background: #e91e63; color: white; border-color: #e91e63; }
+        .part-tab .tab-progress {
+            font-size: 0.8em; opacity: 0.8; margin-left: 4px;
+        }
+
+        /* Feedback */
+        .feedback-section { display: none; }
+        .feedback-card {
+            background: white; border-radius: 8px; padding: 20px; margin-bottom: 20px;
+            border-left: 4px solid #e91e63; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .feedback-headline {
+            font-size: 1.2em; color: #ad1457; margin-bottom: 15px; font-weight: bold;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .score {
+            display: inline-block; padding: 6px 14px; border-radius: 20px; font-weight: bold; margin: 10px 0;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .score.excellent { background: #4caf50; color: white; }
+        .score.good { background: #2196f3; color: white; }
+        .score.fair { background: #ff9800; color: white; }
+        .score.needs-work { background: #f44336; color: white; }
+
+        .result-correct { background: #e8f5e9; border-left: 3px solid #4caf50; padding: 10px 14px; border-radius: 4px; margin: 8px 0; }
+        .result-incorrect { background: #fce4ec; border-left: 3px solid #f44336; padding: 10px 14px; border-radius: 4px; margin: 8px 0; }
+        .result-label {
+            font-size: 0.8em; font-weight: 600; margin-bottom: 4px;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .result-label.correct { color: #2e7d32; }
+        .result-label.incorrect { color: #c62828; }
+        .result-label.missed { color: #e65100; }
+        .result-text {
+            font-size: 0.95em; line-height: 1.5;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        .feedback-text {
+            line-height: 1.6; color: #444; margin: 10px 0;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 0.95em;
+        }
+        .feedback-list { margin: 10px 0; padding-left: 20px; }
+        .feedback-list li {
+            margin: 6px 0; line-height: 1.5;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 0.9em;
+        }
+
+        .try-again-btn { text-align: center; margin-top: 25px; }
+
+        /* Action buttons (copy, export, print, share) */
+        .action-bar {
+            display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; margin-bottom: 10px;
+        }
+        .action-btn {
+            background: none; padding: 6px 14px; border-radius: 4px; cursor: pointer;
+            font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            font-weight: 600; transition: all 0.2s;
+        }
+        .action-btn.copy-btn { border: 1px solid #2196f3; color: #2196f3; }
+        .action-btn.copy-btn:hover { background: #2196f3; color: white; }
+        .action-btn.share-btn { border: 1px solid #4caf50; color: #4caf50; }
+        .action-btn.share-btn:hover { background: #4caf50; color: white; }
+        .print-btn { background: none; border: 1px solid #e91e63; color: #e91e63; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 600; transition: all 0.2s; }
+        .print-btn:hover { background: #e91e63; color: white; }
+
+        /* Toast */
+        .toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: #333; color: white; padding: 12px 24px; border-radius: 8px;
+            font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            z-index: 999; opacity: 0; transition: opacity 0.3s;
+            pointer-events: none; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .toast.visible { opacity: 1; }
+
+        /* Dark mode */
+        .dark-toggle {
+            position: fixed; top: 12px; right: 12px; z-index: 300;
+            background: rgba(255,255,255,0.9); border: 1px solid #ccc; border-radius: 20px;
+            padding: 6px 14px; cursor: pointer; font-size: 13px;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 600;
+            transition: all 0.2s; color: #333;
+        }
+        .dark-toggle:hover { background: #e91e63; color: white; border-color: #e91e63; }
+        body.dark-mode { background: linear-gradient(135deg, #1a1a2e 0%, #2d1b33 100%); }
+        body.dark-mode .container { background: #1e1e1e; }
+        body.dark-mode .header { background: linear-gradient(135deg, #880e4f 0%, #ad1457 100%); }
+        body.dark-mode .content { color: #eee; }
+        body.dark-mode .info-box { background: #2d2030; border-color: #e91e63; color: #ccc; }
+        body.dark-mode .mc-question { background: #2a2a2a; border-color: #444; }
+        body.dark-mode .mc-text { color: #ddd; }
+        body.dark-mode .mc-choice { background: #333; border-color: #555; color: #ddd; }
+        body.dark-mode .mc-choice:hover { background: #3a2030; border-color: #e91e63; }
+        body.dark-mode .mc-choice.selected { background: #3a2030; border-color: #e91e63; }
+        body.dark-mode .sentence-block { background: #2a2a2a; border-color: #444; }
+        body.dark-mode .sentence-original { background: #333; border-color: #555; color: #ddd; }
+        body.dark-mode .sentence-input { background: #333; border-color: #555; color: #eee; }
+        body.dark-mode .brief-original { background: #333; border-color: #555; color: #ddd; }
+        body.dark-mode .brief-input { background: #333; border-color: #555; color: #eee; }
+        body.dark-mode .part-header { background: linear-gradient(135deg, #2d2030, #2a2a2a); }
+        body.dark-mode .part-tabs { background: #1e1e1e; border-color: #444; }
+        body.dark-mode .part-tab { background: #2a2a2a; border-color: #444; color: #ccc; }
+        body.dark-mode .part-tab.active { background: #e91e63; color: white; border-color: #e91e63; }
+        body.dark-mode .timer-bar { background: #2a2a2a; border-color: #444; color: #ddd; }
+        body.dark-mode .feedback-card { background: #252540; border-left-color: #e91e63; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+        body.dark-mode .feedback-text { color: #bbb; }
+        body.dark-mode .mode-btn { background: #2a2a2a; border-color: #444; color: #ccc; }
+        body.dark-mode .mode-btn.active { background: #e91e63; color: white; border-color: #e91e63; }
+        body.dark-mode .dark-toggle { background: rgba(30,30,30,0.9); color: #eee; border-color: #555; }
+
+        /* Print */
+        @media print {
+            body { background: white !important; padding: 0 !important; }
+            .container { box-shadow: none !important; border-radius: 0 !important; }
+            .header { background: white !important; color: black !important; padding: 15px !important; border-bottom: 2px solid #333; }
+            .timer-bar, .mode-selector, #start-section, .submit-section,
+            .try-again-btn, .dark-toggle, .action-bar, .part-tabs { display: none !important; }
+            .feedback-section { display: block !important; }
+            .feedback-card { break-inside: avoid; box-shadow: none !important; border: 1px solid #ccc; }
+            .score { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+        }
+    </style>
+</head>
+<body>
+    <button class="dark-toggle" id="dark-toggle" onclick="toggleDarkMode()">Dark Mode</button>
+
+    <div class="container">
+        <div class="header">
+            <h1>UIL Copy Editing Trainer</h1>
+            <p>Practice proofreading and editing — AP style, grammar, spelling, punctuation</p>
+            <a href="/" class="back-link">&larr; Back to Home</a>
+        </div>
+
+        <div class="timer-bar" id="timer-bar">15:00</div>
+
+        <div class="content">
+            <div class="info-box">
+                <strong>How it works:</strong> Just like the real UIL contest, you'll complete a 3-part test in 15 minutes.
+                <strong>Part 1:</strong> 15 multiple-choice questions (1 pt each).
+                <strong>Part 2:</strong> Edit 5 sentences — find and fix 4 errors each (2 pts each).
+                <strong>Part 3:</strong> Edit a news brief — find all errors (tiebreaker).
+            </div>
+
+            <!-- Mode Selector -->
+            <div class="mode-selector" id="mode-selector">
+                <button class="mode-btn active" onclick="setMode('practice')" id="mode-practice">Practice Mode</button>
+                <button class="mode-btn" onclick="setMode('timed')" id="mode-timed">Timed (15 min)</button>
+                <button class="mode-btn" onclick="setMode('mock')" id="mode-mock">Mock Contest</button>
+            </div>
+
+            <!-- Start Section -->
+            <div id="start-section" style="text-align: center;">
+                <button class="btn" id="generate-btn" onclick="generateTest()">Generate Copy Editing Test</button>
+            </div>
+
+            <!-- Loading -->
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Generating your copy editing test...</p>
+            </div>
+
+            <!-- Test Content -->
+            <div class="test-section" id="test-section">
+                <!-- Part Tabs -->
+                <div class="part-tabs">
+                    <button class="part-tab active" onclick="showPart(1)" id="tab-1">Part 1 <span class="tab-progress" id="progress-1">(0/15)</span></button>
+                    <button class="part-tab" onclick="showPart(2)" id="tab-2">Part 2 <span class="tab-progress" id="progress-2">(0/5)</span></button>
+                    <button class="part-tab" onclick="showPart(3)" id="tab-3">Part 3</button>
+                </div>
+
+                <!-- Part 1: Multiple Choice -->
+                <div id="part-1-content"></div>
+
+                <!-- Part 2: Sentence Editing -->
+                <div id="part-2-content" style="display: none;"></div>
+
+                <!-- Part 3: News Brief -->
+                <div id="part-3-content" style="display: none;"></div>
+
+                <!-- Submit -->
+                <div class="submit-section">
+                    <button class="btn" id="submit-btn" onclick="submitTest()">Submit Test</button>
+                </div>
+            </div>
+
+            <!-- Feedback -->
+            <div class="feedback-section" id="feedback-section">
+                <div class="action-bar">
+                    <button class="action-btn copy-btn" onclick="copyResults()">Copy Results</button>
+                    <button class="action-btn share-btn" onclick="shareWithCoach()">Share with Coach</button>
+                    <button class="print-btn" onclick="window.print()">Print Results</button>
+                </div>
+                <div id="feedback-content"></div>
+                <div class="try-again-btn">
+                    <button class="btn" onclick="resetApp()">Try Another Test</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Share Modal -->
+    <div style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:500;display:none;justify-content:center;align-items:center;" id="share-modal" onclick="if(event.target===this)this.style.display='none'">
+        <div style="background:white;border-radius:12px;padding:30px;max-width:520px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);position:relative;">
+            <button onclick="document.getElementById('share-modal').style.display='none'" style="position:absolute;top:10px;right:15px;background:none;border:none;font-size:22px;cursor:pointer;color:#999;">&times;</button>
+            <h3 style="color:#ad1457;margin-bottom:10px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;">Share with Coach</h3>
+            <p style="color:#666;font-size:0.95em;margin-bottom:15px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;line-height:1.5;">Enter your name and copy the code. Your coach can paste it into the <a href="/coach/index.html" target="_blank" style="color:#e91e63;">Coach Dashboard</a>.</p>
+            <input type="text" id="share-name" placeholder="Your name" maxlength="50" style="width:100%;padding:10px 14px;border:2px solid #ddd;border-radius:6px;font-size:15px;margin-bottom:12px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;">
+            <div id="share-code-box" style="background:#f5f5f5;border:2px dashed #ccc;border-radius:8px;padding:15px;font-family:monospace;font-size:11px;word-break:break-all;max-height:120px;overflow-y:auto;color:#333;margin-bottom:12px;">Enter name and click Generate</div>
+            <div style="display:flex;gap:10px;justify-content:flex-end;">
+                <button onclick="document.getElementById('share-modal').style.display='none'" style="padding:10px 20px;border-radius:6px;border:none;cursor:pointer;font-size:14px;font-weight:600;background:#eee;color:#333;font-family:-apple-system,BlinkMacSystemFont,sans-serif;">Close</button>
+                <button id="share-gen-btn" onclick="generateShareCode()" style="padding:10px 20px;border-radius:6px;border:none;cursor:pointer;font-size:14px;font-weight:600;background:#e91e63;color:white;font-family:-apple-system,BlinkMacSystemFont,sans-serif;">Generate Code</button>
+                <button id="share-copy-btn" onclick="copyShareCode()" style="display:none;padding:10px 20px;border-radius:6px;border:none;cursor:pointer;font-size:14px;font-weight:600;background:#4caf50;color:white;font-family:-apple-system,BlinkMacSystemFont,sans-serif;">Copy Code</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var currentMode = 'practice';
+        var testData = null;
+        var part1Answers = {};
+        var timerInterval = null;
+        var timeRemaining = 900; // 15 minutes in seconds
+        var lastEvaluation = null;
+        var lastPart1Score = 0;
+
+        function setMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.mode-btn').forEach(function(b) { b.classList.remove('active'); });
+            document.getElementById('mode-' + mode).classList.add('active');
+        }
+
+        // Timer
+        function startTimer() {
+            timeRemaining = 900;
+            document.getElementById('timer-bar').style.display = 'block';
+            updateTimerDisplay();
+            timerInterval = setInterval(function() {
+                timeRemaining--;
+                updateTimerDisplay();
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    if (currentMode === 'mock') submitTest();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            var mins = Math.floor(timeRemaining / 60);
+            var secs = timeRemaining % 60;
+            var display = mins + ':' + (secs < 10 ? '0' : '') + secs;
+            var bar = document.getElementById('timer-bar');
+            bar.textContent = display;
+            bar.className = 'timer-bar';
+            if (timeRemaining <= 60) bar.classList.add('danger');
+            else if (timeRemaining <= 180) bar.classList.add('warning');
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            document.getElementById('timer-bar').style.display = 'none';
+        }
+
+        // Show part tab
+        function showPart(num) {
+            document.querySelectorAll('.part-tab').forEach(function(t) { t.classList.remove('active'); });
+            document.getElementById('tab-' + num).classList.add('active');
+            document.getElementById('part-1-content').style.display = num === 1 ? 'block' : 'none';
+            document.getElementById('part-2-content').style.display = num === 2 ? 'block' : 'none';
+            document.getElementById('part-3-content').style.display = num === 3 ? 'block' : 'none';
+        }
+
+        // Generate test
+        async function generateTest() {
+            var btn = document.getElementById('generate-btn');
+            btn.disabled = true;
+            btn.textContent = 'Generating test...';
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('mode-selector').style.display = 'none';
+
+            try {
+                var response = await fetch('/api/copyedit/generate-test', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                var data = await response.json();
+                if (data.error) throw new Error(data.error);
+
+                testData = data;
+                part1Answers = {};
+                renderTest();
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('start-section').style.display = 'none';
+                document.getElementById('test-section').style.display = 'block';
+
+                if (currentMode === 'timed' || currentMode === 'mock') {
+                    startTimer();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('loading').style.display = 'none';
+                btn.disabled = false;
+                btn.textContent = 'Generate Copy Editing Test';
+                document.getElementById('mode-selector').style.display = 'flex';
+                showToast('Error generating test: ' + error.message);
+            }
+        }
+
+        // Render the test
+        function renderTest() {
+            // Part 1: Multiple Choice
+            var p1Html = '<div class="part-header"><h2>Part 1 — Multiple Choice</h2><p>Select the correct answer for each question. (15 questions, 1 point each)</p></div>';
+            testData.part1.forEach(function(q, i) {
+                p1Html += '<div class="mc-question" id="mc-q-' + i + '">' +
+                    '<div class="mc-number">Question ' + (i + 1) + '</div>' +
+                    '<div class="mc-text">' + q.question + '</div>' +
+                    '<div class="mc-choices">';
+                q.choices.forEach(function(choice, ci) {
+                    p1Html += '<label class="mc-choice" id="mc-choice-' + i + '-' + ci + '" onclick="selectChoice(' + i + ',' + ci + ')">' +
+                        '<span class="radio"></span>' +
+                        '<span>' + choice + '</span>' +
+                    '</label>';
+                });
+                p1Html += '</div></div>';
+            });
+            document.getElementById('part-1-content').innerHTML = p1Html;
+
+            // Part 2: Sentence Editing
+            var p2Html = '<div class="part-header"><h2>Part 2 — Sentence Editing</h2><p>Each sentence has 4 errors. Rewrite each sentence with all errors corrected. (5 sentences, 2 points each)</p></div>';
+            testData.part2.forEach(function(s, i) {
+                p2Html += '<div class="sentence-block">' +
+                    '<div class="sentence-number">Sentence ' + (i + 1) + '</div>' +
+                    '<div class="sentence-label">Original (contains 4 errors):</div>' +
+                    '<div class="sentence-original">' + s.original + '</div>' +
+                    '<div class="sentence-label">Your corrected version:</div>' +
+                    '<textarea class="sentence-input" id="sentence-' + i + '" placeholder="Type your corrected sentence here..." oninput="updateProgress()"></textarea>' +
+                '</div>';
+            });
+            document.getElementById('part-2-content').innerHTML = p2Html;
+
+            // Part 3: News Brief
+            var p3Html = '<div class="part-header"><h2>Part 3 — News Brief Editing</h2><p>Find and fix all errors in this news brief. Rewrite it correctly. (Tiebreaker, ' + testData.part3.errorCount + ' errors)</p></div>' +
+                '<div class="sentence-label">Original news brief (contains ' + testData.part3.errorCount + ' errors):</div>' +
+                '<div class="brief-original">' + testData.part3.original + '</div>' +
+                '<div class="sentence-label">Your corrected version:</div>' +
+                '<textarea class="brief-input" id="brief-input" placeholder="Type or paste the corrected news brief here..." oninput="updateProgress()"></textarea>';
+            document.getElementById('part-3-content').innerHTML = p3Html;
+        }
+
+        function selectChoice(qIndex, choiceIndex) {
+            // Clear previous selection
+            for (var c = 0; c < 4; c++) {
+                var el = document.getElementById('mc-choice-' + qIndex + '-' + c);
+                if (el) el.classList.remove('selected');
+            }
+            // Select new
+            document.getElementById('mc-choice-' + qIndex + '-' + choiceIndex).classList.add('selected');
+            document.getElementById('mc-q-' + qIndex).classList.add('answered');
+            part1Answers[qIndex] = choiceIndex;
+            updateProgress();
+        }
+
+        function updateProgress() {
+            var p1Count = Object.keys(part1Answers).length;
+            document.getElementById('progress-1').textContent = '(' + p1Count + '/15)';
+
+            var p2Count = 0;
+            for (var i = 0; i < 5; i++) {
+                var el = document.getElementById('sentence-' + i);
+                if (el && el.value.trim()) p2Count++;
+            }
+            document.getElementById('progress-2').textContent = '(' + p2Count + '/5)';
+        }
+
+        // Submit test
+        async function submitTest() {
+            stopTimer();
+            document.getElementById('submit-btn').disabled = true;
+            document.getElementById('submit-btn').textContent = 'Grading...';
+
+            // Score Part 1 client-side (multiple choice)
+            var part1Score = 0;
+            var part1Results = [];
+            testData.part1.forEach(function(q, i) {
+                var studentAnswer = part1Answers[i];
+                var isCorrect = studentAnswer === q.correct;
+                if (isCorrect) part1Score++;
+                part1Results.push({
+                    question: q.question,
+                    choices: q.choices,
+                    studentAnswer: studentAnswer !== undefined ? studentAnswer : -1,
+                    correct: q.correct,
+                    isCorrect: isCorrect,
+                    explanation: q.explanation
+                });
+            });
+            lastPart1Score = part1Score;
+
+            // Collect Part 2 answers
+            var part2Answers = [];
+            for (var i = 0; i < 5; i++) {
+                var el = document.getElementById('sentence-' + i);
+                part2Answers.push(el ? el.value.trim() : '');
+            }
+
+            // Collect Part 3 answer
+            var briefEl = document.getElementById('brief-input');
+            var part3Answer = briefEl ? briefEl.value.trim() : '';
+
+            // Send Parts 2 & 3 to API for evaluation
+            try {
+                var response = await fetch('/api/copyedit/evaluate-test', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        part2Answers: part2Answers,
+                        part3Answer: part3Answer,
+                        testData: testData
+                    })
+                });
+
+                var evalData = await response.json();
+                if (evalData.error) throw new Error(evalData.error);
+
+                lastEvaluation = {
+                    part1Score: part1Score,
+                    part1Results: part1Results,
+                    part2Scores: evalData.part2Scores,
+                    part3Score: evalData.part3Score,
+                    part2Total: evalData.part2Total,
+                    part3Total: evalData.part3Total,
+                    overallFeedback: evalData.overallFeedback
+                };
+
+                displayFeedback();
+
+                // Save to history
+                saveSession(part1Score, evalData.part2Total, evalData.part3Total);
+
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Error grading test: ' + error.message);
+                document.getElementById('submit-btn').disabled = false;
+                document.getElementById('submit-btn').textContent = 'Submit Test';
+            }
+        }
+
+        // Display feedback
+        function displayFeedback() {
+            var eval = lastEvaluation;
+            document.getElementById('test-section').style.display = 'none';
+            document.getElementById('feedback-section').style.display = 'block';
+
+            var html = '';
+
+            // Overall score
+            var totalScore = eval.part1Score + eval.part2Total;
+            var maxScore = 25; // 15 + 10
+            var pct = Math.round((totalScore / maxScore) * 100);
+            var scoreClass = pct >= 85 ? 'excellent' : pct >= 70 ? 'good' : pct >= 50 ? 'fair' : 'needs-work';
+
+            html += '<div class="feedback-card">' +
+                '<div class="feedback-headline">Overall Score</div>' +
+                '<div class="score ' + scoreClass + '">' + totalScore.toFixed(1) + ' / ' + maxScore + ' (' + pct + '%)</div>' +
+                '<div class="feedback-text">' +
+                    'Part 1: ' + eval.part1Score + '/15 &nbsp;&middot;&nbsp; ' +
+                    'Part 2: ' + eval.part2Total.toFixed(1) + '/10 &nbsp;&middot;&nbsp; ' +
+                    'Part 3 (tiebreaker): ' + eval.part3Total + '/' + eval.part3Score.maxScore +
+                '</div>' +
+                '<div class="feedback-text">' + (eval.overallFeedback || '') + '</div>' +
+            '</div>';
+
+            // Part 1 results
+            html += '<div class="feedback-card">' +
+                '<div class="feedback-headline">Part 1 — Multiple Choice (' + eval.part1Score + '/15)</div>';
+            eval.part1Results.forEach(function(r, i) {
+                var cls = r.isCorrect ? 'result-correct' : 'result-incorrect';
+                var label = r.isCorrect ? 'Correct' : 'Incorrect';
+                var labelCls = r.isCorrect ? 'correct' : 'incorrect';
+                html += '<div class="' + cls + '">' +
+                    '<div class="result-label ' + labelCls + '">Q' + (i + 1) + ' — ' + label + '</div>' +
+                    '<div class="result-text"><strong>' + r.question + '</strong></div>';
+                if (!r.isCorrect) {
+                    html += '<div class="result-text" style="margin-top:4px;">Your answer: ' + (r.studentAnswer >= 0 ? r.choices[r.studentAnswer] : '<em>No answer</em>') + '</div>' +
+                        '<div class="result-text">Correct: ' + r.choices[r.correct] + '</div>';
+                }
+                html += '<div class="result-text" style="color:#888;font-size:0.85em;margin-top:4px;">' + r.explanation + '</div></div>';
+            });
+            html += '</div>';
+
+            // Part 2 results
+            html += '<div class="feedback-card">' +
+                '<div class="feedback-headline">Part 2 — Sentence Editing (' + eval.part2Total.toFixed(1) + '/10)</div>';
+            if (eval.part2Scores) {
+                eval.part2Scores.forEach(function(s) {
+                    var sCls = s.score >= 1.5 ? 'result-correct' : s.score >= 1 ? '' : 'result-incorrect';
+                    html += '<div style="background:#f8f9fa;border-radius:6px;padding:12px;margin-bottom:10px;border-left:3px solid ' + (s.score >= 1.5 ? '#4caf50' : s.score >= 1 ? '#ff9800' : '#f44336') + ';">' +
+                        '<div class="result-label" style="color:#ad1457;">Sentence ' + s.sentence + ' — ' + s.score + '/2</div>' +
+                        '<div class="result-text">' + s.feedback + '</div>';
+                    if (s.errorsMissed && s.errorsMissed.length > 0) {
+                        html += '<div class="result-text" style="color:#e65100;font-size:0.85em;margin-top:4px;">Missed: ' + s.errorsMissed.join('; ') + '</div>';
+                    }
+                    html += '</div>';
+                });
+            }
+            html += '</div>';
+
+            // Part 3 results
+            html += '<div class="feedback-card">' +
+                '<div class="feedback-headline">Part 3 — News Brief (' + eval.part3Total + '/' + eval.part3Score.maxScore + ') — Tiebreaker</div>' +
+                '<div class="feedback-text">' + eval.part3Score.feedback + '</div>';
+            if (eval.part3Score.errorsFound && eval.part3Score.errorsFound.length > 0) {
+                html += '<div class="result-correct"><div class="result-label correct">Errors Found:</div><ul class="feedback-list">' +
+                    eval.part3Score.errorsFound.map(function(e) { return '<li>' + e + '</li>'; }).join('') + '</ul></div>';
+            }
+            if (eval.part3Score.errorsMissed && eval.part3Score.errorsMissed.length > 0) {
+                html += '<div class="result-incorrect"><div class="result-label missed">Errors Missed:</div><ul class="feedback-list">' +
+                    eval.part3Score.errorsMissed.map(function(e) { return '<li>' + e + '</li>'; }).join('') + '</ul></div>';
+            }
+            html += '</div>';
+
+            document.getElementById('feedback-content').innerHTML = html;
+        }
+
+        // Save session to localStorage
+        function saveSession(p1, p2, p3) {
+            try {
+                var data = localStorage.getItem('uil-copyedit-history');
+                var history = data ? JSON.parse(data) : { sessions: [] };
+                history.sessions.push({
+                    date: new Date().toISOString(),
+                    part1: p1,
+                    part2: p2,
+                    part3: p3,
+                    total: p1 + p2,
+                    mode: currentMode
+                });
+                localStorage.setItem('uil-copyedit-history', JSON.stringify(history));
+            } catch (e) {}
+        }
+
+        // Reset
+        function resetApp() {
+            stopTimer();
+            timeRemaining = 900;
+            document.getElementById('test-section').style.display = 'none';
+            document.getElementById('feedback-section').style.display = 'none';
+            document.getElementById('start-section').style.display = 'block';
+            document.getElementById('mode-selector').style.display = 'flex';
+            var btn = document.getElementById('generate-btn');
+            btn.disabled = false;
+            btn.textContent = 'Generate Copy Editing Test';
+            document.getElementById('submit-btn').disabled = false;
+            document.getElementById('submit-btn').textContent = 'Submit Test';
+            testData = null;
+            part1Answers = {};
+            lastEvaluation = null;
+        }
+
+        // Toast
+        function showToast(msg) {
+            var t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('visible');
+            setTimeout(function() { t.classList.remove('visible'); }, 2500);
+        }
+
+        // Copy results
+        function copyResults() {
+            if (!lastEvaluation) return;
+            var e = lastEvaluation;
+            var text = '=== UIL Copy Editing Results ===\n';
+            text += 'Date: ' + new Date().toLocaleDateString() + '\n';
+            text += 'Mode: ' + currentMode.toUpperCase() + '\n';
+            text += 'Part 1: ' + e.part1Score + '/15\n';
+            text += 'Part 2: ' + e.part2Total.toFixed(1) + '/10\n';
+            text += 'Part 3: ' + e.part3Total + '/' + e.part3Score.maxScore + ' (tiebreaker)\n';
+            text += 'Total: ' + (e.part1Score + e.part2Total).toFixed(1) + '/25\n\n';
+            text += e.overallFeedback + '\n';
+
+            navigator.clipboard.writeText(text).then(function() {
+                showToast('Results copied!');
+            }).catch(function() {
+                showToast('Results copied!');
+            });
+        }
+
+        // Share with coach
+        function shareWithCoach() {
+            if (!lastEvaluation) return;
+            document.getElementById('share-modal').style.display = 'flex';
+            document.getElementById('share-code-box').textContent = 'Enter name and click Generate';
+            document.getElementById('share-gen-btn').style.display = '';
+            document.getElementById('share-copy-btn').style.display = 'none';
+        }
+
+        function generateShareCode() {
+            var name = document.getElementById('share-name').value.trim();
+            if (!name) { document.getElementById('share-name').focus(); return; }
+            var e = lastEvaluation;
+            var shareData = {
+                v: 1, contest: 'copyedit', name: name,
+                date: new Date().toISOString(), mode: currentMode,
+                p1: e.part1Score, p2: e.part2Total, p3: e.part3Total,
+                p3max: e.part3Score.maxScore,
+                total: e.part1Score + e.part2Total, max: 25,
+                feedback: e.overallFeedback
+            };
+            var encoded = btoa(unescape(encodeURIComponent(JSON.stringify(shareData))));
+            document.getElementById('share-code-box').textContent = 'UIL:' + encoded;
+            document.getElementById('share-gen-btn').style.display = 'none';
+            document.getElementById('share-copy-btn').style.display = '';
+        }
+
+        function copyShareCode() {
+            var code = document.getElementById('share-code-box').textContent;
+            navigator.clipboard.writeText(code).then(function() {
+                showToast('Share code copied!');
+            });
+        }
+
+        // Dark mode
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            var isDark = document.body.classList.contains('dark-mode');
+            document.getElementById('dark-toggle').textContent = isDark ? 'Light Mode' : 'Dark Mode';
+            try { localStorage.setItem('uil-dark-mode', isDark ? '1' : '0'); } catch (e) {}
+        }
+
+        // Init
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                if (localStorage.getItem('uil-dark-mode') === '1') {
+                    document.body.classList.add('dark-mode');
+                    document.getElementById('dark-toggle').textContent = 'Light Mode';
+                }
+            } catch (e) {}
+        });
+    </script>
+</body>
+</html>

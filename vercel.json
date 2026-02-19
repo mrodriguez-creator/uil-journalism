@@ -1,6 +1,8 @@
 {
   "functions": {
     "api/headline/generate-story.js": { "memory": 1024, "maxDuration": 60 },
-    "api/headline/evaluate-headlines.js": { "memory": 1024, "maxDuration": 60 }
+    "api/headline/evaluate-headlines.js": { "memory": 1024, "maxDuration": 60 },
+    "api/copyedit/generate-test.js": { "memory": 1024, "maxDuration": 60 },
+    "api/copyedit/evaluate-test.js": { "memory": 1024, "maxDuration": 60 }
   }
 }
