@@ -5,6 +5,8 @@
     "api/copyedit/generate-test.js": { "memory": 1024, "maxDuration": 60 },
     "api/copyedit/evaluate-test.js": { "memory": 1024, "maxDuration": 60 },
     "api/editorial/generate-prompt.js": { "memory": 1024, "maxDuration": 60 },
-    "api/editorial/evaluate.js": { "memory": 1024, "maxDuration": 60 }
+    "api/editorial/evaluate.js": { "memory": 1024, "maxDuration": 60 },
+    "api/news/generate-prompt.js": { "memory": 1024, "maxDuration": 60 },
+    "api/news/evaluate.js": { "memory": 1024, "maxDuration": 60 }
   }
 }
