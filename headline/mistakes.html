@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UIL Headline Writing - Common Mistakes Bank</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 { font-size: 2.2em; margin-bottom: 10px; }
+        .header p { font-size: 1.1em; opacity: 0.9; }
+
+        .content { padding: 30px; }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .info-box strong { color: #1976d2; }
+        .info-box a { color: #1976d2; text-decoration: underline; }
+
+        .filter-bar {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+            align-items: center;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #667eea;
+            border-radius: 20px;
+            background: white;
+            color: #667eea;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover { background: #f0f0ff; }
+        .filter-btn.active { background: #667eea; color: white; }
+
+        .example-pair {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+            transition: transform 0.2s;
+        }
+
+        .example-pair:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+
+        .pair-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .pair-title {
+            font-weight: bold;
+            color: #1e3c72;
+            font-size: 1.05em;
+        }
+
+        .mistake-tag {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            letter-spacing: 0.3px;
+        }
+
+        .mistake-tag.articles { background: #fff3cd; color: #856404; }
+        .mistake-tag.past-tense { background: #f8d7da; color: #721c24; }
+        .mistake-tag.passive-voice { background: #f8d7da; color: #721c24; }
+        .mistake-tag.names { background: #e2d5f1; color: #4a235a; }
+        .mistake-tag.char-count { background: #cce5ff; color: #004085; }
+        .mistake-tag.main-idea { background: #d4edda; color: #155724; }
+        .mistake-tag.word-split { background: #fde2e2; color: #9b2c2c; }
+        .mistake-tag.weak-verb { background: #fed7aa; color: #9a3412; }
+
+        .pair-body {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+        }
+
+        .pair-side {
+            padding: 20px;
+        }
+
+        .pair-side.bad-side {
+            background: #fff5f5;
+            border-right: 2px solid #e0e0e0;
+        }
+
+        .pair-side.good-side {
+            background: #f0fff4;
+        }
+
+        .side-label {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        .bad-side .side-label { color: #e53e3e; }
+        .good-side .side-label { color: #38a169; }
+
+        .side-score {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            margin-bottom: 10px;
+        }
+
+        .bad-side .side-score { background: #feb2b2; color: #9b2c2c; }
+        .good-side .side-score { background: #9ae6b4; color: #22543d; }
+
+        .headline-text {
+            font-size: 1.15em;
+            font-weight: bold;
+            line-height: 1.5;
+            margin: 8px 0;
+        }
+
+        .bad-side .headline-text { color: #c53030; }
+        .good-side .headline-text { color: #276749; }
+
+        .explanation {
+            font-size: 0.9em;
+            color: #555;
+            line-height: 1.5;
+            margin-top: 10px;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        .story-context {
+            font-size: 0.85em;
+            color: #666;
+            font-style: italic;
+            padding: 10px 20px;
+            background: #fafafa;
+            border-top: 1px solid #e0e0e0;
+            line-height: 1.5;
+        }
+
+        .section-divider {
+            text-align: center;
+            margin: 30px 0 10px;
+            color: #999;
+            font-size: 0.9em;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        .tip-callout {
+            background: #fffbeb;
+            border: 2px solid #f59e0b;
+            border-radius: 8px;
+            padding: 18px;
+            margin: 25px 0;
+        }
+
+        .tip-callout strong { color: #b45309; }
+        .tip-callout p { color: #78350f; line-height: 1.6; font-size: 0.95em; }
+
+        @media (max-width: 600px) {
+            .header h1 { font-size: 1.6em; }
+            .content { padding: 20px; }
+            .pair-body { grid-template-columns: 1fr; }
+            .pair-side.bad-side { border-right: none; border-bottom: 2px solid #e0e0e0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Common Mistakes Bank</h1>
+            <p>Learn from real examples: what separates 0-1 point headlines from 3-4 point headlines</p>
+        </div>
+
+        <div class="content">
+            <div class="info-box">
+                <strong>How to use:</strong> Study each side-by-side comparison. The left shows what NOT to do (and why it loses points). The right shows the corrected version with a strong score. Filter by mistake type to focus on your weaknesses.
+                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #2196f3;">
+                    <a href="index.html">Back to practice</a>
+                    <span style="margin: 0 8px; color: #999;">|</span>
+                    <a href="drills.html">Skill drills</a>
+                    <span style="margin: 0 8px; color: #999;">|</span>
+                    <a href="tutorial.html">Review rules</a>
+                    <span style="margin: 0 8px; color: #999;">|</span>
+                    <a href="verbs.html">Vocabulary builder</a>
+                </div>
+            </div>
+
+            <div class="filter-bar">
+                <span style="font-size: 13px; color: #666; font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 600;">Filter:</span>
+                <button class="filter-btn active" onclick="filterExamples('all')">All</button>
+                <button class="filter-btn" onclick="filterExamples('past-tense')">Past Tense</button>
+                <button class="filter-btn" onclick="filterExamples('passive-voice')">Passive Voice</button>
+                <button class="filter-btn" onclick="filterExamples('articles')">Articles</button>
+                <button class="filter-btn" onclick="filterExamples('names')">Name Usage</button>
+                <button class="filter-btn" onclick="filterExamples('char-count')">Char Count</button>
+                <button class="filter-btn" onclick="filterExamples('main-idea')">Main Idea</button>
+                <button class="filter-btn" onclick="filterExamples('weak-verb')">Weak Verbs</button>
+                <button class="filter-btn" onclick="filterExamples('word-split')">Word Splits</button>
+            </div>
+
+            <div id="examples-container"></div>
+
+            <div class="tip-callout">
+                <strong>Pro Tip:</strong>
+                <p>Before submitting each headline, run through a mental checklist: (1) Present tense? (2) Active voice? (3) No articles? (4) Last name only? (5) Character count within range? (6) Captures the lead? Catching even one mistake can be the difference between 1 and 3 points.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var examples = [
+            {
+                category: 'past-tense',
+                title: 'Past Tense Verb',
+                storyContext: 'Story: The school board voted to approve a $2.5 million renovation of the gym facilities at Tuesday night\'s meeting.',
+                bad: { headline: 'Board approved gym renovation', score: '1/4', explanation: '"Approved" is past tense. UIL headlines must always use present tense, even when reporting on past events.' },
+                good: { headline: 'Board approves gym renovation', score: '4/4', explanation: '"Approves" is present tense, active voice, captures the main idea, and fits within character limits.' }
+            },
+            {
+                category: 'past-tense',
+                title: 'Irregular Past Tense',
+                storyContext: 'Story: The varsity swim team won the regional championship Saturday, qualifying for the state meet for the first time in 12 years.',
+                bad: { headline: 'Swim team won regionals', score: '1/4', explanation: '"Won" is irregular past tense. Many students miss irregular past verbs like won, went, came, took, gave, ran, broke, etc.' },
+                good: { headline: 'Swim team wins regionals', score: '4/4', explanation: '"Wins" is present tense. Remember: won→wins, went→goes, came→comes, took→takes, gave→gives.' }
+            },
+            {
+                category: 'passive-voice',
+                title: 'Passive Voice Construction',
+                storyContext: 'Story: Senior Maria Santos received the district\'s Outstanding Student Award at Friday\'s awards ceremony.',
+                bad: { headline: 'Award given to senior', score: '1/4', explanation: 'Passive voice: the subject (senior) is receiving the action instead of performing it. The verb "given" indicates the subject isn\'t acting.' },
+                good: { headline: 'Senior earns top district award', score: '4/4', explanation: 'Active voice: the senior is the subject performing the action "earns." The subject is doing something, not having something done to them.' }
+            },
+            {
+                category: 'passive-voice',
+                title: 'Hidden Passive Voice',
+                storyContext: 'Story: The school district hired Coach James Williams as the new head football coach after a nationwide search.',
+                bad: { headline: 'New coach hired by district', score: '1/4', explanation: '"Hired by" is a clear passive voice marker. Whenever you see "by [someone]" after a verb, it\'s likely passive.' },
+                good: { headline: 'District hires new football coach', score: '4/4', explanation: 'District (subject) hires (active verb) new football coach (object). Clean subject-verb-object structure.' }
+            },
+            {
+                category: 'articles',
+                title: 'Articles (a, an, the)',
+                storyContext: 'Story: The student council is organizing a spring carnival to raise money for the local children\'s hospital.',
+                bad: { headline: 'The council plans a spring event', score: '1/4', explanation: 'Contains two articles: "the" and "a". Articles are never allowed in UIL headlines and result in an automatic 1-point score.' },
+                good: { headline: 'Council plans spring carnival', score: '4/4', explanation: 'All articles removed. Headline still reads clearly. Also more specific: "carnival" instead of generic "event."' }
+            },
+            {
+                category: 'articles',
+                title: 'Sneaky Article Usage',
+                storyContext: 'Story: An anonymous donor gave $50,000 to the school\'s music program, allowing them to purchase new instruments.',
+                bad: { headline: 'An anonymous donor funds music', score: '1/4', explanation: '"An" is an article. Students often forget that "an" counts just like "a" and "the." All three are prohibited.' },
+                good: { headline: 'Donor funds music program', score: '3/4', explanation: 'Article removed. "Anonymous" could be added for specificity if character count allows, but headline works without it.' }
+            },
+            {
+                category: 'names',
+                title: 'Using Full Name',
+                storyContext: 'Story: Junior Emily Rodriguez won first place at the state science fair with her project on water purification.',
+                bad: { headline: 'Emily Rodriguez wins science fair', score: '2/4', explanation: 'Uses both first and last name. UIL rules require last name only. Using first name only is also wrong.' },
+                good: { headline: 'Rodriguez wins state science fair', score: '4/4', explanation: 'Last name only, as required. Added "state" for specificity — it\'s the state fair, not just any science fair.' }
+            },
+            {
+                category: 'names',
+                title: 'First Name Only',
+                storyContext: 'Story: Senior quarterback Marcus Thompson threw for 350 yards and four touchdowns in Friday\'s playoff victory.',
+                bad: { headline: 'Marcus throws four touchdowns', score: '2/4', explanation: 'Uses first name only. This is just as wrong as using the full name. Always use last name only in UIL headlines.' },
+                good: { headline: 'Thompson throws four touchdowns', score: '4/4', explanation: 'Last name only. Strong active verb "throws" in present tense. Captures the key stat from the story.' }
+            },
+            {
+                category: 'char-count',
+                title: 'Over Character Count',
+                storyContext: 'Story: The school board approved a new attendance policy requiring students to maintain 90% attendance to participate in extracurriculars. (Assignment: 1-line, 24-30 characters)',
+                bad: { headline: 'Board approves new attendance requirements', score: '0/4', explanation: '41 characters — way over the 30-character max. Over-count = automatic 0. Always count before submitting!' },
+                good: { headline: 'Board sets attendance policy', score: '4/4', explanation: '27 characters — fits perfectly in the 24-30 range. Concise but captures the main idea.' }
+            },
+            {
+                category: 'char-count',
+                title: 'Under Character Count',
+                storyContext: 'Story: The debate team qualified three students for the national tournament after winning multiple events at the state competition. (Assignment: 1-line, 24-30 characters)',
+                bad: { headline: 'Debate team qualifies', score: '0/4', explanation: '21 characters — under the 24-character minimum. Under-count is also an automatic disqualification.' },
+                good: { headline: 'Debate team reaches nationals', score: '4/4', explanation: '29 characters — within range. "Reaches nationals" is more specific and uses the extra characters wisely.' }
+            },
+            {
+                category: 'main-idea',
+                title: 'Missing the Lead',
+                storyContext: 'Story: The school will break ground on a new $15 million performing arts center next month. The 800-seat facility will include a state-of-the-art sound system. Principal Davis said construction should be complete by fall 2026.',
+                bad: { headline: 'Davis discusses construction', score: '2/4', explanation: 'Buries the lead. The main news is the new performing arts center, not what the principal said. Always headline the first paragraph\'s main idea.' },
+                good: { headline: 'School builds arts center', score: '4/4', explanation: 'Captures the lead: a new performing arts center. The who (school), what (builds), and what (arts center) are all present.' }
+            },
+            {
+                category: 'main-idea',
+                title: 'Too Vague / Generic',
+                storyContext: 'Story: The robotics team won first place at the state championship Saturday, beating 48 other teams with their autonomous navigation robot.',
+                bad: { headline: 'Team does well at competition', score: '2/4', explanation: 'Too vague. Which team? What competition? "Does well" is weak. Missing key details: it was STATE, they won FIRST PLACE, it was ROBOTICS.' },
+                good: { headline: 'Robotics captures state title', score: '4/4', explanation: 'Specific: identifies the team (robotics), the achievement (captures/wins), and the level (state title).' }
+            },
+            {
+                category: 'weak-verb',
+                title: 'Weak/Generic Verb',
+                storyContext: 'Story: The choir program received a $25,000 grant from the National Endowment for the Arts to expand their after-school music program.',
+                bad: { headline: 'Choir gets grant for program', score: '2/4', explanation: '"Gets" is weak and generic. Strong verbs paint a picture and convey energy. They\'re the difference between a 2 and a 4.' },
+                good: { headline: 'Choir lands arts grant', score: '4/4', explanation: '"Lands" is vivid and specific. Other strong options: earns, secures, wins, captures. Strong verbs make headlines pop.' }
+            },
+            {
+                category: 'weak-verb',
+                title: 'Weak "Has/Have" Verb',
+                storyContext: 'Story: The school unveiled a new state-of-the-art science lab Tuesday, funded by a $500,000 donation from a local tech company.',
+                bad: { headline: 'School has new science lab', score: '2/4', explanation: '"Has" is one of the weakest verbs. It shows no action and no energy. What did the school DO?' },
+                good: { headline: 'School unveils new science lab', score: '4/4', explanation: '"Unveils" shows action and excitement. The school didn\'t just passively "have" something — they revealed it.' }
+            },
+            {
+                category: 'word-split',
+                title: 'Bad Word Split (2-line headline)',
+                storyContext: 'Story: Students plan to attend the annual college fair hosted by the guidance department next Friday. (Assignment: 2-line headline)',
+                bad: { headline: 'Students plan to<br>attend college fair', score: '2/4', explanation: 'Splits the verb phrase "plan to attend" across two lines. Never break a verb phrase, prepositional phrase, or noun phrase between lines.' },
+                good: { headline: 'Students attend<br>annual college fair', score: '4/4', explanation: 'Clean break between subject-verb (line 1) and object (line 2). Each line can stand somewhat on its own.' }
+            },
+            {
+                category: 'word-split',
+                title: 'Splitting Adjective from Noun',
+                storyContext: 'Story: The school received a prestigious national Blue Ribbon School designation from the U.S. Department of Education. (Assignment: 2-line headline)',
+                bad: { headline: 'School earns national<br>Blue Ribbon honor', score: '2/4', explanation: 'Splits "national Blue Ribbon" across lines. The adjective "national" should stay with "Blue Ribbon" on the same line.' },
+                good: { headline: 'School earns<br>Blue Ribbon designation', score: '4/4', explanation: 'Clean split: subject + verb on line 1, full noun phrase on line 2. Nothing is awkwardly separated.' }
+            }
+        ];
+
+        function renderExamples(filter) {
+            var container = document.getElementById('examples-container');
+            container.innerHTML = '';
+
+            var filtered = filter === 'all' ? examples : examples.filter(function(ex) { return ex.category === filter; });
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">No examples found for this filter.</p>';
+                return;
+            }
+
+            filtered.forEach(function(ex) {
+                var div = document.createElement('div');
+                div.className = 'example-pair';
+                div.setAttribute('data-category', ex.category);
+
+                var tagClass = ex.category;
+                var tagLabel = ex.title;
+
+                div.innerHTML =
+                    '<div class="pair-header">' +
+                        '<span class="pair-title">' + ex.title + '</span>' +
+                        '<span class="mistake-tag ' + tagClass + '">' + ex.category.replace('-', ' ').toUpperCase() + '</span>' +
+                    '</div>' +
+                    '<div class="pair-body">' +
+                        '<div class="pair-side bad-side">' +
+                            '<div class="side-label">Wrong</div>' +
+                            '<div class="side-score">' + ex.bad.score + '</div>' +
+                            '<div class="headline-text">' + ex.bad.headline + '</div>' +
+                            '<div class="explanation">' + ex.bad.explanation + '</div>' +
+                        '</div>' +
+                        '<div class="pair-side good-side">' +
+                            '<div class="side-label">Correct</div>' +
+                            '<div class="side-score">' + ex.good.score + '</div>' +
+                            '<div class="headline-text">' + ex.good.headline + '</div>' +
+                            '<div class="explanation">' + ex.good.explanation + '</div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="story-context">' + ex.storyContext + '</div>';
+
+                container.appendChild(div);
+            });
+        }
+
+        function filterExamples(filter) {
+            document.querySelectorAll('.filter-btn').forEach(function(btn) {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            renderExamples(filter);
+        }
+
+        // Initial render
+        renderExamples('all');
+    </script>
+</body>
+</html>

@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UIL Headline Writing — Coach Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh; padding: 20px;
+        }
+        .container {
+            max-width: 960px; margin: 0 auto; background: white;
+            border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
+            color: white; padding: 30px; text-align: center;
+        }
+        .header h1 { font-size: 2em; margin-bottom: 8px; }
+        .header p { font-size: 1.05em; opacity: 0.9; }
+        .header .back-link { color: rgba(255,255,255,0.8); font-size: 0.9em; margin-top: 8px; display: inline-block; }
+        .header .back-link:hover { color: white; }
+        .content { padding: 30px; }
+
+        /* Input area */
+        .paste-section {
+            background: #f8f9fa; border-radius: 8px; padding: 25px; margin-bottom: 25px;
+            border-left: 4px solid #4caf50;
+        }
+        .paste-section h2 {
+            color: #2e7d32; font-size: 1.2em; margin-bottom: 8px;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .paste-section p {
+            color: #666; font-size: 0.9em; margin-bottom: 15px;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; line-height: 1.5;
+        }
+        .paste-input {
+            width: 100%; min-height: 80px; padding: 12px; border: 2px solid #ddd;
+            border-radius: 6px; font-family: monospace; font-size: 12px;
+            resize: vertical; transition: border-color 0.2s; line-height: 1.4;
+        }
+        .paste-input:focus { border-color: #4caf50; outline: none; }
+        .paste-actions { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+        .btn {
+            padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer;
+            font-size: 14px; font-weight: 600; transition: all 0.2s;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .btn-primary { background: #4caf50; color: white; }
+        .btn-primary:hover { background: #43a047; transform: translateY(-1px); }
+        .btn-secondary { background: #eee; color: #333; }
+        .btn-secondary:hover { background: #ddd; }
+        .btn-danger { background: #f44336; color: white; }
+        .btn-danger:hover { background: #e53935; }
+        .btn-export { background: #ff9800; color: white; }
+        .btn-export:hover { background: #f57c00; }
+
+        .error-msg {
+            color: #f44336; font-size: 13px; margin-top: 8px;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; display: none;
+        }
+
+        /* Student cards */
+        .students-section { margin-top: 25px; }
+        .students-section h2 {
+            color: #1e3c72; font-size: 1.3em; margin-bottom: 15px;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .student-count {
+            background: #667eea; color: white; border-radius: 20px; padding: 3px 12px;
+            font-size: 0.7em; font-weight: 600;
+        }
+
+        .student-card {
+            background: white; border: 1px solid #e0e0e0; border-radius: 10px;
+            margin-bottom: 20px; overflow: hidden; transition: box-shadow 0.2s;
+        }
+        .student-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+        .student-card-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 18px 20px; cursor: pointer; background: #fafafa; border-bottom: 1px solid #eee;
+        }
+        .student-card-header:hover { background: #f0f4ff; }
+        .student-info { display: flex; align-items: center; gap: 15px; }
+        .student-name {
+            font-size: 1.15em; font-weight: bold; color: #1e3c72;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .student-meta {
+            color: #888; font-size: 0.85em;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .student-score {
+            font-size: 1.5em; font-weight: bold; padding: 4px 16px;
+            border-radius: 20px; color: white;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .student-score.excellent { background: #4caf50; }
+        .student-score.good { background: #2196f3; }
+        .student-score.fair { background: #ff9800; }
+        .student-score.needs-work { background: #f44336; }
+
+        .student-details { display: none; padding: 20px; border-top: 1px solid #eee; }
+        .student-details.open { display: block; }
+        .expand-icon {
+            font-size: 1.2em; color: #999; transition: transform 0.2s;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .expand-icon.open { transform: rotate(180deg); }
+        .remove-btn {
+            background: none; border: none; color: #ccc; cursor: pointer;
+            font-size: 18px; padding: 4px 8px; transition: color 0.2s;
+        }
+        .remove-btn:hover { color: #f44336; }
+
+        /* Detail cards inside student view */
+        .hl-card {
+            background: #f8f9fa; border-radius: 8px; padding: 15px; margin-bottom: 12px;
+            border-left: 4px solid #667eea;
+        }
+        .hl-card-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
+        }
+        .hl-type {
+            color: #1e3c72; font-weight: bold; font-size: 1em;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .hl-score-badge {
+            padding: 2px 10px; border-radius: 12px; font-size: 0.85em; font-weight: 600;
+            color: white; font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .hl-student-text {
+            background: white; padding: 10px; border-radius: 4px; margin: 8px 0;
+            font-family: Georgia, serif; font-size: 1em; color: #333;
+            border: 1px solid #e0e0e0;
+        }
+        .hl-revision {
+            background: #e8f5e9; padding: 10px; border-radius: 4px; margin: 8px 0;
+            font-family: Georgia, serif; font-size: 0.95em; color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+        .hl-revision-label {
+            font-size: 0.8em; font-weight: 600; color: #4caf50; margin-bottom: 4px;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .hl-strengths, .hl-improvements {
+            padding: 8px 12px; border-radius: 4px; margin: 6px 0; font-size: 0.9em;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; line-height: 1.6;
+        }
+        .hl-strengths { background: #e8f5e9; border-left: 3px solid #4caf50; }
+        .hl-improvements { background: #fff3e0; border-left: 3px solid #ff9800; }
+        .hl-feedback {
+            color: #555; font-size: 0.9em; margin-top: 8px; line-height: 1.5;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        /* Summary / comparison table */
+        .summary-table {
+            width: 100%; border-collapse: collapse; margin-top: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 0.9em;
+        }
+        .summary-table th {
+            background: #1e3c72; color: white; padding: 10px 12px; text-align: left;
+            font-weight: 600;
+        }
+        .summary-table td { padding: 10px 12px; border-bottom: 1px solid #eee; }
+        .summary-table tr:hover td { background: #f5f8ff; }
+        .summary-table .score-cell { text-align: center; font-weight: bold; }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center; padding: 50px 20px; color: #999;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .empty-state .icon { font-size: 3em; margin-bottom: 15px; }
+        .empty-state h3 { color: #666; margin-bottom: 8px; }
+        .empty-state p { font-size: 0.95em; line-height: 1.6; }
+
+        /* Class Summary Bar */
+        .class-summary {
+            background: linear-gradient(135deg, #f8f9fa, #e8eaf6);
+            border-radius: 8px; padding: 20px; margin-bottom: 20px;
+            display: none;
+        }
+        .class-summary.visible { display: block; }
+        .class-summary h3 {
+            color: #1e3c72; margin-bottom: 12px;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .class-stats {
+            display: flex; gap: 20px; flex-wrap: wrap;
+        }
+        .class-stat {
+            background: white; border-radius: 8px; padding: 12px 20px;
+            text-align: center; flex: 1; min-width: 120px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .class-stat-value {
+            font-size: 1.8em; font-weight: bold; color: #1e3c72;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .class-stat-label {
+            font-size: 0.8em; color: #888; margin-top: 4px;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        /* Print styles */
+        @media print {
+            body { background: white !important; padding: 0 !important; }
+            .container { box-shadow: none !important; border-radius: 0 !important; }
+            .header { background: white !important; color: black !important; padding: 15px !important; border-bottom: 2px solid #333; }
+            .paste-section, .paste-actions, .remove-btn, .back-link { display: none !important; }
+            .student-details { display: block !important; }
+            .student-card { break-inside: avoid; box-shadow: none !important; border: 1px solid #ccc; }
+            .hl-card { break-inside: avoid; }
+            .class-summary { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+            .student-score, .hl-score-badge { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+        }
+
+        /* Dark mode */
+        body.dark-mode { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); }
+        body.dark-mode .container { background: #1e1e1e; }
+        body.dark-mode .header { background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%); }
+        body.dark-mode .content { color: #eee; }
+        body.dark-mode .paste-section { background: #2a2a2a; }
+        body.dark-mode .paste-section h2 { color: #66bb6a; }
+        body.dark-mode .paste-section p { color: #aaa; }
+        body.dark-mode .paste-input { background: #333; border-color: #555; color: #eee; }
+        body.dark-mode .student-card { background: #2a2a2a; border-color: #444; }
+        body.dark-mode .student-card-header { background: #2a2a2a; border-color: #444; }
+        body.dark-mode .student-card-header:hover { background: #333; }
+        body.dark-mode .student-name { color: #8ab4f8; }
+        body.dark-mode .hl-card { background: #333; }
+        body.dark-mode .hl-type { color: #8ab4f8; }
+        body.dark-mode .hl-student-text { background: #2a2a2a; border-color: #555; color: #ddd; }
+        body.dark-mode .hl-feedback { color: #bbb; }
+        body.dark-mode .class-summary { background: linear-gradient(135deg, #2a2a2a, #1e1e2e); }
+        body.dark-mode .class-summary h3 { color: #8ab4f8; }
+        body.dark-mode .class-stat { background: #333; }
+        body.dark-mode .class-stat-value { color: #8ab4f8; }
+        body.dark-mode .summary-table th { background: #333; }
+        body.dark-mode .summary-table td { border-color: #444; }
+        body.dark-mode .summary-table tr:hover td { background: #2a2a2a; }
+        body.dark-mode .empty-state { color: #888; }
+        body.dark-mode .empty-state h3 { color: #bbb; }
+
+        .dark-toggle {
+            position: fixed; top: 12px; right: 12px; z-index: 300;
+            background: rgba(255,255,255,0.9); border: 1px solid #ccc; border-radius: 20px;
+            padding: 6px 14px; cursor: pointer; font-size: 13px;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 600;
+            transition: all 0.2s; color: #333;
+        }
+        .dark-toggle:hover { background: #4caf50; color: white; border-color: #4caf50; }
+        body.dark-mode .dark-toggle { background: rgba(50,50,50,0.9); color: #eee; border-color: #555; }
+
+        .toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: #333; color: white; padding: 12px 24px; border-radius: 8px;
+            font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            z-index: 999; opacity: 0; transition: opacity 0.3s;
+            pointer-events: none; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .toast.visible { opacity: 1; }
+    </style>
+</head>
+<body>
+    <button class="dark-toggle" id="dark-toggle" onclick="toggleDarkMode()">Dark Mode</button>
+
+    <div class="container">
+        <div class="header">
+            <h1>Coach Dashboard</h1>
+            <p>View and compare student UIL journalism contest results</p>
+            <a href="/" class="back-link">&larr; Back to Home</a>
+        </div>
+        <div class="content">
+            <!-- Paste Section -->
+            <div class="paste-section">
+                <h2>Import Student Results</h2>
+                <p>Students click "Share with Coach" after completing a practice. They'll get a code starting with <code>UIL:</code> — paste it below to import their results. You can import multiple students.</p>
+                <textarea class="paste-input" id="paste-input" placeholder="Paste student share code here (starts with UIL:)..."></textarea>
+                <div class="error-msg" id="error-msg"></div>
+                <div class="paste-actions">
+                    <button class="btn btn-primary" onclick="importCode()">Import Student</button>
+                    <button class="btn btn-secondary" onclick="document.getElementById('paste-input').value=''">Clear</button>
+                    <button class="btn btn-export" onclick="exportAllCSV()">Export All to CSV</button>
+                    <button class="btn btn-secondary" onclick="window.print()">Print All</button>
+                    <button class="btn btn-danger" onclick="clearAll()" style="margin-left: auto;">Clear All Students</button>
+                </div>
+            </div>
+
+            <!-- Class Summary -->
+            <div class="class-summary" id="class-summary">
+                <h3>Class Overview</h3>
+                <div class="class-stats" id="class-stats"></div>
+            </div>
+
+            <!-- Students List -->
+            <div class="students-section" id="students-section">
+                <div class="empty-state" id="empty-state">
+                    <div class="icon">📋</div>
+                    <h3>No students imported yet</h3>
+                    <p>Paste a student share code above to get started.<br>Students generate codes by clicking "Share with Coach" on their results page.</p>
+                </div>
+                <div id="students-list"></div>
+            </div>
+
+            <!-- Comparison Table -->
+            <div id="comparison-section" style="display:none;">
+                <h2 style="color: #1e3c72; margin-top: 30px; margin-bottom: 15px; font-family: -apple-system, BlinkMacSystemFont, sans-serif;">Score Comparison</h2>
+                <div style="overflow-x: auto;">
+                    <table class="summary-table" id="comparison-table"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        var students = [];
+
+        // Load persisted students from localStorage
+        function loadStudents() {
+            try {
+                var data = localStorage.getItem('uil-coach-students');
+                return data ? JSON.parse(data) : [];
+            } catch (e) { return []; }
+        }
+
+        function saveStudents() {
+            try { localStorage.setItem('uil-coach-students', JSON.stringify(students)); } catch (e) {}
+        }
+
+        function showToast(msg) {
+            var t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('visible');
+            setTimeout(function() { t.classList.remove('visible'); }, 2500);
+        }
+
+        function showError(msg) {
+            var el = document.getElementById('error-msg');
+            el.textContent = msg;
+            el.style.display = 'block';
+            setTimeout(function() { el.style.display = 'none'; }, 5000);
+        }
+
+        // Decode a share code
+        function decodeShareCode(code) {
+            code = code.trim();
+            if (!code.startsWith('UIL:')) throw new Error('Invalid code: must start with UIL:');
+            var base64 = code.substring(4);
+            var jsonStr = decodeURIComponent(escape(atob(base64)));
+            var data = JSON.parse(jsonStr);
+            if (!data.v || !data.name || !data.hl) throw new Error('Invalid share code format');
+            return data;
+        }
+
+        // Import a student from pasted code
+        function importCode() {
+            var input = document.getElementById('paste-input');
+            var code = input.value.trim();
+            if (!code) { showError('Please paste a share code.'); return; }
+
+            try {
+                var data = decodeShareCode(code);
+
+                // Check for duplicate (same name + same date)
+                var isDupe = students.some(function(s) {
+                    return s.name === data.name && s.date === data.date;
+                });
+                if (isDupe) {
+                    showError('This exact result has already been imported.');
+                    return;
+                }
+
+                students.push(data);
+                saveStudents();
+                input.value = '';
+                renderStudents();
+                showToast('Imported results for ' + data.name + '!');
+            } catch (e) {
+                showError('Could not read code: ' + e.message);
+            }
+        }
+
+        // Remove a student
+        function removeStudent(index) {
+            if (confirm('Remove ' + students[index].name + '\'s results?')) {
+                students.splice(index, 1);
+                saveStudents();
+                renderStudents();
+            }
+        }
+
+        // Toggle student detail view
+        function toggleDetails(index) {
+            var details = document.getElementById('student-details-' + index);
+            var icon = document.getElementById('expand-icon-' + index);
+            if (details.classList.contains('open')) {
+                details.classList.remove('open');
+                icon.classList.remove('open');
+            } else {
+                details.classList.add('open');
+                icon.classList.add('open');
+            }
+        }
+
+        // Render all students
+        function renderStudents() {
+            var list = document.getElementById('students-list');
+            var empty = document.getElementById('empty-state');
+
+            if (students.length === 0) {
+                list.innerHTML = '';
+                empty.style.display = 'block';
+                document.getElementById('class-summary').classList.remove('visible');
+                document.getElementById('comparison-section').style.display = 'none';
+                return;
+            }
+
+            empty.style.display = 'none';
+            document.getElementById('class-summary').classList.add('visible');
+            document.getElementById('comparison-section').style.display = 'block';
+
+            // Render class summary
+            renderClassSummary();
+
+            // Render student cards
+            var cardsHtml = '';
+            students.forEach(function(s, idx) {
+                var d = new Date(s.date);
+                var dateStr = (d.getMonth() + 1) + '/' + d.getDate() + '/' + d.getFullYear() + ' ' +
+                    d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                var max = s.max || (s.storyCount * 4) || 24;
+                var pct = Math.round((s.overall / max) * 100);
+                var scoreClass = pct >= 83 ? 'excellent' : pct >= 62 ? 'good' : pct >= 42 ? 'fair' : 'needs-work';
+
+                // Build headline details
+                var hlHtml = '';
+                s.hl.forEach(function(h) {
+                    var hScoreClass = h.s === 4 ? 'excellent' : h.s === 3 ? 'good' : h.s >= 1 ? 'fair' : 'needs-work';
+                    var bgColor = h.s === 4 ? '#4caf50' : h.s === 3 ? '#2196f3' : h.s >= 1 ? '#ff9800' : '#f44336';
+
+                    hlHtml += '<div class="hl-card">' +
+                        '<div class="hl-card-header">' +
+                            '<span class="hl-type">Headline ' + h.n + ' (' + h.t + ')</span>' +
+                            '<span class="hl-score-badge" style="background:' + bgColor + '">' + h.s + '/4</span>' +
+                        '</div>' +
+                        '<div class="hl-student-text">' + (h.sh || '(no text)') + '</div>';
+
+                    if (h.sr) {
+                        hlHtml += '<div class="hl-revision-label">Suggested Revision:</div>' +
+                            '<div class="hl-revision">' + h.sr + '</div>';
+                    }
+
+                    if (h.st && h.st.length > 0) {
+                        hlHtml += '<div class="hl-strengths"><strong>Strengths:</strong> ' + h.st.join('; ') + '</div>';
+                    }
+                    if (h.im && h.im.length > 0) {
+                        hlHtml += '<div class="hl-improvements"><strong>Improvements:</strong> ' + h.im.join('; ') + '</div>';
+                    }
+                    if (h.fb) {
+                        hlHtml += '<div class="hl-feedback">' + h.fb + '</div>';
+                    }
+
+                    hlHtml += '</div>';
+                });
+
+                // Overall feedback
+                if (s.overallFeedback) {
+                    hlHtml += '<div style="background:#e8eaf6;border-radius:8px;padding:15px;margin-top:10px;border-left:4px solid #667eea;">' +
+                        '<strong style="color:#1e3c72;font-family:-apple-system,BlinkMacSystemFont,sans-serif;">Overall Feedback:</strong>' +
+                        '<p style="margin-top:6px;color:#444;font-family:-apple-system,BlinkMacSystemFont,sans-serif;line-height:1.5;font-size:0.9em;">' + s.overallFeedback + '</p>' +
+                    '</div>';
+                }
+
+                cardsHtml +=
+                    '<div class="student-card">' +
+                        '<div class="student-card-header" onclick="toggleDetails(' + idx + ')">' +
+                            '<div class="student-info">' +
+                                '<div>' +
+                                    '<div class="student-name">' + escapeHtml(s.name) + '</div>' +
+                                    '<div class="student-meta">' + dateStr + ' &middot; ' + (s.mode || 'practice').toUpperCase() + ' &middot; ' + (s.storyCount || 6) + ' stories</div>' +
+                                '</div>' +
+                            '</div>' +
+                            '<div style="display:flex;align-items:center;gap:12px;">' +
+                                '<div class="student-score ' + scoreClass + '">' + s.overall + '/' + max + '</div>' +
+                                '<span class="expand-icon" id="expand-icon-' + idx + '">&#9660;</span>' +
+                                '<button class="remove-btn" onclick="event.stopPropagation();removeStudent(' + idx + ')" title="Remove student">&times;</button>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="student-details" id="student-details-' + idx + '">' +
+                            hlHtml +
+                        '</div>' +
+                    '</div>';
+            });
+
+            list.innerHTML = cardsHtml;
+
+            // Render comparison table
+            renderComparison();
+        }
+
+        function escapeHtml(str) {
+            var div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // Render class overview stats
+        function renderClassSummary() {
+            var totalStudents = students.length;
+            var scores = students.map(function(s) {
+                var max = s.max || (s.storyCount * 4) || 24;
+                return Math.round((s.overall / max) * 100);
+            });
+            var avgPct = Math.round(scores.reduce(function(a, b) { return a + b; }, 0) / totalStudents);
+            var highScore = Math.max.apply(null, students.map(function(s) { return s.overall; }));
+            var lowScore = Math.min.apply(null, students.map(function(s) { return s.overall; }));
+
+            // Find most common weakness
+            var weaknessCounts = {};
+            students.forEach(function(s) {
+                s.hl.forEach(function(h) {
+                    if (h.im) {
+                        h.im.forEach(function(imp) {
+                            var cat = categorizeWeakness(imp);
+                            weaknessCounts[cat] = (weaknessCounts[cat] || 0) + 1;
+                        });
+                    }
+                });
+            });
+            var topWeakness = 'None';
+            var topCount = 0;
+            Object.keys(weaknessCounts).forEach(function(key) {
+                if (weaknessCounts[key] > topCount) {
+                    topCount = weaknessCounts[key];
+                    topWeakness = key;
+                }
+            });
+
+            document.getElementById('class-stats').innerHTML =
+                '<div class="class-stat"><div class="class-stat-value">' + totalStudents + '</div><div class="class-stat-label">Students</div></div>' +
+                '<div class="class-stat"><div class="class-stat-value">' + avgPct + '%</div><div class="class-stat-label">Average Score</div></div>' +
+                '<div class="class-stat"><div class="class-stat-value">' + highScore + '</div><div class="class-stat-label">High Score</div></div>' +
+                '<div class="class-stat"><div class="class-stat-value">' + lowScore + '</div><div class="class-stat-label">Low Score</div></div>' +
+                '<div class="class-stat"><div class="class-stat-value" style="font-size:1em;">' + topWeakness + '</div><div class="class-stat-label">Top Weakness</div></div>';
+        }
+
+        function categorizeWeakness(text) {
+            var t = text.toLowerCase();
+            if (t.includes('passive') || t.includes('voice')) return 'Passive Voice';
+            if (t.includes('past tense') || t.includes('tense') || t.includes('-ed')) return 'Verb Tense';
+            if (t.includes('character count') || t.includes('over count') || t.includes('under count')) return 'Char Count';
+            if (t.includes('article') || t.includes(' a ') || t.includes(' an ') || t.includes(' the ')) return 'Articles';
+            if (t.includes('first name') || t.includes('full name') || t.includes('name')) return 'Name Usage';
+            if (t.includes('main idea') || t.includes('lead') || t.includes('misses')) return 'Missed Lead';
+            if (t.includes('word split') || t.includes('split')) return 'Word Splits';
+            if (t.includes('verb') || t.includes('strong')) return 'Weak Verbs';
+            if (t.includes('l-word') || t.includes('leaguetown') || t.includes('lhs')) return 'L-Words';
+            return 'Other';
+        }
+
+        // Render comparison table
+        function renderComparison() {
+            if (students.length < 1) return;
+
+            var maxHL = Math.max.apply(null, students.map(function(s) { return s.hl.length; }));
+
+            var headerCells = '<th>Student</th><th>Date</th>';
+            for (var i = 1; i <= maxHL; i++) {
+                headerCells += '<th class="score-cell">HL ' + i + '</th>';
+            }
+            headerCells += '<th class="score-cell">Total</th><th class="score-cell">%</th>';
+
+            var rows = '';
+            students.forEach(function(s) {
+                var max = s.max || (s.storyCount * 4) || 24;
+                var pct = Math.round((s.overall / max) * 100);
+                var d = new Date(s.date);
+                var dateStr = (d.getMonth() + 1) + '/' + d.getDate();
+
+                rows += '<tr>';
+                rows += '<td><strong>' + escapeHtml(s.name) + '</strong></td>';
+                rows += '<td>' + dateStr + '</td>';
+                for (var i = 0; i < maxHL; i++) {
+                    var score = s.hl[i] ? s.hl[i].s : '-';
+                    var color = score === 4 ? '#4caf50' : score === 3 ? '#2196f3' : score >= 1 ? '#ff9800' : score === 0 ? '#f44336' : '#999';
+                    rows += '<td class="score-cell" style="color:' + color + ';font-weight:bold;">' + score + '</td>';
+                }
+                rows += '<td class="score-cell" style="font-size:1.1em;">' + s.overall + '/' + max + '</td>';
+                rows += '<td class="score-cell" style="font-weight:bold;">' + pct + '%</td>';
+                rows += '</tr>';
+            });
+
+            document.getElementById('comparison-table').innerHTML =
+                '<thead><tr>' + headerCells + '</tr></thead><tbody>' + rows + '</tbody>';
+        }
+
+        // Export all students to CSV
+        function exportAllCSV() {
+            if (students.length === 0) { showToast('No students to export'); return; }
+
+            var maxHL = Math.max.apply(null, students.map(function(s) { return s.hl.length; }));
+            var headers = ['Student Name', 'Date', 'Mode', 'Stories'];
+            for (var i = 1; i <= maxHL; i++) {
+                headers.push('HL ' + i + ' Score');
+                headers.push('HL ' + i + ' Text');
+            }
+            headers.push('Total Score', 'Max Score', 'Percentage');
+
+            var rows = [headers];
+            students.forEach(function(s) {
+                var max = s.max || (s.storyCount * 4) || 24;
+                var pct = Math.round((s.overall / max) * 100);
+                var d = new Date(s.date);
+                var dateStr = (d.getMonth() + 1) + '/' + d.getDate() + '/' + d.getFullYear();
+
+                var row = [
+                    '"' + s.name.replace(/"/g, '""') + '"',
+                    dateStr,
+                    (s.mode || 'practice').toUpperCase(),
+                    s.storyCount || 6
+                ];
+                for (var i = 0; i < maxHL; i++) {
+                    if (s.hl[i]) {
+                        row.push(s.hl[i].s);
+                        row.push('"' + (s.hl[i].sh || '').replace(/"/g, '""') + '"');
+                    } else {
+                        row.push('');
+                        row.push('');
+                    }
+                }
+                row.push(s.overall, max, pct + '%');
+                rows.push(row);
+            });
+
+            var csv = rows.map(function(r) { return r.join(','); }).join('\n');
+            var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            var link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'uil-headline-class-results-' + new Date().toISOString().slice(0, 10) + '.csv';
+            link.click();
+            URL.revokeObjectURL(link.href);
+            showToast('Class CSV downloaded!');
+        }
+
+        // Clear all students
+        function clearAll() {
+            if (students.length === 0) return;
+            if (confirm('Remove all ' + students.length + ' student results? This cannot be undone.')) {
+                students = [];
+                saveStudents();
+                renderStudents();
+                showToast('All student data cleared.');
+            }
+        }
+
+        // Dark mode
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            var isDark = document.body.classList.contains('dark-mode');
+            document.getElementById('dark-toggle').textContent = isDark ? 'Light Mode' : 'Dark Mode';
+            try { localStorage.setItem('uil-dark-mode', isDark ? '1' : '0'); } catch (e) {}
+        }
+
+        function loadDarkMode() {
+            try {
+                if (localStorage.getItem('uil-dark-mode') === '1') {
+                    document.body.classList.add('dark-mode');
+                    document.getElementById('dark-toggle').textContent = 'Light Mode';
+                }
+            } catch (e) {}
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDarkMode();
+            students = loadStudents();
+            renderStudents();
+        });
+
+        // Allow Enter key to import
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey && document.activeElement.id === 'paste-input') {
+                e.preventDefault();
+                importCode();
+            }
+        });
+    </script>
+</body>
+</html>

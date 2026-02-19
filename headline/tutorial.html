@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UIL Headline Writing Tutorial - For Beginners</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 1.8em;
+            color: #1e3c72;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .rule-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .rule-box h3 {
+            color: #1e3c72;
+            margin-bottom: 10px;
+        }
+
+        .rule-list {
+            margin: 15px 0;
+            padding-left: 25px;
+        }
+
+        .rule-list li {
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+
+        .example-box {
+            background: #e3f2fd;
+            border: 2px solid #2196f3;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .good {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .bad {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .story-example {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+            font-size: 1.05em;
+            line-height: 1.8;
+        }
+
+        .practice-story {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .step {
+            background: white;
+            border: 2px solid #667eea;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        .step-number {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 35px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .quick-tips {
+            background: #f8f9fa;
+            border: 2px dashed #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .quick-tips h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .center {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 UIL Headline Writing Tutorial</h1>
+            <p>Learn to write winning headlines step-by-step</p>
+        </div>
+
+        <div class="content">
+            <!-- Introduction -->
+            <div class="section">
+                <h2 class="section-title">What is UIL Headline Writing?</h2>
+                <p>UIL Headline Writing is a contest where you read short news stories and write headlines that summarize the main idea in a limited number of characters. You'll write 6 headlines in 30 minutes!</p>
+                
+                <div class="rule-box">
+                    <h3>The Goal:</h3>
+                    <p>Write a headline that <span class="highlight">tells the story</span> and <span class="highlight">sells the story</span> - it should be accurate, attention-grabbing, and follow UIL rules.</p>
+                </div>
+            </div>
+
+            <!-- Core Rules -->
+            <div class="section">
+                <h2 class="section-title">The 10 Essential Rules</h2>
+                
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <strong>Active Voice Only</strong>
+                    <div class="example-box">
+                        <p><span class="good">✓ GOOD:</span> "Student wins scholarship"</p>
+                        <p><span class="bad">✗ BAD:</span> "Scholarship won by student"</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <strong>Present or Future Tense (Never Past)</strong>
+                    <div class="example-box">
+                        <p><span class="good">✓ GOOD:</span> "Board approves new policy"</p>
+                        <p><span class="bad">✗ BAD:</span> "Board approved new policy"</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <strong>Stay Within Character Count</strong>
+                    <p style="margin-top: 10px;">Every character counts! Going over or under = disqualification for that headline.</p>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">4</span>
+                    <strong>No Articles (a, an, the)</strong>
+                    <div class="example-box">
+                        <p><span class="good">✓ GOOD:</span> "School adds robotics class"</p>
+                        <p><span class="bad">✗ BAD:</span> "The school adds a robotics class"</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">5</span>
+                    <strong>Use Last Names Only</strong>
+                    <div class="example-box">
+                        <p><span class="good">✓ GOOD:</span> "Johnson earns award"</p>
+                        <p><span class="bad">✗ BAD:</span> "Sarah Johnson earns award" or "Sarah earns award"</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">6</span>
+                    <strong>Multi-line Headlines = One Sentence</strong>
+                    <p style="margin-top: 10px;">If you have 2 or 3 lines, they must read as one complete sentence from top to bottom.</p>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">7</span>
+                    <strong>Don't Split Verb Phrases Between Lines</strong>
+                    <div class="example-box">
+                        <p><span class="bad">✗ BAD:</span><br>
+                        Line 1: "Students plan to"<br>
+                        Line 2: "attend college fair"</p>
+                        <p><span class="good">✓ GOOD:</span><br>
+                        Line 1: "Students plan"<br>
+                        Line 2: "college fair visit"</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">8</span>
+                    <strong>Grab Main Idea from Lead (First 2 Paragraphs)</strong>
+                    <p style="margin-top: 10px;">Focus on the most important info at the beginning of the story, not minor details from later paragraphs.</p>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">9</span>
+                    <strong>No Abbreviations (Unless in Story)</strong>
+                    <div class="example-box">
+                        <p><span class="bad">✗ BAD:</span> "NHS inducts 20 students" (unless NHS is spelled out in story)</p>
+                        <p><span class="good">✓ GOOD:</span> "Honor society inducts 20"</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">10</span>
+                    <strong>Use Strong, Specific Verbs</strong>
+                    <div class="example-box">
+                        <p><span class="good">✓ GOOD:</span> "Team captures championship"</p>
+                        <p><span class="bad">✗ WEAK:</span> "Team gets championship"</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scoring System -->
+            <div class="section">
+                <h2 class="section-title">How Headlines Are Scored (0-4 Points)</h2>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Score</th>
+                            <th>What It Means</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>0 Points</strong></td>
+                            <td>Disqualified - over/under character count</td>
+                        </tr>
+                        <tr>
+                            <td><strong>1 Point</strong></td>
+                            <td>Major errors: passive voice, past tense, misspellings, using articles, wrong names</td>
+                        </tr>
+                        <tr>
+                            <td><strong>2 Points</strong></td>
+                            <td>Misses main idea, uses first names, bad word splits, double quotes</td>
+                        </tr>
+                        <tr>
+                            <td><strong>3 Points</strong></td>
+                            <td>Good headline - summarizes story, correct grammar, not outstanding</td>
+                        </tr>
+                        <tr>
+                            <td><strong>4 Points</strong></td>
+                            <td>Excellent - nails the lead, strong verb, clever, every word counts!</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Step-by-Step Process -->
+            <div class="section">
+                <h2 class="section-title">Step-by-Step: How to Write a Headline</h2>
+                
+                <div class="story-example">
+                    <h3 style="margin-bottom: 15px;">📰 Example Story:</h3>
+                    <p>The robotics team will compete in the state championship Saturday after winning the regional tournament last weekend.</p>
+                    <p style="margin-top: 10px;">"We've worked so hard all year for this opportunity," team captain Maria Santos said. "Winning regionals showed us we can compete with anyone."</p>
+                    <p style="margin-top: 10px;">The team earned first place in the programming category and second place overall at the regional competition in Austin. They will face 32 teams at the state championship in Dallas.</p>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <strong>Identify the Main Idea</strong>
+                    <p style="margin-top: 10px;">What's the MOST important news? → Team going to state championship</p>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <strong>Find the Key Facts</strong>
+                    <ul class="rule-list">
+                        <li>Who: Robotics team</li>
+                        <li>What: Will compete / advance</li>
+                        <li>Where: State championship</li>
+                        <li>Why/How: Won regionals</li>
+                    </ul>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <strong>Choose a Strong Verb (Present/Future Tense)</strong>
+                    <div class="example-box">
+                        <p><span class="good">✓ Good verbs:</span> advance, compete, qualify, earn, capture</p>
+                        <p><span class="bad">✗ Avoid:</span> won (past tense), will be competing (wordy)</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">4</span>
+                    <strong>Write Subject + Verb + Object</strong>
+                    <p style="margin-top: 10px;">Draft: "Robotics team advances to state championship"</p>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">5</span>
+                    <strong>Count Characters & Adjust</strong>
+                    <p style="margin-top: 10px;">"Robotics team advances to state championship" = 46 characters</p>
+                    <p style="margin-top: 10px;">If limit is 30: "Robotics team earns state bid" = 31 characters (still too long!)</p>
+                    <p style="margin-top: 10px;">Final: "Robotics earns state berth" = 28 characters ✓</p>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">6</span>
+                    <strong>Check All Rules</strong>
+                    <ul class="rule-list">
+                        <li>✓ Active voice</li>
+                        <li>✓ Present tense</li>
+                        <li>✓ Within character count</li>
+                        <li>✓ No articles</li>
+                        <li>✓ Strong verb</li>
+                        <li>✓ Captures main idea</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Practice Story -->
+            <div class="section">
+                <h2 class="section-title">🎯 Your Turn to Practice!</h2>
+                
+                <div class="practice-story">
+                    <h3 style="margin-bottom: 15px;">Practice Story:</h3>
+                    <p>The school board approved a new dress code policy Tuesday that will take effect next fall semester.</p>
+                    <p style="margin-top: 10px;">The updated policy eliminates restrictions on hair color and allows students to wear hats and hoodies in classrooms. The previous dress code, implemented in 2018, banned both.</p>
+                    <p style="margin-top: 10px;">"Students should be able to express themselves," board president Amy Chen said. "This policy reflects current student needs while maintaining a professional learning environment."</p>
+                </div>
+
+                <div class="quick-tips">
+                    <h3>💡 Try Writing This Headline:</h3>
+                    <p><strong>Assignment:</strong> Write a 1-line headline counting 24-30 characters</p>
+                    <p style="margin-top: 15px;"><strong>Think about:</strong></p>
+                    <ul class="rule-list">
+                        <li>What's the main news? (New dress code policy approved)</li>
+                        <li>What verb to use? (approves, adopts, changes)</li>
+                        <li>Keep it under 30 characters!</li>
+                    </ul>
+                    
+                    <div class="example-box" style="margin-top: 20px;">
+                        <p><strong>Possible Headlines:</strong></p>
+                        <p><span class="good">✓ "Board adopts new dress code"</span> (28 chars) - Good!</p>
+                        <p><span class="good">✓ "Dress code changes approved"</span> (28 chars) - Good, but passive voice!</p>
+                        <p><span class="bad">✗ "Board approved new dress code"</span> - Past tense = 1 point</p>
+                        <p><span class="bad">✗ "The board adopts a new policy"</span> - Uses articles = 1 point</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Common Mistakes -->
+            <div class="section">
+                <h2 class="section-title">⚠️ Common Mistakes to Avoid</h2>
+                
+                <div class="rule-box">
+                    <h3>1. Using Past Tense</h3>
+                    <p><span class="bad">✗</span> "Team won championship"</p>
+                    <p><span class="good">✓</span> "Team wins championship" or "Team captures title"</p>
+                </div>
+
+                <div class="rule-box">
+                    <h3>2. Passive Voice</h3>
+                    <p><span class="bad">✗</span> "Award given to student"</p>
+                    <p><span class="good">✓</span> "Student receives award"</p>
+                </div>
+
+                <div class="rule-box">
+                    <h3>3. Using Both First and Last Names</h3>
+                    <p><span class="bad">✗</span> "Sarah Johnson wins award"</p>
+                    <p><span class="good">✓</span> "Johnson wins award"</p>
+                </div>
+
+                <div class="rule-box">
+                    <h3>4. Including Articles</h3>
+                    <p><span class="bad">✗</span> "The school hosts a fundraiser"</p>
+                    <p><span class="good">✓</span> "School hosts fundraiser"</p>
+                </div>
+
+                <div class="rule-box">
+                    <h3>5. Burying the Lead</h3>
+                    <p><span class="bad">✗</span> "Teacher enjoys new class" (when main story is about new robotics program)</p>
+                    <p><span class="good">✓</span> "School launches robotics program"</p>
+                </div>
+            </div>
+
+            <!-- Ready to Practice -->
+            <div class="section center">
+                <h2 class="section-title">Ready to Practice with AI Feedback?</h2>
+                <p style="font-size: 1.1em; margin: 20px 0;">Now that you know the rules, practice with real stories and get instant feedback!</p>
+                <a href="index.html" class="btn">Start Practice Session →</a>
+                <a href="drills.html" class="btn" style="margin-left: 10px; background: linear-gradient(135deg, #28a745 0%, #218838 100%);">Try Skill Drills</a>
+                <br>
+                <a href="mistakes.html" class="btn" style="background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);">Common Mistakes</a>
+                <a href="verbs.html" class="btn" style="margin-left: 10px; background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);">Verb Bank</a>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

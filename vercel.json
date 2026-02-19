@@ -1,0 +1,10 @@
+{
+  "functions": {
+    "api/headline/generate-story.js": { "memory": 1024, "maxDuration": 60 },
+    "api/headline/evaluate-headlines.js": { "memory": 1024, "maxDuration": 60 },
+    "api/copyedit/*.js": { "memory": 1024, "maxDuration": 60 },
+    "api/news/*.js": { "memory": 1024, "maxDuration": 60 },
+    "api/feature/*.js": { "memory": 1024, "maxDuration": 60 },
+    "api/editorial/*.js": { "memory": 1024, "maxDuration": 60 }
+  }
+}

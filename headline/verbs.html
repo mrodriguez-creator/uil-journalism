@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UIL Headline Writing - Vocabulary Builder</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 { font-size: 2.2em; margin-bottom: 10px; }
+        .header p { font-size: 1.1em; opacity: 0.9; }
+
+        .content { padding: 30px; }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .info-box strong { color: #1976d2; }
+        .info-box a { color: #1976d2; text-decoration: underline; }
+
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px 16px;
+            font-size: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        .search-input:focus { outline: none; border-color: #667eea; }
+
+        .topic-tabs {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 15px 0 25px;
+        }
+
+        .topic-tab {
+            padding: 8px 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 20px;
+            background: white;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            transition: all 0.2s;
+        }
+
+        .topic-tab:hover { border-color: #667eea; background: #f0f0ff; }
+        .topic-tab.active { background: #667eea; color: white; border-color: #667eea; }
+
+        .topic-section {
+            margin-bottom: 30px;
+        }
+
+        .topic-heading {
+            font-size: 1.3em;
+            color: #1e3c72;
+            padding-bottom: 8px;
+            border-bottom: 3px solid #667eea;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .topic-icon {
+            font-size: 1.2em;
+        }
+
+        .verb-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 12px;
+            margin: 10px 0;
+        }
+
+        .verb-card {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 14px 18px;
+            transition: all 0.2s;
+        }
+
+        .verb-card:hover {
+            border-color: #667eea;
+            background: #f0f0ff;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(102,126,234,0.15);
+        }
+
+        .verb-word {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #1e3c72;
+            margin-bottom: 4px;
+        }
+
+        .verb-replaces {
+            font-size: 12px;
+            color: #999;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            margin-bottom: 6px;
+        }
+
+        .verb-replaces span {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 1px 6px;
+            border-radius: 3px;
+            font-weight: 600;
+            text-decoration: line-through;
+        }
+
+        .verb-example {
+            font-size: 0.9em;
+            color: #555;
+            font-style: italic;
+            line-height: 1.4;
+        }
+
+        .verb-char-count {
+            font-size: 11px;
+            color: #667eea;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        .no-results {
+            text-align: center;
+            color: #999;
+            padding: 40px;
+            font-size: 1.1em;
+        }
+
+        .quick-ref {
+            background: #fffbeb;
+            border: 2px solid #f59e0b;
+            border-radius: 8px;
+            padding: 18px;
+            margin: 25px 0;
+        }
+
+        .quick-ref strong { color: #b45309; }
+
+        .quick-ref-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .quick-ref-item {
+            font-size: 0.9em;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.5;
+        }
+
+        .quick-ref-item .weak {
+            text-decoration: line-through;
+            color: #dc2626;
+        }
+
+        .quick-ref-item .arrow {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .quick-ref-item .strong-verb {
+            color: #16a34a;
+            font-weight: 600;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 { font-size: 1.6em; }
+            .content { padding: 20px; }
+            .verb-grid { grid-template-columns: 1fr; }
+            .quick-ref-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Vocabulary Builder</h1>
+            <p>Strong verbs organized by topic to power up your headlines</p>
+        </div>
+
+        <div class="content">
+            <div class="info-box">
+                <strong>Why strong verbs matter:</strong> The verb is the engine of every headline. A weak verb like "gets" or "has" can drop your score from 4 to 2. Use this reference to find powerful alternatives organized by the topics you'll see in UIL stories.
+                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #2196f3;">
+                    <a href="index.html">Back to practice</a>
+                    <span style="margin: 0 8px; color: #999;">|</span>
+                    <a href="drills.html">Skill drills</a>
+                    <span style="margin: 0 8px; color: #999;">|</span>
+                    <a href="mistakes.html">Common mistakes</a>
+                    <span style="margin: 0 8px; color: #999;">|</span>
+                    <a href="tutorial.html">Review rules</a>
+                </div>
+            </div>
+
+            <div class="search-bar">
+                <input type="text" class="search-input" id="search-input" placeholder="Search verbs or weak words to replace..." oninput="handleSearch()">
+            </div>
+
+            <div class="topic-tabs" id="topic-tabs">
+                <button class="topic-tab active" onclick="filterTopic('all')">All Topics</button>
+                <button class="topic-tab" onclick="filterTopic('sports')">Sports</button>
+                <button class="topic-tab" onclick="filterTopic('academics')">Academics</button>
+                <button class="topic-tab" onclick="filterTopic('government')">Government</button>
+                <button class="topic-tab" onclick="filterTopic('arts')">Arts & Culture</button>
+                <button class="topic-tab" onclick="filterTopic('community')">Community</button>
+                <button class="topic-tab" onclick="filterTopic('general')">General Action</button>
+            </div>
+
+            <div id="verb-content"></div>
+
+            <div class="quick-ref">
+                <strong>Quick Swap Reference — Replace These Immediately:</strong>
+                <div class="quick-ref-grid" id="quick-ref-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var verbBank = {
+            sports: {
+                label: 'Sports & Athletics',
+                icon: '',
+                verbs: [
+                    { word: 'captures', replaces: 'wins/gets', example: 'Team captures state title', chars: 8 },
+                    { word: 'defeats', replaces: 'beats', example: 'Eagles defeat rival Panthers', chars: 7 },
+                    { word: 'dominates', replaces: 'wins easily', example: 'Swimmers dominate district meet', chars: 9 },
+                    { word: 'clinches', replaces: 'gets/wins', example: 'Senior clinches playoff spot', chars: 8 },
+                    { word: 'rallies', replaces: 'comes back', example: 'Team rallies for overtime win', chars: 7 },
+                    { word: 'edges', replaces: 'barely beats', example: 'Runners edge rivals by seconds', chars: 5 },
+                    { word: 'topples', replaces: 'beats', example: 'Underdog topples top seed', chars: 7 },
+                    { word: 'shatters', replaces: 'breaks', example: 'Sprinter shatters school record', chars: 8 },
+                    { word: 'advances', replaces: 'goes to/moves on', example: 'Tennis advances to regionals', chars: 8 },
+                    { word: 'secures', replaces: 'gets', example: 'Kicker secures playoff berth', chars: 7 },
+                    { word: 'routs', replaces: 'beats badly', example: 'Basketball routs conference foe', chars: 5 },
+                    { word: 'surges', replaces: 'moves up', example: 'Cross country surges to first', chars: 6 },
+                    { word: 'claims', replaces: 'wins', example: 'Wrestler claims regional crown', chars: 6 },
+                    { word: 'outlasts', replaces: 'beats after long game', example: 'Softball outlasts rival', chars: 8 },
+                    { word: 'blanks', replaces: 'shuts out', example: 'Defense blanks opponent', chars: 6 }
+                ]
+            },
+            academics: {
+                label: 'Academics & Achievements',
+                icon: '',
+                verbs: [
+                    { word: 'earns', replaces: 'gets/receives', example: 'Senior earns full scholarship', chars: 5 },
+                    { word: 'qualifies', replaces: 'gets in/makes it', example: 'Mathlete qualifies for state', chars: 9 },
+                    { word: 'excels', replaces: 'does well', example: 'Students excel at science fair', chars: 6 },
+                    { word: 'achieves', replaces: 'gets', example: 'District achieves top rating', chars: 8 },
+                    { word: 'masters', replaces: 'learns/does well', example: 'Student masters coding skills', chars: 7 },
+                    { word: 'garners', replaces: 'gets/receives', example: 'Research garners national award', chars: 7 },
+                    { word: 'leads', replaces: 'is first in', example: 'Valedictorian leads class', chars: 5 },
+                    { word: 'tackles', replaces: 'works on', example: 'Students tackle STEM project', chars: 7 },
+                    { word: 'pioneers', replaces: 'starts/begins', example: 'Teacher pioneers new method', chars: 8 },
+                    { word: 'soars', replaces: 'goes up/improves', example: 'Test scores soar after program', chars: 5 },
+                    { word: 'lands', replaces: 'gets', example: 'Senior lands Ivy League spot', chars: 5 },
+                    { word: 'sweeps', replaces: 'wins all', example: 'Debate sweeps district awards', chars: 6 }
+                ]
+            },
+            government: {
+                label: 'School Board & Government',
+                icon: '',
+                verbs: [
+                    { word: 'approves', replaces: 'says yes to', example: 'Board approves new policy', chars: 8 },
+                    { word: 'adopts', replaces: 'agrees to/accepts', example: 'Council adopts dress code', chars: 6 },
+                    { word: 'enacts', replaces: 'makes/puts in place', example: 'Board enacts budget cuts', chars: 6 },
+                    { word: 'rejects', replaces: 'says no to', example: 'Board rejects rezoning plan', chars: 7 },
+                    { word: 'slashes', replaces: 'cuts/reduces', example: 'District slashes spending', chars: 7 },
+                    { word: 'allocates', replaces: 'gives/sets aside', example: 'Board allocates tech funds', chars: 9 },
+                    { word: 'unveils', replaces: 'shows/announces', example: 'Superintendent unveils plan', chars: 7 },
+                    { word: 'mandates', replaces: 'requires', example: 'State mandates new testing', chars: 8 },
+                    { word: 'overhauls', replaces: 'changes/fixes', example: 'District overhauls grading', chars: 9 },
+                    { word: 'tables', replaces: 'delays/puts off', example: 'Board tables bond proposal', chars: 6 },
+                    { word: 'axes', replaces: 'cuts/removes', example: 'Budget axes fine arts funds', chars: 4 },
+                    { word: 'ratifies', replaces: 'approves formally', example: 'Board ratifies teacher deal', chars: 8 }
+                ]
+            },
+            arts: {
+                label: 'Arts, Music & Culture',
+                icon: '',
+                verbs: [
+                    { word: 'stages', replaces: 'puts on/does', example: 'Theater stages spring musical', chars: 6 },
+                    { word: 'performs', replaces: 'does/plays', example: 'Band performs at halftime', chars: 8 },
+                    { word: 'showcases', replaces: 'shows/displays', example: 'Gallery showcases student art', chars: 9 },
+                    { word: 'debuts', replaces: 'first shows/starts', example: 'Choir debuts new concert', chars: 6 },
+                    { word: 'dazzles', replaces: 'impresses', example: 'Musical dazzles audiences', chars: 7 },
+                    { word: 'premieres', replaces: 'first shows', example: 'Film club premieres documentary', chars: 9 },
+                    { word: 'captivates', replaces: 'interests/gets attention', example: 'Art show captivates visitors', chars: 10 },
+                    { word: 'headlines', replaces: 'performs at', example: 'Jazz band headlines festival', chars: 9 },
+                    { word: 'hosts', replaces: 'has/puts on', example: 'Drama hosts talent show', chars: 5 },
+                    { word: 'nets', replaces: 'gets/wins', example: 'Photographer nets top honors', chars: 4 }
+                ]
+            },
+            community: {
+                label: 'Community & Service',
+                icon: '',
+                verbs: [
+                    { word: 'launches', replaces: 'starts', example: 'Club launches food drive', chars: 8 },
+                    { word: 'rallies', replaces: 'brings together', example: 'School rallies for cause', chars: 7 },
+                    { word: 'spearheads', replaces: 'leads/starts', example: 'Senior spearheads campaign', chars: 10 },
+                    { word: 'raises', replaces: 'gets/collects', example: 'Walk raises record funds', chars: 6 },
+                    { word: 'donates', replaces: 'gives', example: 'Class donates to shelter', chars: 7 },
+                    { word: 'partners', replaces: 'works with', example: 'School partners with hospital', chars: 8 },
+                    { word: 'mobilizes', replaces: 'gets together', example: 'Students mobilize for relief', chars: 9 },
+                    { word: 'transforms', replaces: 'changes/fixes up', example: 'Volunteers transform campus', chars: 10 },
+                    { word: 'fuels', replaces: 'helps/supports', example: 'Donation fuels new program', chars: 5 },
+                    { word: 'sparks', replaces: 'starts/causes', example: 'Initiative sparks change', chars: 6 }
+                ]
+            },
+            general: {
+                label: 'General Action Verbs',
+                icon: '',
+                verbs: [
+                    { word: 'reveals', replaces: 'tells/shows', example: 'Survey reveals student views', chars: 7 },
+                    { word: 'sparks', replaces: 'causes/starts', example: 'Policy sparks debate', chars: 6 },
+                    { word: 'tackles', replaces: 'deals with', example: 'District tackles bullying', chars: 7 },
+                    { word: 'expands', replaces: 'makes bigger', example: 'School expands lunch options', chars: 7 },
+                    { word: 'boosts', replaces: 'helps/improves', example: 'Program boosts graduation rate', chars: 6 },
+                    { word: 'trims', replaces: 'cuts/reduces', example: 'Admin trims staff positions', chars: 5 },
+                    { word: 'nixes', replaces: 'rejects/cancels', example: 'Board nixes phone ban', chars: 5 },
+                    { word: 'eyes', replaces: 'considers/looks at', example: 'District eyes new calendar', chars: 4 },
+                    { word: 'targets', replaces: 'aims at/focuses on', example: 'Plan targets chronic absence', chars: 7 },
+                    { word: 'ignites', replaces: 'starts/causes', example: 'Proposal ignites parent debate', chars: 7 },
+                    { word: 'halts', replaces: 'stops', example: 'Storm halts construction', chars: 5 },
+                    { word: 'taps', replaces: 'chooses/picks', example: 'Board taps new principal', chars: 4 },
+                    { word: 'pledges', replaces: 'promises', example: 'Superintendent pledges reform', chars: 7 },
+                    { word: 'vows', replaces: 'promises', example: 'Council vows transparency', chars: 4 },
+                    { word: 'bolsters', replaces: 'strengthens/helps', example: 'Grant bolsters STEM program', chars: 8 }
+                ]
+            }
+        };
+
+        var quickSwaps = [
+            { weak: 'gets', strong: 'earns, lands, secures' },
+            { weak: 'wins', strong: 'captures, claims' },
+            { weak: 'has', strong: 'boasts, features' },
+            { weak: 'does', strong: 'performs, tackles' },
+            { weak: 'goes to', strong: 'advances, heads to' },
+            { weak: 'makes', strong: 'creates, builds' },
+            { weak: 'starts', strong: 'launches, sparks' },
+            { weak: 'says', strong: 'reveals, announces' },
+            { weak: 'shows', strong: 'unveils, showcases' },
+            { weak: 'gives', strong: 'donates, grants' },
+            { weak: 'puts on', strong: 'hosts, stages' },
+            { weak: 'comes back', strong: 'rallies, rebounds' },
+            { weak: 'cuts', strong: 'slashes, axes, trims' },
+            { weak: 'stops', strong: 'halts, blocks, nixes' },
+            { weak: 'helps', strong: 'boosts, fuels, aids' },
+            { weak: 'picks', strong: 'taps, selects, names' }
+        ];
+
+        var currentTopic = 'all';
+        var searchTerm = '';
+
+        function renderQuickRef() {
+            var grid = document.getElementById('quick-ref-grid');
+            grid.innerHTML = quickSwaps.map(function(s) {
+                return '<div class="quick-ref-item">' +
+                    '<span class="weak">' + s.weak + '</span> ' +
+                    '<span class="arrow">&rarr;</span> ' +
+                    '<span class="strong-verb">' + s.strong + '</span>' +
+                '</div>';
+            }).join('');
+        }
+
+        function renderVerbs() {
+            var container = document.getElementById('verb-content');
+            container.innerHTML = '';
+
+            var topics = currentTopic === 'all' ? Object.keys(verbBank) : [currentTopic];
+            var anyResults = false;
+
+            topics.forEach(function(topicKey) {
+                var topic = verbBank[topicKey];
+                var filtered = topic.verbs;
+
+                if (searchTerm) {
+                    var s = searchTerm.toLowerCase();
+                    filtered = filtered.filter(function(v) {
+                        return v.word.toLowerCase().includes(s) ||
+                               v.replaces.toLowerCase().includes(s) ||
+                               v.example.toLowerCase().includes(s);
+                    });
+                }
+
+                if (filtered.length === 0) return;
+                anyResults = true;
+
+                var section = document.createElement('div');
+                section.className = 'topic-section';
+
+                section.innerHTML =
+                    '<div class="topic-heading">' +
+                        '<span class="topic-icon">' + topic.icon + '</span>' +
+                        topic.label +
+                    '</div>';
+
+                var grid = document.createElement('div');
+                grid.className = 'verb-grid';
+
+                filtered.forEach(function(v) {
+                    var card = document.createElement('div');
+                    card.className = 'verb-card';
+                    card.innerHTML =
+                        '<div class="verb-word">' + v.word + '</div>' +
+                        '<div class="verb-replaces">Replaces: <span>' + v.replaces + '</span></div>' +
+                        '<div class="verb-example">"' + v.example + '"</div>' +
+                        '<div class="verb-char-count">' + v.chars + ' characters</div>';
+                    grid.appendChild(card);
+                });
+
+                section.appendChild(grid);
+                container.appendChild(section);
+            });
+
+            if (!anyResults) {
+                container.innerHTML = '<div class="no-results">No verbs found matching "' + searchTerm + '". Try a different search.</div>';
+            }
+        }
+
+        function filterTopic(topic) {
+            currentTopic = topic;
+            document.querySelectorAll('.topic-tab').forEach(function(tab) { tab.classList.remove('active'); });
+            event.target.classList.add('active');
+            renderVerbs();
+        }
+
+        function handleSearch() {
+            searchTerm = document.getElementById('search-input').value.trim();
+            renderVerbs();
+        }
+
+        // Initial render
+        renderVerbs();
+        renderQuickRef();
+    </script>
+</body>
+</html>
