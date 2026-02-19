@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UIL Headline Writing — Coach Dashboard</title>
+    <title>UIL Journalism — Coach Dashboard</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -21,9 +21,10 @@
         }
         .header h1 { font-size: 2em; margin-bottom: 8px; }
         .header p { font-size: 1.05em; opacity: 0.9; }
-        .header .back-link { color: rgba(255,255,255,0.8); font-size: 0.9em; margin-top: 8px; display: inline-block; }
+        .header .back-link { color: rgba(255,255,255,0.8); font-size: 0.9em; margin-top: 8px; display: inline-block; text-decoration: none; }
         .header .back-link:hover { color: white; }
         .content { padding: 30px; }
+        .sf { font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
 
         /* Input area */
         .paste-section {
@@ -64,6 +65,24 @@
             font-family: -apple-system, BlinkMacSystemFont, sans-serif; display: none;
         }
 
+        /* Filter tabs */
+        .filter-tabs {
+            display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;
+        }
+        .filter-tab {
+            padding: 8px 16px; border: 2px solid #e0e0e0; border-radius: 20px;
+            cursor: pointer; font-size: 13px; font-weight: 600;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; color: #555;
+            transition: all 0.2s; background: #f8f9fa;
+        }
+        .filter-tab:hover { background: #eee; }
+        .filter-tab.active { background: #2e7d32; color: white; border-color: #2e7d32; }
+        .filter-count {
+            display: inline-block; background: rgba(255,255,255,0.3); border-radius: 10px;
+            padding: 0 6px; margin-left: 4px; font-size: 0.85em;
+        }
+        .filter-tab.active .filter-count { background: rgba(255,255,255,0.25); }
+
         /* Student cards */
         .students-section { margin-top: 25px; }
         .students-section h2 {
@@ -86,7 +105,7 @@
             padding: 18px 20px; cursor: pointer; background: #fafafa; border-bottom: 1px solid #eee;
         }
         .student-card-header:hover { background: #f0f4ff; }
-        .student-info { display: flex; align-items: center; gap: 15px; }
+        .student-info { display: flex; align-items: center; gap: 15px; flex: 1; min-width: 0; }
         .student-name {
             font-size: 1.15em; font-weight: bold; color: #1e3c72;
             font-family: -apple-system, BlinkMacSystemFont, sans-serif;
@@ -95,6 +114,18 @@
             color: #888; font-size: 0.85em;
             font-family: -apple-system, BlinkMacSystemFont, sans-serif;
         }
+        .contest-badge {
+            display: inline-block; padding: 2px 10px; border-radius: 12px;
+            font-size: 0.75em; font-weight: 700; color: white;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .contest-badge.headline { background: #667eea; }
+        .contest-badge.copyedit { background: #e91e63; }
+        .contest-badge.editorial { background: #0288d1; }
+        .contest-badge.news { background: #1565c0; }
+        .contest-badge.feature { background: #2e7d32; }
+
         .student-score {
             font-size: 1.5em; font-weight: bold; padding: 4px 16px;
             border-radius: 20px; color: white;
@@ -119,45 +150,56 @@
         .remove-btn:hover { color: #f44336; }
 
         /* Detail cards inside student view */
-        .hl-card {
+        .detail-card {
             background: #f8f9fa; border-radius: 8px; padding: 15px; margin-bottom: 12px;
             border-left: 4px solid #667eea;
         }
-        .hl-card-header {
+        .detail-card-header {
             display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
         }
-        .hl-type {
+        .detail-type {
             color: #1e3c72; font-weight: bold; font-size: 1em;
             font-family: -apple-system, BlinkMacSystemFont, sans-serif;
         }
-        .hl-score-badge {
+        .detail-score-badge {
             padding: 2px 10px; border-radius: 12px; font-size: 0.85em; font-weight: 600;
             color: white; font-family: -apple-system, BlinkMacSystemFont, sans-serif;
         }
-        .hl-student-text {
+        .detail-text {
             background: white; padding: 10px; border-radius: 4px; margin: 8px 0;
             font-family: Georgia, serif; font-size: 1em; color: #333;
             border: 1px solid #e0e0e0;
         }
-        .hl-revision {
+        .detail-revision {
             background: #e8f5e9; padding: 10px; border-radius: 4px; margin: 8px 0;
             font-family: Georgia, serif; font-size: 0.95em; color: #2e7d32;
             border: 1px solid #c8e6c9;
         }
-        .hl-revision-label {
+        .detail-revision-label {
             font-size: 0.8em; font-weight: 600; color: #4caf50; margin-bottom: 4px;
             font-family: -apple-system, BlinkMacSystemFont, sans-serif;
         }
-        .hl-strengths, .hl-improvements {
+        .detail-strengths, .detail-improvements {
             padding: 8px 12px; border-radius: 4px; margin: 6px 0; font-size: 0.9em;
             font-family: -apple-system, BlinkMacSystemFont, sans-serif; line-height: 1.6;
         }
-        .hl-strengths { background: #e8f5e9; border-left: 3px solid #4caf50; }
-        .hl-improvements { background: #fff3e0; border-left: 3px solid #ff9800; }
-        .hl-feedback {
+        .detail-strengths { background: #e8f5e9; border-left: 3px solid #4caf50; }
+        .detail-improvements { background: #fff3e0; border-left: 3px solid #ff9800; }
+        .detail-feedback {
             color: #555; font-size: 0.9em; margin-top: 8px; line-height: 1.5;
             font-family: -apple-system, BlinkMacSystemFont, sans-serif;
         }
+
+        /* Criteria grid for scoring breakdowns */
+        .criteria-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0; }
+        @media (max-width: 600px) { .criteria-grid { grid-template-columns: 1fr; } }
+        .criteria-item {
+            background: white; border-radius: 6px; padding: 10px;
+            border-left: 3px solid #667eea; font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .criteria-name { font-weight: 600; color: #1e3c72; font-size: 0.82em; }
+        .criteria-score { font-size: 1.1em; font-weight: bold; color: #667eea; }
+        .criteria-fb { font-size: 0.8em; color: #888; line-height: 1.3; margin-top: 2px; }
 
         /* Summary / comparison table */
         .summary-table {
@@ -214,12 +256,12 @@
             body { background: white !important; padding: 0 !important; }
             .container { box-shadow: none !important; border-radius: 0 !important; }
             .header { background: white !important; color: black !important; padding: 15px !important; border-bottom: 2px solid #333; }
-            .paste-section, .paste-actions, .remove-btn, .back-link { display: none !important; }
+            .paste-section, .paste-actions, .remove-btn, .back-link, .filter-tabs { display: none !important; }
             .student-details { display: block !important; }
             .student-card { break-inside: avoid; box-shadow: none !important; border: 1px solid #ccc; }
-            .hl-card { break-inside: avoid; }
+            .detail-card { break-inside: avoid; }
             .class-summary { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-            .student-score, .hl-score-badge { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+            .student-score, .detail-score-badge, .contest-badge { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
         }
 
         /* Dark mode */
@@ -235,10 +277,13 @@
         body.dark-mode .student-card-header { background: #2a2a2a; border-color: #444; }
         body.dark-mode .student-card-header:hover { background: #333; }
         body.dark-mode .student-name { color: #8ab4f8; }
-        body.dark-mode .hl-card { background: #333; }
-        body.dark-mode .hl-type { color: #8ab4f8; }
-        body.dark-mode .hl-student-text { background: #2a2a2a; border-color: #555; color: #ddd; }
-        body.dark-mode .hl-feedback { color: #bbb; }
+        body.dark-mode .detail-card { background: #333; }
+        body.dark-mode .detail-type { color: #8ab4f8; }
+        body.dark-mode .detail-text { background: #2a2a2a; border-color: #555; color: #ddd; }
+        body.dark-mode .detail-feedback { color: #bbb; }
+        body.dark-mode .criteria-item { background: #2a2a2a; }
+        body.dark-mode .criteria-name { color: #8ab4f8; }
+        body.dark-mode .criteria-fb { color: #999; }
         body.dark-mode .class-summary { background: linear-gradient(135deg, #2a2a2a, #1e1e2e); }
         body.dark-mode .class-summary h3 { color: #8ab4f8; }
         body.dark-mode .class-stat { background: #333; }
@@ -248,6 +293,8 @@
         body.dark-mode .summary-table tr:hover td { background: #2a2a2a; }
         body.dark-mode .empty-state { color: #888; }
         body.dark-mode .empty-state h3 { color: #bbb; }
+        body.dark-mode .filter-tab { background: #2a2a2a; border-color: #444; color: #ccc; }
+        body.dark-mode .filter-tab.active { background: #2e7d32; color: white; border-color: #2e7d32; }
 
         .dark-toggle {
             position: fixed; top: 12px; right: 12px; z-index: 300;
@@ -275,14 +322,14 @@
     <div class="container">
         <div class="header">
             <h1>Coach Dashboard</h1>
-            <p>View and compare student UIL journalism contest results</p>
+            <p>View and compare student UIL journalism contest results — all 5 events</p>
             <a href="/" class="back-link">&larr; Back to Home</a>
         </div>
         <div class="content">
             <!-- Paste Section -->
             <div class="paste-section">
                 <h2>Import Student Results</h2>
-                <p>Students click "Share with Coach" after completing a practice. They'll get a code starting with <code>UIL:</code> — paste it below to import their results. You can import multiple students.</p>
+                <p>Students click "Share with Coach" after completing any practice (Headline, Copy Editing, Editorial, News, or Feature Writing). They'll get a code starting with <code>UIL:</code> — paste it below to import their results.</p>
                 <textarea class="paste-input" id="paste-input" placeholder="Paste student share code here (starts with UIL:)..."></textarea>
                 <div class="error-msg" id="error-msg"></div>
                 <div class="paste-actions">
@@ -293,6 +340,9 @@
                     <button class="btn btn-danger" onclick="clearAll()" style="margin-left: auto;">Clear All Students</button>
                 </div>
             </div>
+
+            <!-- Filter tabs -->
+            <div class="filter-tabs" id="filter-tabs" style="display:none;"></div>
 
             <!-- Class Summary -->
             <div class="class-summary" id="class-summary">
@@ -305,7 +355,7 @@
                 <div class="empty-state" id="empty-state">
                     <div class="icon">📋</div>
                     <h3>No students imported yet</h3>
-                    <p>Paste a student share code above to get started.<br>Students generate codes by clicking "Share with Coach" on their results page.</p>
+                    <p>Paste a student share code above to get started.<br>Students generate codes by clicking "Share with Coach" on their results page.<br><br>Supports all 5 UIL Journalism contests: Headline Writing, Copy Editing, Editorial Writing, News Writing, and Feature Writing.</p>
                 </div>
                 <div id="students-list"></div>
             </div>
@@ -324,8 +374,58 @@
 
     <script>
         var students = [];
+        var currentFilter = 'all';
 
-        // Load persisted students from localStorage
+        // ===== CONTEST TYPE DETECTION =====
+        // Share code formats:
+        // Headline:  { v, name, date, mode, hl: [...], overall, storyCount, max, overallFeedback }
+        // Copyedit:  { v, contest:'copyedit', name, date, mode, p1, p2, total, max:35, p3rank, feedback }
+        // Editorial: { v, contest:'editorial', name, date, mode, score, max, words, topic, ranking, feedback }
+        // News:      { type:'news', date, topic, mode, scores, totalScore, maxScore, wordCount, ranking, feedback, story }
+        // Feature:   { type:'feature', date, topic, mode, scores, totalScore, maxScore, wordCount, ranking, feedback, story }
+
+        function detectContest(data) {
+            if (data.contest === 'copyedit') return 'copyedit';
+            if (data.contest === 'editorial') return 'editorial';
+            if (data.type === 'news') return 'news';
+            if (data.type === 'feature') return 'feature';
+            if (data.hl && Array.isArray(data.hl)) return 'headline';
+            return 'unknown';
+        }
+
+        function getContestLabel(contest) {
+            var labels = { headline: 'Headline Writing', copyedit: 'Copy Editing', editorial: 'Editorial Writing', news: 'News Writing', feature: 'Feature Writing' };
+            return labels[contest] || 'Unknown';
+        }
+
+        function getStudentName(data) {
+            return data.name || 'Unknown Student';
+        }
+
+        function getStudentDate(data) {
+            return data.date || new Date().toISOString();
+        }
+
+        function getStudentMode(data) {
+            return (data.mode || 'practice').toUpperCase();
+        }
+
+        function getScore(data, contest) {
+            switch (contest) {
+                case 'headline': return { score: data.overall, max: data.max || (data.storyCount * 4) || 24 };
+                case 'copyedit': return { score: data.total, max: data.max || 35 };
+                case 'editorial': return { score: data.score, max: data.max || 70 };
+                case 'news': return { score: data.totalScore, max: data.maxScore || 70 };
+                case 'feature': return { score: data.totalScore, max: data.maxScore || 70 };
+                default: return { score: 0, max: 1 };
+            }
+        }
+
+        function getScoreClass(pct) {
+            return pct >= 83 ? 'excellent' : pct >= 62 ? 'good' : pct >= 42 ? 'fair' : 'needs-work';
+        }
+
+        // ===== PERSISTENCE =====
         function loadStudents() {
             try {
                 var data = localStorage.getItem('uil-coach-students');
@@ -337,6 +437,7 @@
             try { localStorage.setItem('uil-coach-students', JSON.stringify(students)); } catch (e) {}
         }
 
+        // ===== UI HELPERS =====
         function showToast(msg) {
             var t = document.getElementById('toast');
             t.textContent = msg;
@@ -351,18 +452,30 @@
             setTimeout(function() { el.style.display = 'none'; }, 5000);
         }
 
-        // Decode a share code
+        function escapeHtml(str) {
+            var div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // ===== DECODE =====
         function decodeShareCode(code) {
             code = code.trim();
             if (!code.startsWith('UIL:')) throw new Error('Invalid code: must start with UIL:');
             var base64 = code.substring(4);
             var jsonStr = decodeURIComponent(escape(atob(base64)));
             var data = JSON.parse(jsonStr);
-            if (!data.v || !data.name || !data.hl) throw new Error('Invalid share code format');
+
+            // Detect contest type
+            var contest = detectContest(data);
+            if (contest === 'unknown') throw new Error('Unrecognized contest type in share code');
+
+            // Normalize: attach contest type
+            data._contest = contest;
             return data;
         }
 
-        // Import a student from pasted code
+        // ===== IMPORT =====
         function importCode() {
             var input = document.getElementById('paste-input');
             var code = input.value.trim();
@@ -370,10 +483,12 @@
 
             try {
                 var data = decodeShareCode(code);
+                var name = getStudentName(data);
+                var date = getStudentDate(data);
 
-                // Check for duplicate (same name + same date)
+                // Check for duplicate (same name + same date + same contest)
                 var isDupe = students.some(function(s) {
-                    return s.name === data.name && s.date === data.date;
+                    return getStudentName(s) === name && getStudentDate(s) === date && s._contest === data._contest;
                 });
                 if (isDupe) {
                     showError('This exact result has already been imported.');
@@ -384,22 +499,34 @@
                 saveStudents();
                 input.value = '';
                 renderStudents();
-                showToast('Imported results for ' + data.name + '!');
+                showToast('Imported ' + getContestLabel(data._contest) + ' results for ' + name + '!');
             } catch (e) {
                 showError('Could not read code: ' + e.message);
             }
         }
 
-        // Remove a student
+        // ===== REMOVE / CLEAR =====
         function removeStudent(index) {
-            if (confirm('Remove ' + students[index].name + '\'s results?')) {
-                students.splice(index, 1);
+            var filtered = getFilteredStudents();
+            var realIdx = students.indexOf(filtered[index]);
+            if (realIdx < 0) return;
+            if (confirm('Remove ' + getStudentName(students[realIdx]) + '\'s results?')) {
+                students.splice(realIdx, 1);
                 saveStudents();
                 renderStudents();
             }
         }
 
-        // Toggle student detail view
+        function clearAll() {
+            if (students.length === 0) return;
+            if (confirm('Remove all ' + students.length + ' student results? This cannot be undone.')) {
+                students = [];
+                saveStudents();
+                renderStudents();
+                showToast('All student data cleared.');
+            }
+        }
+
         function toggleDetails(index) {
             var details = document.getElementById('student-details-' + index);
             var icon = document.getElementById('expand-icon-' + index);
@@ -412,10 +539,142 @@
             }
         }
 
-        // Render all students
+        // ===== FILTER =====
+        function getFilteredStudents() {
+            if (currentFilter === 'all') return students;
+            return students.filter(function(s) { return s._contest === currentFilter; });
+        }
+
+        function setFilter(f) {
+            currentFilter = f;
+            renderStudents();
+        }
+
+        function renderFilterTabs() {
+            var counts = { all: students.length };
+            students.forEach(function(s) {
+                counts[s._contest] = (counts[s._contest] || 0) + 1;
+            });
+
+            var tabsEl = document.getElementById('filter-tabs');
+            if (students.length === 0) { tabsEl.style.display = 'none'; return; }
+            tabsEl.style.display = 'flex';
+
+            var html = '<div class="filter-tab' + (currentFilter === 'all' ? ' active' : '') + '" onclick="setFilter(\'all\')">All<span class="filter-count">' + counts.all + '</span></div>';
+
+            var contests = ['headline', 'copyedit', 'editorial', 'news', 'feature'];
+            contests.forEach(function(c) {
+                if (counts[c]) {
+                    html += '<div class="filter-tab' + (currentFilter === c ? ' active' : '') + '" onclick="setFilter(\'' + c + '\')">' + getContestLabel(c) + '<span class="filter-count">' + counts[c] + '</span></div>';
+                }
+            });
+
+            tabsEl.innerHTML = html;
+        }
+
+        // ===== RENDER STUDENT DETAILS =====
+
+        function renderHeadlineDetails(s) {
+            var html = '';
+            s.hl.forEach(function(h) {
+                var bgColor = h.s === 4 ? '#4caf50' : h.s === 3 ? '#2196f3' : h.s >= 1 ? '#ff9800' : '#f44336';
+                html += '<div class="detail-card" style="border-left-color:#667eea;">' +
+                    '<div class="detail-card-header">' +
+                        '<span class="detail-type">Headline ' + h.n + ' (' + h.t + ')</span>' +
+                        '<span class="detail-score-badge" style="background:' + bgColor + '">' + h.s + '/4</span>' +
+                    '</div>' +
+                    '<div class="detail-text">' + (h.sh || '(no text)') + '</div>';
+                if (h.sr) {
+                    html += '<div class="detail-revision-label">Suggested Revision:</div>' +
+                        '<div class="detail-revision">' + h.sr + '</div>';
+                }
+                if (h.st && h.st.length > 0) {
+                    html += '<div class="detail-strengths"><strong>Strengths:</strong> ' + h.st.join('; ') + '</div>';
+                }
+                if (h.im && h.im.length > 0) {
+                    html += '<div class="detail-improvements"><strong>Improvements:</strong> ' + h.im.join('; ') + '</div>';
+                }
+                if (h.fb) html += '<div class="detail-feedback">' + h.fb + '</div>';
+                html += '</div>';
+            });
+            if (s.overallFeedback) {
+                html += '<div style="background:#e8eaf6;border-radius:8px;padding:15px;margin-top:10px;border-left:4px solid #667eea;">' +
+                    '<strong class="sf" style="color:#1e3c72;">Overall Feedback:</strong>' +
+                    '<p class="sf" style="margin-top:6px;color:#444;line-height:1.5;font-size:0.9em;">' + s.overallFeedback + '</p></div>';
+            }
+            return html;
+        }
+
+        function renderCopyeditDetails(s) {
+            var html = '<div class="detail-card" style="border-left-color:#e91e63;">' +
+                '<div class="detail-card-header">' +
+                    '<span class="detail-type">Copy Editing Results</span>' +
+                    '<span class="detail-score-badge" style="background:#e91e63;">' + s.total + '/35</span>' +
+                '</div>' +
+                '<div class="criteria-grid">' +
+                    '<div class="criteria-item" style="border-left-color:#e91e63;"><div class="criteria-name">Part 1 — Multiple Choice</div><div class="criteria-score" style="color:#e91e63;">' + s.p1 + '/15</div></div>' +
+                    '<div class="criteria-item" style="border-left-color:#e91e63;"><div class="criteria-name">Part 2 — Sentence Editing</div><div class="criteria-score" style="color:#e91e63;">' + s.p2 + '/20</div></div>' +
+                '</div>' +
+                '<div class="detail-feedback" style="margin-top:8px;"><strong>Part 3 (Tiebreaker):</strong> ' + (s.p3rank || 'N/A') + '</div>';
+            if (s.feedback) html += '<div class="detail-feedback">' + s.feedback + '</div>';
+            html += '</div>';
+            return html;
+        }
+
+        function renderEditorialDetails(s) {
+            var html = '<div class="detail-card" style="border-left-color:#0288d1;">' +
+                '<div class="detail-card-header">' +
+                    '<span class="detail-type">' + escapeHtml(s.topic || 'Editorial') + '</span>' +
+                    '<span class="detail-score-badge" style="background:#0288d1;">' + s.score + '/' + s.max + '</span>' +
+                '</div>' +
+                '<div class="detail-feedback"><strong>Words:</strong> ' + (s.words || 'N/A') + ' &middot; <strong>Ranking:</strong> ' + (s.ranking || 'N/A') + '</div>';
+            if (s.feedback) html += '<div class="detail-feedback">' + s.feedback + '</div>';
+            html += '</div>';
+            return html;
+        }
+
+        function renderWritingDetails(s, color) {
+            // For news and feature writing — they share the same format
+            var html = '<div class="detail-card" style="border-left-color:' + color + ';">' +
+                '<div class="detail-card-header">' +
+                    '<span class="detail-type">' + escapeHtml(s.topic || 'Story') + '</span>' +
+                    '<span class="detail-score-badge" style="background:' + color + ';">' + s.totalScore + '/' + s.maxScore + '</span>' +
+                '</div>' +
+                '<div class="detail-feedback"><strong>Words:</strong> ' + (s.wordCount || 'N/A') + ' &middot; <strong>Ranking:</strong> ' + (s.ranking || 'N/A') + '</div>';
+
+            // Score breakdown
+            if (s.scores) {
+                var criteriaLabels;
+                if (s._contest === 'news') {
+                    criteriaLabels = { lead: 'Lead', accuracy: 'Accuracy', quotes: 'Quotes & Attribution', structure: 'Story Structure', writing: 'Writing Quality', apStyle: 'AP Style', objectivity: 'Objectivity' };
+                } else {
+                    criteriaLabels = { lead: 'Lead / Hook', structure: 'Nut Graph & Structure', quotes: 'Quotes & Attribution', storytelling: 'Storytelling', writing: 'Writing Quality', apStyle: 'AP Style', objectivity: 'Objectivity' };
+                }
+                html += '<div class="criteria-grid">';
+                Object.keys(criteriaLabels).forEach(function(key) {
+                    var sc = s.scores[key];
+                    if (!sc) return;
+                    var c = sc.score >= 8 ? '#4caf50' : sc.score >= 6 ? '#2196f3' : sc.score >= 4 ? '#ff9800' : '#f44336';
+                    html += '<div class="criteria-item" style="border-left-color:' + color + ';">' +
+                        '<div class="criteria-name">' + criteriaLabels[key] + '</div>' +
+                        '<div class="criteria-score" style="color:' + c + ';">' + sc.score + '/10</div>' +
+                        (sc.feedback ? '<div class="criteria-fb">' + sc.feedback + '</div>' : '') +
+                    '</div>';
+                });
+                html += '</div>';
+            }
+
+            if (s.feedback) html += '<div class="detail-feedback">' + s.feedback + '</div>';
+            html += '</div>';
+            return html;
+        }
+
+        // ===== MAIN RENDER =====
         function renderStudents() {
             var list = document.getElementById('students-list');
             var empty = document.getElementById('empty-state');
+
+            renderFilterTabs();
 
             if (students.length === 0) {
                 list.innerHTML = '';
@@ -429,56 +688,38 @@
             document.getElementById('class-summary').classList.add('visible');
             document.getElementById('comparison-section').style.display = 'block';
 
-            // Render class summary
             renderClassSummary();
 
-            // Render student cards
+            var filtered = getFilteredStudents();
             var cardsHtml = '';
-            students.forEach(function(s, idx) {
-                var d = new Date(s.date);
+
+            filtered.forEach(function(s, idx) {
+                var contest = s._contest;
+                var name = getStudentName(s);
+                var d = new Date(getStudentDate(s));
                 var dateStr = (d.getMonth() + 1) + '/' + d.getDate() + '/' + d.getFullYear() + ' ' +
                     d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                var max = s.max || (s.storyCount * 4) || 24;
-                var pct = Math.round((s.overall / max) * 100);
-                var scoreClass = pct >= 83 ? 'excellent' : pct >= 62 ? 'good' : pct >= 42 ? 'fair' : 'needs-work';
+                var scoreInfo = getScore(s, contest);
+                var pct = Math.round((scoreInfo.score / scoreInfo.max) * 100);
+                var scoreClass = getScoreClass(pct);
 
-                // Build headline details
-                var hlHtml = '';
-                s.hl.forEach(function(h) {
-                    var hScoreClass = h.s === 4 ? 'excellent' : h.s === 3 ? 'good' : h.s >= 1 ? 'fair' : 'needs-work';
-                    var bgColor = h.s === 4 ? '#4caf50' : h.s === 3 ? '#2196f3' : h.s >= 1 ? '#ff9800' : '#f44336';
+                // Build detail HTML based on contest type
+                var detailHtml = '';
+                switch (contest) {
+                    case 'headline': detailHtml = renderHeadlineDetails(s); break;
+                    case 'copyedit': detailHtml = renderCopyeditDetails(s); break;
+                    case 'editorial': detailHtml = renderEditorialDetails(s); break;
+                    case 'news': detailHtml = renderWritingDetails(s, '#1565c0'); break;
+                    case 'feature': detailHtml = renderWritingDetails(s, '#2e7d32'); break;
+                }
 
-                    hlHtml += '<div class="hl-card">' +
-                        '<div class="hl-card-header">' +
-                            '<span class="hl-type">Headline ' + h.n + ' (' + h.t + ')</span>' +
-                            '<span class="hl-score-badge" style="background:' + bgColor + '">' + h.s + '/4</span>' +
-                        '</div>' +
-                        '<div class="hl-student-text">' + (h.sh || '(no text)') + '</div>';
-
-                    if (h.sr) {
-                        hlHtml += '<div class="hl-revision-label">Suggested Revision:</div>' +
-                            '<div class="hl-revision">' + h.sr + '</div>';
-                    }
-
-                    if (h.st && h.st.length > 0) {
-                        hlHtml += '<div class="hl-strengths"><strong>Strengths:</strong> ' + h.st.join('; ') + '</div>';
-                    }
-                    if (h.im && h.im.length > 0) {
-                        hlHtml += '<div class="hl-improvements"><strong>Improvements:</strong> ' + h.im.join('; ') + '</div>';
-                    }
-                    if (h.fb) {
-                        hlHtml += '<div class="hl-feedback">' + h.fb + '</div>';
-                    }
-
-                    hlHtml += '</div>';
-                });
-
-                // Overall feedback
-                if (s.overallFeedback) {
-                    hlHtml += '<div style="background:#e8eaf6;border-radius:8px;padding:15px;margin-top:10px;border-left:4px solid #667eea;">' +
-                        '<strong style="color:#1e3c72;font-family:-apple-system,BlinkMacSystemFont,sans-serif;">Overall Feedback:</strong>' +
-                        '<p style="margin-top:6px;color:#444;font-family:-apple-system,BlinkMacSystemFont,sans-serif;line-height:1.5;font-size:0.9em;">' + s.overallFeedback + '</p>' +
-                    '</div>';
+                // Extra meta info
+                var metaExtra = '';
+                if (contest === 'headline') metaExtra = ' &middot; ' + (s.storyCount || 6) + ' stories';
+                if (contest === 'editorial' || contest === 'news' || contest === 'feature') {
+                    var topic = s.topic || '';
+                    if (topic.length > 40) topic = topic.substring(0, 37) + '...';
+                    if (topic) metaExtra = ' &middot; ' + escapeHtml(topic);
                 }
 
                 cardsHtml +=
@@ -486,117 +727,91 @@
                         '<div class="student-card-header" onclick="toggleDetails(' + idx + ')">' +
                             '<div class="student-info">' +
                                 '<div>' +
-                                    '<div class="student-name">' + escapeHtml(s.name) + '</div>' +
-                                    '<div class="student-meta">' + dateStr + ' &middot; ' + (s.mode || 'practice').toUpperCase() + ' &middot; ' + (s.storyCount || 6) + ' stories</div>' +
+                                    '<div class="student-name">' + escapeHtml(name) + ' <span class="contest-badge ' + contest + '">' + getContestLabel(contest).split(' ')[0] + '</span></div>' +
+                                    '<div class="student-meta">' + dateStr + ' &middot; ' + getStudentMode(s) + metaExtra + '</div>' +
                                 '</div>' +
                             '</div>' +
                             '<div style="display:flex;align-items:center;gap:12px;">' +
-                                '<div class="student-score ' + scoreClass + '">' + s.overall + '/' + max + '</div>' +
+                                '<div class="student-score ' + scoreClass + '">' + scoreInfo.score + '/' + scoreInfo.max + '</div>' +
                                 '<span class="expand-icon" id="expand-icon-' + idx + '">&#9660;</span>' +
                                 '<button class="remove-btn" onclick="event.stopPropagation();removeStudent(' + idx + ')" title="Remove student">&times;</button>' +
                             '</div>' +
                         '</div>' +
                         '<div class="student-details" id="student-details-' + idx + '">' +
-                            hlHtml +
+                            detailHtml +
                         '</div>' +
                     '</div>';
             });
 
             list.innerHTML = cardsHtml;
-
-            // Render comparison table
             renderComparison();
         }
 
-        function escapeHtml(str) {
-            var div = document.createElement('div');
-            div.textContent = str;
-            return div.innerHTML;
-        }
-
-        // Render class overview stats
+        // ===== CLASS SUMMARY =====
         function renderClassSummary() {
-            var totalStudents = students.length;
-            var scores = students.map(function(s) {
-                var max = s.max || (s.storyCount * 4) || 24;
-                return Math.round((s.overall / max) * 100);
+            var filtered = getFilteredStudents();
+            if (filtered.length === 0) return;
+
+            var totalStudents = filtered.length;
+            var scores = filtered.map(function(s) {
+                var info = getScore(s, s._contest);
+                return Math.round((info.score / info.max) * 100);
             });
             var avgPct = Math.round(scores.reduce(function(a, b) { return a + b; }, 0) / totalStudents);
-            var highScore = Math.max.apply(null, students.map(function(s) { return s.overall; }));
-            var lowScore = Math.min.apply(null, students.map(function(s) { return s.overall; }));
+            var highPct = Math.max.apply(null, scores);
+            var lowPct = Math.min.apply(null, scores);
 
-            // Find most common weakness
-            var weaknessCounts = {};
-            students.forEach(function(s) {
-                s.hl.forEach(function(h) {
-                    if (h.im) {
-                        h.im.forEach(function(imp) {
-                            var cat = categorizeWeakness(imp);
-                            weaknessCounts[cat] = (weaknessCounts[cat] || 0) + 1;
-                        });
-                    }
-                });
+            // Count contest types
+            var contestCounts = {};
+            filtered.forEach(function(s) {
+                contestCounts[s._contest] = (contestCounts[s._contest] || 0) + 1;
             });
-            var topWeakness = 'None';
-            var topCount = 0;
-            Object.keys(weaknessCounts).forEach(function(key) {
-                if (weaknessCounts[key] > topCount) {
-                    topCount = weaknessCounts[key];
-                    topWeakness = key;
-                }
-            });
+            var contestSummary = Object.keys(contestCounts).map(function(c) {
+                return contestCounts[c] + ' ' + getContestLabel(c).split(' ')[0];
+            }).join(', ');
 
             document.getElementById('class-stats').innerHTML =
-                '<div class="class-stat"><div class="class-stat-value">' + totalStudents + '</div><div class="class-stat-label">Students</div></div>' +
+                '<div class="class-stat"><div class="class-stat-value">' + totalStudents + '</div><div class="class-stat-label">Results</div></div>' +
                 '<div class="class-stat"><div class="class-stat-value">' + avgPct + '%</div><div class="class-stat-label">Average Score</div></div>' +
-                '<div class="class-stat"><div class="class-stat-value">' + highScore + '</div><div class="class-stat-label">High Score</div></div>' +
-                '<div class="class-stat"><div class="class-stat-value">' + lowScore + '</div><div class="class-stat-label">Low Score</div></div>' +
-                '<div class="class-stat"><div class="class-stat-value" style="font-size:1em;">' + topWeakness + '</div><div class="class-stat-label">Top Weakness</div></div>';
+                '<div class="class-stat"><div class="class-stat-value">' + highPct + '%</div><div class="class-stat-label">High Score</div></div>' +
+                '<div class="class-stat"><div class="class-stat-value">' + lowPct + '%</div><div class="class-stat-label">Low Score</div></div>' +
+                '<div class="class-stat"><div class="class-stat-value" style="font-size:0.9em;">' + contestSummary + '</div><div class="class-stat-label">Contests</div></div>';
         }
 
-        function categorizeWeakness(text) {
-            var t = text.toLowerCase();
-            if (t.includes('passive') || t.includes('voice')) return 'Passive Voice';
-            if (t.includes('past tense') || t.includes('tense') || t.includes('-ed')) return 'Verb Tense';
-            if (t.includes('character count') || t.includes('over count') || t.includes('under count')) return 'Char Count';
-            if (t.includes('article') || t.includes(' a ') || t.includes(' an ') || t.includes(' the ')) return 'Articles';
-            if (t.includes('first name') || t.includes('full name') || t.includes('name')) return 'Name Usage';
-            if (t.includes('main idea') || t.includes('lead') || t.includes('misses')) return 'Missed Lead';
-            if (t.includes('word split') || t.includes('split')) return 'Word Splits';
-            if (t.includes('verb') || t.includes('strong')) return 'Weak Verbs';
-            if (t.includes('l-word') || t.includes('leaguetown') || t.includes('lhs')) return 'L-Words';
-            return 'Other';
-        }
-
-        // Render comparison table
+        // ===== COMPARISON TABLE =====
         function renderComparison() {
-            if (students.length < 1) return;
+            var filtered = getFilteredStudents();
+            if (filtered.length < 1) return;
 
-            var maxHL = Math.max.apply(null, students.map(function(s) { return s.hl.length; }));
-
-            var headerCells = '<th>Student</th><th>Date</th>';
-            for (var i = 1; i <= maxHL; i++) {
-                headerCells += '<th class="score-cell">HL ' + i + '</th>';
-            }
-            headerCells += '<th class="score-cell">Total</th><th class="score-cell">%</th>';
+            var headerCells = '<th>Student</th><th>Contest</th><th>Date</th><th>Mode</th><th class="score-cell">Score</th><th class="score-cell">Max</th><th class="score-cell">%</th><th>Details</th>';
 
             var rows = '';
-            students.forEach(function(s) {
-                var max = s.max || (s.storyCount * 4) || 24;
-                var pct = Math.round((s.overall / max) * 100);
-                var d = new Date(s.date);
+            filtered.forEach(function(s) {
+                var contest = s._contest;
+                var scoreInfo = getScore(s, contest);
+                var pct = Math.round((scoreInfo.score / scoreInfo.max) * 100);
+                var d = new Date(getStudentDate(s));
                 var dateStr = (d.getMonth() + 1) + '/' + d.getDate();
+                var pctColor = pct >= 83 ? '#4caf50' : pct >= 62 ? '#2196f3' : pct >= 42 ? '#ff9800' : '#f44336';
+
+                var details = '';
+                switch (contest) {
+                    case 'headline': details = (s.storyCount || 6) + ' stories'; break;
+                    case 'copyedit': details = 'P1: ' + s.p1 + '/15, P2: ' + s.p2 + '/20'; break;
+                    case 'editorial': details = (s.words || '?') + ' words'; break;
+                    case 'news':
+                    case 'feature': details = (s.wordCount || '?') + ' words'; break;
+                }
 
                 rows += '<tr>';
-                rows += '<td><strong>' + escapeHtml(s.name) + '</strong></td>';
+                rows += '<td><strong>' + escapeHtml(getStudentName(s)) + '</strong></td>';
+                rows += '<td><span class="contest-badge ' + contest + '" style="font-size:0.7em;">' + getContestLabel(contest).split(' ')[0] + '</span></td>';
                 rows += '<td>' + dateStr + '</td>';
-                for (var i = 0; i < maxHL; i++) {
-                    var score = s.hl[i] ? s.hl[i].s : '-';
-                    var color = score === 4 ? '#4caf50' : score === 3 ? '#2196f3' : score >= 1 ? '#ff9800' : score === 0 ? '#f44336' : '#999';
-                    rows += '<td class="score-cell" style="color:' + color + ';font-weight:bold;">' + score + '</td>';
-                }
-                rows += '<td class="score-cell" style="font-size:1.1em;">' + s.overall + '/' + max + '</td>';
-                rows += '<td class="score-cell" style="font-weight:bold;">' + pct + '%</td>';
+                rows += '<td>' + getStudentMode(s) + '</td>';
+                rows += '<td class="score-cell">' + scoreInfo.score + '</td>';
+                rows += '<td class="score-cell">' + scoreInfo.max + '</td>';
+                rows += '<td class="score-cell" style="color:' + pctColor + ';font-weight:bold;">' + pct + '%</td>';
+                rows += '<td style="font-size:0.85em;color:#888;">' + details + '</td>';
                 rows += '</tr>';
             });
 
@@ -604,66 +819,61 @@
                 '<thead><tr>' + headerCells + '</tr></thead><tbody>' + rows + '</tbody>';
         }
 
-        // Export all students to CSV
+        // ===== EXPORT CSV =====
         function exportAllCSV() {
             if (students.length === 0) { showToast('No students to export'); return; }
 
-            var maxHL = Math.max.apply(null, students.map(function(s) { return s.hl.length; }));
-            var headers = ['Student Name', 'Date', 'Mode', 'Stories'];
-            for (var i = 1; i <= maxHL; i++) {
-                headers.push('HL ' + i + ' Score');
-                headers.push('HL ' + i + ' Text');
-            }
-            headers.push('Total Score', 'Max Score', 'Percentage');
-
+            var headers = ['Student Name', 'Contest', 'Date', 'Mode', 'Score', 'Max Score', 'Percentage', 'Details'];
             var rows = [headers];
+
             students.forEach(function(s) {
-                var max = s.max || (s.storyCount * 4) || 24;
-                var pct = Math.round((s.overall / max) * 100);
-                var d = new Date(s.date);
+                var contest = s._contest;
+                var name = getStudentName(s);
+                var scoreInfo = getScore(s, contest);
+                var pct = Math.round((scoreInfo.score / scoreInfo.max) * 100);
+                var d = new Date(getStudentDate(s));
                 var dateStr = (d.getMonth() + 1) + '/' + d.getDate() + '/' + d.getFullYear();
 
-                var row = [
-                    '"' + s.name.replace(/"/g, '""') + '"',
-                    dateStr,
-                    (s.mode || 'practice').toUpperCase(),
-                    s.storyCount || 6
-                ];
-                for (var i = 0; i < maxHL; i++) {
-                    if (s.hl[i]) {
-                        row.push(s.hl[i].s);
-                        row.push('"' + (s.hl[i].sh || '').replace(/"/g, '""') + '"');
-                    } else {
-                        row.push('');
-                        row.push('');
-                    }
+                var details = '';
+                switch (contest) {
+                    case 'headline':
+                        details = s.hl.map(function(h) { return 'HL' + h.n + ':' + h.s + '/4'; }).join(' ');
+                        break;
+                    case 'copyedit':
+                        details = 'P1:' + s.p1 + '/15 P2:' + s.p2 + '/20 P3:' + (s.p3rank || 'N/A');
+                        break;
+                    case 'editorial':
+                        details = (s.words || '?') + ' words - ' + (s.topic || '');
+                        break;
+                    case 'news':
+                    case 'feature':
+                        details = (s.wordCount || '?') + ' words - ' + (s.topic || '');
+                        break;
                 }
-                row.push(s.overall, max, pct + '%');
-                rows.push(row);
+
+                rows.push([
+                    '"' + name.replace(/"/g, '""') + '"',
+                    getContestLabel(contest),
+                    dateStr,
+                    getStudentMode(s),
+                    scoreInfo.score,
+                    scoreInfo.max,
+                    pct + '%',
+                    '"' + details.replace(/"/g, '""') + '"'
+                ]);
             });
 
             var csv = rows.map(function(r) { return r.join(','); }).join('\n');
             var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             var link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = 'uil-headline-class-results-' + new Date().toISOString().slice(0, 10) + '.csv';
+            link.download = 'uil-journalism-class-results-' + new Date().toISOString().slice(0, 10) + '.csv';
             link.click();
             URL.revokeObjectURL(link.href);
             showToast('Class CSV downloaded!');
         }
 
-        // Clear all students
-        function clearAll() {
-            if (students.length === 0) return;
-            if (confirm('Remove all ' + students.length + ' student results? This cannot be undone.')) {
-                students = [];
-                saveStudents();
-                renderStudents();
-                showToast('All student data cleared.');
-            }
-        }
-
-        // Dark mode
+        // ===== DARK MODE =====
         function toggleDarkMode() {
             document.body.classList.toggle('dark-mode');
             var isDark = document.body.classList.contains('dark-mode');
@@ -680,10 +890,16 @@
             } catch (e) {}
         }
 
-        // Initialize
+        // ===== INIT =====
         document.addEventListener('DOMContentLoaded', function() {
             loadDarkMode();
             students = loadStudents();
+
+            // Ensure all loaded students have _contest detected
+            students.forEach(function(s) {
+                if (!s._contest) s._contest = detectContest(s);
+            });
+
             renderStudents();
         });
 

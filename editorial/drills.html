@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editorial Writing Skill Drills — UIL Journalism Trainer</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #4fc3f7 0%, #0288d1 100%);
+            min-height: 100vh; padding: 20px;
+        }
+        .container {
+            max-width: 900px; margin: 0 auto; background: white;
+            border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #01579b 0%, #0288d1 100%);
+            color: white; padding: 30px; text-align: center;
+        }
+        .header h1 { font-size: 2.2em; margin-bottom: 10px; }
+        .header p { font-size: 1.1em; opacity: 0.9; }
+        .header .back-link { color: rgba(255,255,255,0.8); font-size: 0.9em; margin-top: 8px; display: inline-block; text-decoration: none; }
+        .header .back-link:hover { color: white; }
+        .content { padding: 30px; color: #333; }
+
+        .nav-links {
+            display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+        .nav-link {
+            padding: 10px 20px; border: 2px solid #0288d1; border-radius: 6px;
+            text-decoration: none; color: #0288d1; font-weight: 600; font-size: 0.9em;
+            transition: all 0.2s;
+        }
+        .nav-link:hover { background: #0288d1; color: white; }
+        .nav-link.active { background: #0288d1; color: white; }
+
+        .btn {
+            background: linear-gradient(135deg, #0288d1, #4fc3f7);
+            color: white; border: none; padding: 14px 28px; font-size: 16px;
+            border-radius: 6px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: 600;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(2,136,209,0.4); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .btn-sm { padding: 8px 16px; font-size: 13px; border-radius: 4px; }
+
+        /* Drill selector grid */
+        .drill-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px; margin-bottom: 25px;
+        }
+        .drill-card {
+            background: #f8f9fa; border: 2px solid #eee; border-radius: 10px;
+            padding: 20px; cursor: pointer; transition: all 0.2s; text-align: center;
+        }
+        .drill-card:hover { border-color: #0288d1; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(2,136,209,0.15); }
+        .drill-card.active { border-color: #0288d1; background: #e1f5fe; }
+        .drill-icon { font-size: 2em; margin-bottom: 8px; }
+        .drill-name { font-weight: bold; color: #01579b; margin-bottom: 4px; }
+        .drill-desc { font-size: 0.85em; color: #777; line-height: 1.4; }
+        .drill-best { font-size: 0.78em; color: #0288d1; margin-top: 6px; font-weight: 600; }
+
+        /* Drill area */
+        .drill-area { display: none; }
+        .drill-area.visible { display: block; }
+        .drill-header-bar {
+            background: #e1f5fe; border-radius: 8px; padding: 15px 20px;
+            margin-bottom: 20px; display: flex; justify-content: space-between;
+            align-items: center; flex-wrap: wrap; gap: 10px;
+        }
+        .drill-title { font-weight: bold; color: #01579b; }
+        .drill-score-bar { font-size: 0.95em; color: #555; }
+        .drill-score-bar strong { color: #0288d1; }
+
+        /* Question card */
+        .q-card {
+            background: #f8f9fa; border-radius: 8px; padding: 20px; margin-bottom: 15px;
+            border: 2px solid #eee; transition: border-color 0.2s;
+        }
+        .q-card.correct { border-color: #4caf50; background: #e8f5e9; }
+        .q-card.incorrect { border-color: #f44336; background: #fce4ec; }
+        .q-text { font-size: 1.05em; line-height: 1.7; margin-bottom: 12px; }
+        .q-options { display: flex; flex-direction: column; gap: 8px; }
+        .q-option {
+            padding: 10px 16px; border: 2px solid #ddd; border-radius: 6px;
+            cursor: pointer; transition: all 0.15s; font-size: 0.95em; background: white;
+        }
+        .q-option:hover { border-color: #4fc3f7; background: #e1f5fe; }
+        .q-option.selected { border-color: #0288d1; background: #e1f5fe; font-weight: 600; }
+        .q-option.correct-answer { border-color: #4caf50; background: #e8f5e9; }
+        .q-option.wrong-answer { border-color: #f44336; background: #ffebee; }
+        .q-explanation {
+            display: none; margin-top: 10px; padding: 10px 14px;
+            background: #fff3e0; border-radius: 4px; border-left: 3px solid #ff9800;
+            font-size: 0.9em; line-height: 1.5; color: #555;
+        }
+        .q-explanation.visible { display: block; }
+        .q-number { font-size: 0.8em; font-weight: 600; color: #999; margin-bottom: 6px; }
+
+        .results-box {
+            background: #e1f5fe; border-radius: 10px; padding: 25px; text-align: center;
+            margin-top: 20px; display: none;
+        }
+        .results-box h3 { color: #01579b; margin-bottom: 8px; }
+        .results-score { font-size: 2em; font-weight: bold; color: #0288d1; margin: 10px 0; }
+        .results-msg { color: #666; margin-bottom: 15px; }
+
+        .toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: #333; color: white; padding: 12px 24px; border-radius: 8px;
+            font-size: 14px; z-index: 999; opacity: 0; transition: opacity 0.3s; pointer-events: none;
+        }
+        .toast.visible { opacity: 1; }
+
+        /* Dark mode */
+        .dark-toggle {
+            position: fixed; top: 12px; right: 12px; z-index: 300;
+            background: rgba(255,255,255,0.9); border: 1px solid #ccc; border-radius: 20px;
+            padding: 6px 14px; cursor: pointer; font-size: 13px; font-weight: 600;
+            transition: all 0.2s; color: #333;
+        }
+        .dark-toggle:hover { background: #0288d1; color: white; border-color: #0288d1; }
+        body.dark-mode { background: linear-gradient(135deg, #0d1b2a 0%, #1b2838 100%); }
+        body.dark-mode .container { background: #1e1e2e; }
+        body.dark-mode .content { color: #ddd; }
+        body.dark-mode .drill-card { background: #252535; border-color: #444; }
+        body.dark-mode .drill-card:hover { border-color: #4fc3f7; }
+        body.dark-mode .drill-card.active { background: #1a2a4a; }
+        body.dark-mode .drill-name { color: #4fc3f7; }
+        body.dark-mode .drill-desc { color: #999; }
+        body.dark-mode .drill-header-bar { background: #1a2a4a; }
+        body.dark-mode .q-card { background: #252535; border-color: #444; color: #ddd; }
+        body.dark-mode .q-card.correct { background: #1b3320; border-color: #4caf50; }
+        body.dark-mode .q-card.incorrect { background: #3a1b1b; border-color: #f44336; }
+        body.dark-mode .q-option { background: #2a2a3a; border-color: #555; color: #ddd; }
+        body.dark-mode .q-option:hover { background: #1a2a4a; border-color: #4fc3f7; }
+        body.dark-mode .q-explanation { background: #2d2520; color: #ddd; }
+        body.dark-mode .results-box { background: #1a2a4a; }
+        body.dark-mode .results-msg { color: #bbb; }
+        body.dark-mode .nav-link { color: #4fc3f7; border-color: #4fc3f7; }
+        body.dark-mode .nav-link:hover, body.dark-mode .nav-link.active { background: #0288d1; color: white; }
+        body.dark-mode .dark-toggle { background: rgba(30,30,46,0.9); color: #eee; border-color: #555; }
+
+        @media (max-width: 600px) { .drill-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <button class="dark-toggle" id="dark-toggle" onclick="toggleDarkMode()">Dark Mode</button>
+    <div class="container">
+        <div class="header">
+            <h1>Editorial Writing Skill Drills</h1>
+            <p>Sharpen specific skills for the UIL Editorial Writing contest</p>
+            <a href="./" class="back-link">&larr; Back to Editorial Writing Trainer</a>
+        </div>
+        <div class="content">
+            <div class="nav-links">
+                <a href="./" class="nav-link">Practice</a>
+                <a href="tutorial.html" class="nav-link">Tutorial</a>
+                <a href="drills.html" class="nav-link active">Skill Drills</a>
+            </div>
+
+            <div id="drill-selector">
+                <div class="drill-grid">
+                    <div class="drill-card" onclick="startDrill('stance')">
+                        <div class="drill-icon">&#9878;</div>
+                        <div class="drill-name">Stance & Position</div>
+                        <div class="drill-desc">Identify clear, strong stances and avoid wishy-washy positions</div>
+                        <div class="drill-best" id="best-stance"></div>
+                    </div>
+                    <div class="drill-card" onclick="startDrill('arguments')">
+                        <div class="drill-icon">&#128170;</div>
+                        <div class="drill-name">Supporting Arguments</div>
+                        <div class="drill-desc">Build strong arguments using facts, logic, and evidence from fact sheets</div>
+                        <div class="drill-best" id="best-arguments"></div>
+                    </div>
+                    <div class="drill-card" onclick="startDrill('rebuttal')">
+                        <div class="drill-icon">&#9881;</div>
+                        <div class="drill-name">Rebuttal Techniques</div>
+                        <div class="drill-desc">Address and dismantle the opposition's strongest arguments</div>
+                        <div class="drill-best" id="best-rebuttal"></div>
+                    </div>
+                    <div class="drill-card" onclick="startDrill('voice')">
+                        <div class="drill-icon">&#128483;</div>
+                        <div class="drill-name">Voice & Tone</div>
+                        <div class="drill-desc">Avoid I/you/questions/sermonizing — write with proper editorial voice</div>
+                        <div class="drill-best" id="best-voice"></div>
+                    </div>
+                    <div class="drill-card" onclick="startDrill('solutions')">
+                        <div class="drill-icon">&#128161;</div>
+                        <div class="drill-name">Solutions & Calls to Action</div>
+                        <div class="drill-desc">End with specific, actionable solutions — not vague wishes</div>
+                        <div class="drill-best" id="best-solutions"></div>
+                    </div>
+                    <div class="drill-card" onclick="startDrill('structure')">
+                        <div class="drill-icon">&#128203;</div>
+                        <div class="drill-name">Editorial Structure</div>
+                        <div class="drill-desc">Lead, stance, body, rebuttal, solution, conclusion — the full formula</div>
+                        <div class="drill-best" id="best-structure"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="drill-area" id="drill-area">
+                <div class="drill-header-bar">
+                    <span class="drill-title" id="drill-title"></span>
+                    <span class="drill-score-bar">Score: <strong id="drill-score">0</strong> / <strong id="drill-total">10</strong></span>
+                </div>
+                <div id="questions-container"></div>
+                <div class="results-box" id="results-box">
+                    <h3>Drill Complete!</h3>
+                    <div class="results-score" id="final-score"></div>
+                    <div class="results-msg" id="final-msg"></div>
+                    <button class="btn" onclick="backToSelector()" style="margin-right:8px;">Try Another Drill</button>
+                    <button class="btn btn-sm" onclick="restartDrill()" style="background:linear-gradient(135deg,#43a047,#66bb6a);">Retry This Drill</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="toast" id="toast"></div>
+
+    <script>
+    var currentDrill = null;
+    var answered = 0;
+    var correct = 0;
+    var totalQ = 10;
+
+    // ========== DRILL DATA ==========
+    var drills = {
+        stance: {
+            name: 'Stance & Position',
+            questions: [
+                { q: 'Which opening most clearly establishes a stance on a school uniform proposal?',
+                  options: ['There are many opinions about school uniforms.', 'The school board should reject the proposed mandatory uniform policy because it restricts student expression without improving academic performance.', 'School uniforms are an interesting idea that has both pros and cons.', 'Some students like uniforms and some do not.'],
+                  answer: 1, explain: 'A strong stance is clear, specific, and includes reasoning. "Should reject" leaves no doubt about the position. The others are vague or take no side.' },
+                { q: 'What is wrong with this stance? "We feel that the new schedule might not be the best idea for some students."',
+                  options: ['It uses "we" incorrectly.', 'It is wishy-washy — "might not" and "some students" hedge the position.', 'It is too short.', 'Nothing is wrong — this is a strong stance.'],
+                  answer: 1, explain: '"Might not" and "some students" are hedging language. A strong editorial stance is definitive: "The new schedule will harm students and should be reversed."' },
+                { q: 'Where should the stance appear in a UIL editorial?',
+                  options: ['In the last paragraph as a surprise conclusion.', 'Within the first 2-3 paragraphs — early and clearly.', 'Only in the headline.', 'Scattered throughout the piece without one clear statement.'],
+                  answer: 1, explain: 'UIL judges want to see your stance early — within the first 2-3 paragraphs. Do not make them hunt for it. State your position clearly and quickly.' },
+                { q: 'Which word signals the strongest stance?',
+                  options: ['Could', 'Might', 'Should', 'Perhaps'],
+                  answer: 2, explain: '"Should" is the strongest stance word — it implies obligation and clear direction. "Could," "might," and "perhaps" are all hedging words that weaken your position.' },
+                { q: 'A fact sheet presents arguments for and against extending the school day by 30 minutes. Which approach is best?',
+                  options: ['Present both sides equally and let the reader decide.', 'Pick one side definitively and argue for it while addressing the other side.', 'Argue for a compromise (15 minutes instead of 30).', 'Avoid taking a side to stay objective.'],
+                  answer: 1, explain: 'An editorial requires a clear stance FOR or AGAINST. Sitting on the fence or splitting the difference is the #1 mistake. Pick a side and argue persuasively.' },
+                { q: 'Which stance is most effective for an editorial about cutting the art program?',
+                  options: ['Art is important to many students at this school.', 'The district must preserve the art program, which serves 300 students and has won 12 regional awards in the past five years.', 'Cutting art would be a terrible, heartless decision.', 'We think the art program should probably stay.'],
+                  answer: 1, explain: 'This stance is specific (300 students, 12 awards), uses strong language ("must preserve"), and provides concrete support. Option C editorializes emotionally; D is weak.' },
+                { q: 'How many sides should you argue in a UIL editorial?',
+                  options: ['Both sides equally.', 'One side — your chosen position — while acknowledging and rebutting the opposition.', 'Three or more perspectives.', 'Whichever side has more facts in the fact sheet.'],
+                  answer: 1, explain: 'An editorial argues ONE side. You acknowledge the opposition in the rebuttal section, but your entire editorial should support your chosen position.' },
+                { q: 'Which transition best introduces a stance after summarizing the situation?',
+                  options: ['"In our opinion..."', '"The board should vote against this proposal."', '"There are many things to consider."', '"What do you think about this issue?"'],
+                  answer: 1, explain: 'Jump directly into the stance without hedging. "The board should..." is clear and assertive. Avoid "In our opinion" (implied), vague transitions, or questions.' },
+                { q: 'If the fact sheet has stronger arguments for one side, what should you do?',
+                  options: ['Always argue the side with more evidence in the fact sheet.', 'You can argue either side — just build the strongest case you can with the available facts.', 'Only argue the side the majority of sources support.', 'Avoid the side with fewer facts because judges will penalize you.'],
+                  answer: 1, explain: 'You can argue either side. Good writers can build a strong case from limited evidence. Judges evaluate the quality of your argument, not which side you chose.' },
+                { q: 'What is "sermonizing" and why should you avoid it in editorials?',
+                  options: ['Using religious references — avoid to keep church and state separate.', 'Lecturing or moralizing the reader instead of making logical arguments.', 'Writing in first person — it sounds preachy.', 'Quoting authority figures — it feels like a sermon.'],
+                  answer: 1, explain: 'Sermonizing means lecturing, moralizing, or preaching at the reader. "Students should value education" is sermonizing. Instead, make logical arguments with evidence.' }
+            ]
+        },
+        arguments: {
+            name: 'Supporting Arguments',
+            questions: [
+                { q: 'Which is the strongest supporting argument for keeping a school library open?',
+                  options: ['Libraries are nice places.', 'The library serves 450 students daily and houses the only free internet access available to 30% of the student body.', 'Everyone loves the library.', 'Closing the library would be a tragedy.'],
+                  answer: 1, explain: 'Strong arguments use specific facts and numbers. "450 students daily" and "30% of the student body" are concrete evidence. The others are vague opinions.' },
+                { q: 'How many supporting arguments should a UIL editorial typically include?',
+                  options: ['1 very detailed argument.', '2-3 strong arguments, each in its own paragraph.', '5-6 quick points.', 'As many as possible to fill the word count.'],
+                  answer: 1, explain: 'Two to three well-developed arguments is ideal for a 300-450 word editorial. One is too few; five or more means none get developed properly.' },
+                { q: 'Which type of evidence from a fact sheet is most persuasive?',
+                  options: ['Emotional appeals about how students feel.', 'Specific numbers, statistics, and concrete facts.', 'Quotes from students who agree with your position.', 'General statements about what "everyone" thinks.'],
+                  answer: 1, explain: 'Numbers and specific facts are the backbone of persuasive editorial arguments. Paraphrase the data from the fact sheet to support each point.' },
+                { q: 'How should you use information from fact sheet quotes in an editorial?',
+                  options: ['Copy the quotes directly with quotation marks.', 'Paraphrase the information in your own words — editorials rarely use direct quotes.', 'Ignore the quotes and only use the narrative facts.', 'Attribute every fact to its source with "according to."'],
+                  answer: 1, explain: 'Editorials paraphrase rather than directly quoting. Pull the facts and data from quotes but put them in your own words. Direct quotes are rare in editorials.' },
+                { q: 'A fact sheet says the new gym would cost $2 million and serve 1,200 students. Which argument uses this best?',
+                  options: ['The gym costs a lot of money.', 'At less than $1,700 per student served, the new gym is a sound investment that would benefit 1,200 students for decades.', 'The $2 million price tag is simply too much in these economic times.', 'Many students want a new gym.'],
+                  answer: 1, explain: 'This answer does math with the facts ($2M / 1,200 = ~$1,700) and frames them persuasively ("sound investment," "for decades"). It uses facts creatively.' },
+                { q: 'What makes a weak supporting argument?',
+                  options: ['Using specific facts from the fact sheet.', 'Making a claim without evidence or support.', 'Connecting your argument to real impact on students.', 'Addressing a different angle than your other arguments.'],
+                  answer: 1, explain: 'A claim without evidence is weak. "The policy is unfair" is weak. "The policy would affect 85% of students who currently participate in extracurriculars" is strong.' },
+                { q: 'Your editorial opposes closing the school pool. Which argument structure is best?',
+                  options: ['List all the reasons the pool is great.', 'State your argument, provide evidence from the fact sheet, then explain why it matters.', 'Ask readers if they want the pool closed.', 'Describe how sad students will be.'],
+                  answer: 1, explain: 'Claim → Evidence → Impact is the ideal structure for each argument paragraph. State what you believe, prove it with facts, explain why it matters.' },
+                { q: 'Should each supporting argument be in its own paragraph?',
+                  options: ['No — combine all arguments into one long paragraph for efficiency.', 'Yes — each argument deserves its own paragraph for clarity and impact.', 'Only if the editorial is over 400 words.', 'Arguments should be woven throughout without clear paragraph breaks.'],
+                  answer: 1, explain: 'Each supporting argument should have its own paragraph. This makes the editorial organized, scannable, and easy for judges to follow.' },
+                { q: 'Which transition best connects two supporting arguments?',
+                  options: ['"Also..."', '"Furthermore, the proposal would increase class sizes by 15%, putting additional strain on already overworked teachers."', '"Another reason is..."', '"Secondly..."'],
+                  answer: 1, explain: 'The best transitions introduce new information while connecting ideas. "Furthermore" + a new fact is much stronger than generic transitions like "Also" or "Secondly."' },
+                { q: 'When building arguments, should you address the strongest or weakest points of the opposition?',
+                  options: ['Only address weak opposing points to make your case look better.', 'Address the strongest opposing arguments — dismantling strong points is more convincing.', 'Never address opposing points — focus only on your side.', 'Address all opposing points equally.'],
+                  answer: 1, explain: 'Tackling the opposition\'s strongest argument shows intellectual honesty and strengthens your case. Ignoring strong counterpoints makes your argument seem one-sided.' }
+            ]
+        },
+        rebuttal: {
+            name: 'Rebuttal Techniques',
+            questions: [
+                { q: 'What is the purpose of a rebuttal in a UIL editorial?',
+                  options: ['To show you read the entire fact sheet.', 'To acknowledge the strongest opposing argument and explain why your position is still better.', 'To insult the other side\'s reasoning.', 'To admit your side has weaknesses too.'],
+                  answer: 1, explain: 'A rebuttal acknowledges the opposition\'s best point, then explains why your position is still stronger. It shows critical thinking and fairness.' },
+                { q: 'Which rebuttal technique is most effective?',
+                  options: ['"The other side is simply wrong."', '"While opponents argue the cost is too high, the long-term savings of $500,000 over five years make this investment worthwhile."', '"Some people disagree, but they are not thinking clearly."', '"The opposition has some good points, but we still disagree."'],
+                  answer: 1, explain: 'Acknowledge the opposing point ("cost is too high"), then counter with specific evidence ("$500,000 savings over five years"). This is the strongest rebuttal technique.' },
+                { q: 'What phrase best introduces a rebuttal?',
+                  options: ['"Critics are wrong because..."', '"While some may argue that..."', '"The other side is stupid for thinking..."', '"We don\'t care what they think because..."'],
+                  answer: 1, explain: '"While some may argue..." or "Critics contend..." acknowledges the opposition respectfully before countering. Never insult or dismiss the opposing view.' },
+                { q: 'Where should the rebuttal appear in an editorial?',
+                  options: ['In the opening paragraph.', 'After your supporting arguments, typically the 4th or 5th paragraph.', 'At the very end as your conclusion.', 'Throughout the editorial, mixed with your arguments.'],
+                  answer: 1, explain: 'The rebuttal typically comes after your 2-3 supporting arguments. Build your case first, then address the opposition before your solution and conclusion.' },
+                { q: 'An opposing argument says the new policy will cost $100,000. How do you rebut this effectively?',
+                  options: ['"$100,000 is not that much money."', '"While the initial cost is significant, the policy would generate $250,000 in savings over three years, making it a net positive investment."', '"The cost doesn\'t matter when students are involved."', '"Other schools spend even more than that."'],
+                  answer: 1, explain: 'The best rebuttal acknowledges the concern (cost is "significant"), then provides specific counter-evidence ($250,000 in savings) that outweighs the concern.' },
+                { q: 'Should you acknowledge that the opposing side has ANY valid points?',
+                  options: ['Never — it weakens your argument.', 'Yes — acknowledging validity shows intellectual honesty and makes your rebuttal stronger.', 'Only if the judge seems sympathetic to the other side.', 'Only in the conclusion.'],
+                  answer: 1, explain: 'Acknowledging the opposition\'s validity ("This is a legitimate concern") before rebutting it actually STRENGTHENS your credibility and makes your counter-argument more convincing.' },
+                { q: 'Which rebuttal is weakest?',
+                  options: ['"While the cost concerns are valid, investing now prevents more expensive repairs later."', '"Opponents worry about scheduling conflicts, but a pilot program could address these concerns before full implementation."', '"The other side just doesn\'t understand the issue."', '"Although some parents oppose later start times, research from 15 school districts shows improved academic performance."'],
+                  answer: 2, explain: '"The other side just doesn\'t understand" is an ad hominem attack — it attacks the people rather than their argument. Always address the argument itself, not the person.' },
+                { q: 'How long should a rebuttal be in a 300-450 word editorial?',
+                  options: ['1-2 sentences only.', '1 well-developed paragraph (3-5 sentences) that acknowledges and counters the opposition.', 'Half the editorial should be rebuttal.', 'A full paragraph for each opposing argument.'],
+                  answer: 1, explain: 'One solid paragraph is enough. Acknowledge the opposing point, counter it with evidence, and move to your solution. Too much rebuttal takes away from your own arguments.' },
+                { q: 'Can you rebut multiple opposing arguments?',
+                  options: ['Yes — address every single opposing point from the fact sheet.', 'Focus on rebutting the ONE strongest opposing argument for maximum impact.', 'Never rebut — just ignore the opposition.', 'Rebut exactly two opposing points.'],
+                  answer: 1, explain: 'In a 300-450 word editorial, focus on the one or two strongest opposing arguments. Addressing every point is not feasible and dilutes your rebuttal.' },
+                { q: 'Which sentence effectively transitions from rebuttal back to your position?',
+                  options: ['"Anyway, back to our point."', '"Despite these concerns, the evidence clearly supports moving forward with the proposal."', '"Now that we\'ve dealt with the opposition..."', '"The other side is wrong, so let\'s move on."'],
+                  answer: 1, explain: '"Despite these concerns" acknowledges what you just addressed, and "the evidence clearly supports" pivots back to your position with confidence.' }
+            ]
+        },
+        voice: {
+            name: 'Voice & Tone',
+            questions: [
+                { q: 'Which sentence uses proper editorial voice?',
+                  options: ['I believe the school board should approve the plan.', 'You should care about this because it affects your education.', 'The school board should approve the plan to protect student programs.', 'Don\'t you think the school board should approve this?'],
+                  answer: 2, explain: 'Proper editorial voice avoids "I" (first person singular), "you" (second person), and questions. Use third person or "we" (the staff). Option C states the position directly.' },
+                { q: 'Which sentence contains sermonizing?',
+                  options: ['The proposed budget cut would eliminate 12 teaching positions.', 'Students need to learn to appreciate what they have and stop taking their education for granted.', 'The district faces a $3 million shortfall that requires difficult decisions.', 'Reducing class sizes has been shown to improve test scores by 8%.'],
+                  answer: 1, explain: 'Sermonizing means lecturing or moralizing. "Students need to learn to appreciate..." preaches at the reader instead of making a logical argument with evidence.' },
+                { q: 'Why should editorials avoid asking questions?',
+                  options: ['Questions make the writer seem uncertain.', 'Editorials ANSWER questions — they don\'t ask them. Questions weaken the authoritative voice.', 'Questions are grammatically wrong in editorials.', 'UIL rules specifically ban questions.'],
+                  answer: 1, explain: 'An editorial takes a definitive position. Asking "Shouldn\'t we care about students?" implies uncertainty. Instead, state: "The district must prioritize student welfare."' },
+                { q: 'Which use of "we" is correct in an editorial?',
+                  options: ['"We all need to do better as a community."', '"We, the staff of the Leaguetown Press, urge the board to reconsider."', '"We students deserve better treatment."', '"We should all care about this issue."'],
+                  answer: 1, explain: '"We" in an editorial means "we, the newspaper staff." It does not mean "we, the students" or "we, the community." Use it sparingly and clearly.' },
+                { q: 'Which sentence is an example of editorializing with loaded language?',
+                  options: ['The proposal would increase class sizes from 25 to 32 students.', 'This disastrous proposal would devastate our school\'s educational quality.', 'The superintendent said the proposal aims to reduce costs.', 'Class sizes would increase by 28% under the proposal.'],
+                  answer: 1, explain: '"Disastrous" and "devastate" are emotionally loaded words. Even in editorials, let facts make your case. "Class sizes would increase by 28%" is more persuasive than hyperbole.' },
+                { q: 'Which approach is best for expressing disagreement in an editorial?',
+                  options: ['"This is the worst idea the board has ever had."', '"The board\'s proposal would reduce academic programs by 40%, a trade-off that is not worth the projected savings."', '"How could anyone think this is a good idea?"', '"We are deeply offended by this proposal."'],
+                  answer: 1, explain: 'Express disagreement through facts and logic, not emotion. "40% reduction" is specific evidence. Avoid insults, emotional outbursts, and rhetorical questions.' },
+                { q: 'What is the best editorial voice?',
+                  options: ['Angry and passionate — show you really care.', 'Confident, logical, and evidence-based — persuade through facts.', 'Neutral and balanced — present both sides equally.', 'Personal and emotional — share your feelings about the issue.'],
+                  answer: 1, explain: 'The ideal editorial voice is confident and logical. You take a clear side but persuade through evidence and reasoning, not emotion or anger.' },
+                { q: 'Which of these words or phrases should be AVOIDED in editorial writing?',
+                  options: ['"According to district data..."', '"The board should..."', '"Obviously..." or "Clearly..."', '"The proposal would impact 1,200 students."'],
+                  answer: 2, explain: '"Obviously" and "clearly" are dismissive — they imply the reader is foolish for not already agreeing. Let your evidence speak for itself without condescending language.' },
+                { q: 'A fact sheet includes a quote: "This will ruin our school." How should you use this in your editorial?',
+                  options: ['Copy it directly: "This will ruin our school," Johnson said.', 'Paraphrase it: Opponents, including teacher Mark Johnson, have expressed concern that the policy could significantly damage the school\'s academic reputation.', '"As Johnson said, this will ruin our school." (no quotation marks)', 'Don\'t use information from quotes at all.'],
+                  answer: 1, explain: 'Editorials paraphrase rather than directly quote. Pull the sentiment and facts from quotes, put them in your own words, and weave them into your argument.' },
+                { q: 'Is it ever acceptable to use "I" in a UIL editorial?',
+                  options: ['Yes, when expressing your personal opinion.', 'Yes, when you feel strongly about the topic.', 'No — UIL editorials are staff editorials and never use first person singular.', 'Only in the conclusion.'],
+                  answer: 2, explain: 'UIL editorials are STAFF editorials. "I" is never acceptable. If you must use a pronoun, use "we" (meaning the newspaper staff), but even "we" should be used sparingly.' }
+            ]
+        },
+        solutions: {
+            name: 'Solutions & Calls to Action',
+            questions: [
+                { q: 'Which is the strongest solution for an editorial opposing a budget cut?',
+                  options: ['"Something should be done about this."', '"The board should reject the proposed cuts and instead redirect $500,000 from the unused building maintenance reserve to preserve all 12 teaching positions."', '"We hope the board will do the right thing."', '"The budget should be fixed."'],
+                  answer: 1, explain: 'The strongest solutions are SPECIFIC: who should act (the board), what they should do (reject cuts, redirect funds), and how (from the maintenance reserve).' },
+                { q: 'Where should the solution appear in a UIL editorial?',
+                  options: ['In the first paragraph.', 'In the second paragraph, right after the stance.', 'Near the end, after arguments and rebuttal — typically the second-to-last or last paragraph.', 'Solutions are optional in UIL editorials.'],
+                  answer: 2, explain: 'The solution comes near the end, after you\'ve built your case and rebutted the opposition. It answers: "So what should happen next?"' },
+                { q: 'Which solution is too vague?',
+                  options: ['"The administration should form a 10-student advisory committee to review the dress code by January."', '"The school should do something to fix this problem."', '"The board should table the vote until a community forum can be held on March 15."', '"The district should allocate $50,000 from surplus funds to keep the program running for one more year."'],
+                  answer: 1, explain: '"Something" and "fix this problem" are vague. Strong solutions name specific actions, deadlines, amounts, or people responsible. Be concrete.' },
+                { q: 'Can a solution include a compromise?',
+                  options: ['Never — you must fully oppose or support the proposal.', 'Yes — a creative alternative that addresses both sides\' concerns can be very effective.', 'Only if the fact sheet suggests a compromise.', 'Compromises always weaken your position.'],
+                  answer: 1, explain: 'A creative compromise can be powerful: "Rather than eliminating the program entirely, the district should reduce it to three days per week, saving $200,000 while preserving access."' },
+                { q: 'Which call to action uses the future angle effectively?',
+                  options: ['"The board voted last week and should reconsider."', '"When the board votes Tuesday, members should reject this proposal and protect student programs."', '"We hope things get better in the future."', '"The board should eventually address this issue."'],
+                  answer: 1, explain: 'Using the future angle ("When the board votes Tuesday") is powerful because your editorial is published BEFORE the decision. It positions you as influencing the outcome.' },
+                { q: 'Should the solution be realistic?',
+                  options: ['No — dream big in editorials.', 'Yes — unrealistic solutions undermine your credibility. Propose something achievable.', 'It doesn\'t matter as long as it sounds good.', 'Only if you think the board will actually listen.'],
+                  answer: 1, explain: 'Realistic solutions show you understand the constraints. "Redirect surplus funds" is realistic. "Give every student a laptop" without funding is not.' },
+                { q: 'Which sentence best concludes an editorial after presenting the solution?',
+                  options: ['"In conclusion, we hope the board will do the right thing."', '"The choice is clear: invest in students today or pay the price tomorrow."', '"That is why we wrote this editorial."', '"Thank you for reading."'],
+                  answer: 1, explain: 'A strong closing reinforces your stance with a memorable final thought. Option B is concise, forward-looking, and leaves a lasting impression. Avoid "in conclusion" and "thank you."' },
+                { q: 'How specific should dollar amounts or numbers be in your solution?',
+                  options: ['Avoid numbers — they make the editorial too technical.', 'Use specific numbers from the fact sheet to make your solution concrete and credible.', 'Round to the nearest million for simplicity.', 'Only use numbers if the fact sheet has them.'],
+                  answer: 1, explain: 'Specific numbers from the fact sheet make your solution credible: "redirect the $75,000 surplus" is much stronger than "use available funds."' },
+                { q: 'Which solution addresses the WHO, WHAT, and WHEN?',
+                  options: ['"Things need to change around here."', '"The superintendent should present an alternative budget to the board at the March 15 meeting that preserves the music program."', '"Someone should fix the budget."', '"The budget problem will hopefully be resolved soon."'],
+                  answer: 1, explain: 'WHO: the superintendent. WHAT: present an alternative budget preserving the music program. WHEN: at the March 15 meeting. Specific and actionable.' },
+                { q: 'Is it effective to propose multiple solutions?',
+                  options: ['Yes — list as many as possible to show creativity.', 'One strong, specific solution is better than three vague ones in a 300-450 word editorial.', 'Always propose exactly two solutions.', 'Multiple solutions confuse the reader.'],
+                  answer: 1, explain: 'In a limited word count, one well-developed solution is more effective than several half-baked ones. Focus on your best idea and develop it fully.' }
+            ]
+        },
+        structure: {
+            name: 'Editorial Structure',
+            questions: [
+                { q: 'What is the correct order for a UIL editorial?',
+                  options: ['Rebuttal → Stance → Arguments → Solution', 'Lead/Situation → Stance → Supporting Arguments → Rebuttal → Solution → Conclusion', 'Introduction → Body → Conclusion (like an essay)', 'Quote → Analysis → Quote → Analysis'],
+                  answer: 1, explain: 'The UIL editorial formula: (1) Lead — state the situation, (2) Stance — take your position, (3) Body — 2-3 supporting arguments, (4) Rebuttal, (5) Solution, (6) Strong conclusion.' },
+                { q: 'What is the ideal word count for a UIL editorial?',
+                  options: ['200-250 words — short and sweet.', '300-450 words — enough to develop arguments without rambling.', '500-600 words — thorough and detailed.', 'As many words as possible to show effort.'],
+                  answer: 1, explain: '300-450 words is the target. Going over 450 suggests poor editing. The best editorials are often 350-400 words — concise, focused, and well-developed.' },
+                { q: 'What should the first paragraph of an editorial do?',
+                  options: ['Present your strongest argument.', 'State the situation — what is happening, what is at stake.', 'Include a creative hook or anecdote.', 'List all your arguments as an outline.'],
+                  answer: 1, explain: 'The opening paragraph states the situation: what\'s happening, who\'s involved, what\'s at stake. Get right to the point — don\'t ramble or use a creative feature lead.' },
+                { q: 'How is an editorial lead different from a feature lead?',
+                  options: ['Editorial leads should be creative and scene-setting.', 'Editorial leads should get right to the point — state the situation and stance quickly.', 'There is no difference.', 'Editorial leads should start with a quote.'],
+                  answer: 1, explain: 'Unlike feature writing, editorial leads are direct and to the point. State the situation quickly and move to your stance. No anecdotes, no scene-setting.' },
+                { q: 'What is the purpose of the conclusion in an editorial?',
+                  options: ['Introduce a new argument.', 'Summarize everything you already said in detail.', 'Reinforce your stance with a strong, memorable final statement.', 'Thank the reader for their time.'],
+                  answer: 2, explain: 'The conclusion should reinforce your position with a punchy, memorable statement. Don\'t introduce new arguments or summarize everything — be concise and impactful.' },
+                { q: 'How many paragraphs should a typical UIL editorial have?',
+                  options: ['3 paragraphs (intro, body, conclusion).', '6-8 short paragraphs — journalistic style.', '10-12 paragraphs for thoroughness.', 'The number doesn\'t matter.'],
+                  answer: 1, explain: 'A typical UIL editorial has 6-8 short paragraphs: lead, stance, 2-3 argument paragraphs, rebuttal, solution/conclusion. Journalistic paragraphs are 1-3 sentences.' },
+                { q: 'Should an editorial include direct quotes from the fact sheet?',
+                  options: ['Yes — quote sources extensively.', 'Rarely — editorials paraphrase information rather than using direct quotes.', 'Always include at least 3 direct quotes.', 'Never reference the fact sheet at all.'],
+                  answer: 1, explain: 'Editorials rarely use direct quotes. Paraphrase information from the fact sheet in your own words. You\'re arguing a position, not reporting quotes.' },
+                { q: 'What should you do in the first 8 minutes of the 45-minute contest?',
+                  options: ['Start writing immediately.', 'Read the fact sheet carefully, highlight key facts, and decide your stance.', 'Outline the entire editorial word by word.', 'Choose the longest quotes to include.'],
+                  answer: 1, explain: 'Spend the first 8 minutes reading, highlighting, and choosing your side. A few minutes planning saves time and produces a more organized editorial.' },
+                { q: 'Which structural element do students most commonly forget?',
+                  options: ['The lead.', 'Supporting arguments.', 'The rebuttal — addressing the opposition.', 'The word count.'],
+                  answer: 2, explain: 'The rebuttal is the most commonly missed element. Many students present their side but forget to address the opposition, which makes the argument seem one-sided.' },
+                { q: 'A student has written 460 words. What should they do?',
+                  options: ['Submit it — 10 words over is fine.', 'Cut unnecessary words, combine sentences, and tighten language to get under 450.', 'Remove the rebuttal to save words.', 'Remove the solution paragraph.'],
+                  answer: 1, explain: 'Going over 450 words suggests poor editing. Tighten language, cut redundancy, and combine sentences. Don\'t remove structural elements — trim within them.' }
+            ]
+        }
+    };
+
+    function shuffle(arr) {
+        for (var i = arr.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+        }
+        return arr;
+    }
+
+    function loadBestScores() {
+        try {
+            var data = JSON.parse(localStorage.getItem('uil-editorial-drills') || '{}');
+            for (var key in drills) {
+                var el = document.getElementById('best-' + key);
+                if (el && data[key]) el.textContent = 'Best: ' + data[key] + '/10';
+            }
+        } catch (e) {}
+    }
+
+    function saveBestScore(drill, score) {
+        try {
+            var data = JSON.parse(localStorage.getItem('uil-editorial-drills') || '{}');
+            if (!data[drill] || score > data[drill]) data[drill] = score;
+            localStorage.setItem('uil-editorial-drills', JSON.stringify(data));
+        } catch (e) {}
+    }
+
+    function startDrill(drill) {
+        currentDrill = drill;
+        answered = 0; correct = 0;
+        var d = drills[drill];
+
+        document.getElementById('drill-title').textContent = d.name;
+        document.getElementById('drill-score').textContent = '0';
+        document.getElementById('drill-total').textContent = '10';
+        document.getElementById('drill-selector').style.display = 'none';
+        document.getElementById('drill-area').classList.add('visible');
+        document.getElementById('results-box').style.display = 'none';
+
+        // Shuffle questions and pick 10
+        var qs = shuffle(d.questions.slice()).slice(0, 10);
+        totalQ = qs.length;
+        document.getElementById('drill-total').textContent = totalQ;
+
+        var container = document.getElementById('questions-container');
+        container.innerHTML = '';
+
+        qs.forEach(function(q, i) {
+            // Shuffle options but track correct answer
+            var optionIndices = q.options.map(function(_, idx) { return idx; });
+            shuffle(optionIndices);
+            var newAnswer = optionIndices.indexOf(q.answer);
+
+            var html = '<div class="q-card" id="q-' + i + '">';
+            html += '<div class="q-number">Question ' + (i + 1) + ' of ' + totalQ + '</div>';
+            html += '<div class="q-text">' + q.q + '</div>';
+            html += '<div class="q-options">';
+            optionIndices.forEach(function(origIdx, optIdx) {
+                html += '<div class="q-option" data-q="' + i + '" data-opt="' + optIdx + '" data-correct="' + newAnswer + '" onclick="selectAnswer(this)">' + q.options[origIdx] + '</div>';
+            });
+            html += '</div>';
+            html += '<div class="q-explanation" id="exp-' + i + '">' + q.explain + '</div>';
+            html += '</div>';
+            container.innerHTML += html;
+        });
+    }
+
+    function selectAnswer(el) {
+        var qIdx = el.getAttribute('data-q');
+        var optIdx = parseInt(el.getAttribute('data-opt'));
+        var correctIdx = parseInt(el.getAttribute('data-correct'));
+        var card = document.getElementById('q-' + qIdx);
+
+        // Prevent re-answering
+        if (card.classList.contains('correct') || card.classList.contains('incorrect')) return;
+
+        answered++;
+        var isCorrect = optIdx === correctIdx;
+
+        if (isCorrect) {
+            correct++;
+            el.classList.add('correct-answer');
+            card.classList.add('correct');
+        } else {
+            el.classList.add('wrong-answer');
+            card.classList.add('incorrect');
+            // Highlight the correct answer
+            var options = card.querySelectorAll('.q-option');
+            options[correctIdx].classList.add('correct-answer');
+        }
+
+        // Show explanation
+        document.getElementById('exp-' + qIdx).classList.add('visible');
+
+        // Disable all options for this question
+        var opts = card.querySelectorAll('.q-option');
+        opts.forEach(function(o) { o.style.pointerEvents = 'none'; });
+
+        // Update score
+        document.getElementById('drill-score').textContent = correct;
+
+        // Check if drill is complete
+        if (answered >= totalQ) {
+            setTimeout(showResults, 600);
+        }
+    }
+
+    function showResults() {
+        var pct = Math.round((correct / totalQ) * 100);
+        var msg = pct >= 90 ? 'Outstanding! You\'ve mastered this skill!' :
+                  pct >= 70 ? 'Good job! A little more practice and you\'ll nail it.' :
+                  pct >= 50 ? 'Getting there. Review the explanations and try again.' :
+                  'Keep practicing! Read the tutorial for tips on this topic.';
+
+        document.getElementById('final-score').textContent = correct + '/' + totalQ + ' (' + pct + '%)';
+        document.getElementById('final-msg').textContent = msg;
+        document.getElementById('results-box').style.display = 'block';
+        document.getElementById('results-box').scrollIntoView({ behavior: 'smooth' });
+
+        saveBestScore(currentDrill, correct);
+        loadBestScores();
+    }
+
+    function backToSelector() {
+        document.getElementById('drill-area').classList.remove('visible');
+        document.getElementById('drill-selector').style.display = '';
+        document.getElementById('questions-container').innerHTML = '';
+    }
+
+    function restartDrill() {
+        document.getElementById('results-box').style.display = 'none';
+        startDrill(currentDrill);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showToast(m) { var t = document.getElementById('toast'); t.textContent = m; t.classList.add('visible'); setTimeout(function() { t.classList.remove('visible'); }, 2500); }
+
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+        var isDark = document.body.classList.contains('dark-mode');
+        document.getElementById('dark-toggle').textContent = isDark ? 'Light Mode' : 'Dark Mode';
+        try { localStorage.setItem('uil-dark-mode', isDark ? '1' : '0'); } catch (e) {}
+    }
+
+    // Init
+    document.addEventListener('DOMContentLoaded', function() {
+        try { if (localStorage.getItem('uil-dark-mode') === '1') { document.body.classList.add('dark-mode'); document.getElementById('dark-toggle').textContent = 'Light Mode'; } } catch (e) {}
+        loadBestScores();
+    });
+    </script>
+</body>
+</html>
