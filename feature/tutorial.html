@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feature Writing Tutorial — UIL Journalism Trainer</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 50%, #43a047 100%);
+            min-height: 100vh; padding: 20px;
+        }
+        .container {
+            max-width: 900px; margin: 0 auto; background: white;
+            border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #1b5e20 0%, #388e3c 100%);
+            color: white; padding: 30px; text-align: center;
+        }
+        .header h1 { font-size: 2.2em; margin-bottom: 10px; }
+        .header p { font-size: 1.1em; opacity: 0.9; }
+        .header .back-link { color: rgba(255,255,255,0.8); font-size: 0.9em; margin-top: 8px; display: inline-block; text-decoration: none; }
+        .header .back-link:hover { color: white; }
+        .content { padding: 30px; color: #333; }
+
+        .nav-links {
+            display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+        .nav-link {
+            padding: 10px 20px; border: 2px solid #2e7d32; border-radius: 6px;
+            text-decoration: none; color: #2e7d32; font-weight: 600; font-size: 0.9em;
+            transition: all 0.2s;
+        }
+        .nav-link:hover { background: #2e7d32; color: white; }
+        .nav-link.active { background: #2e7d32; color: white; }
+
+        .toc { background: #e8f5e9; border-radius: 8px; padding: 20px; margin-bottom: 30px; }
+        .toc h3 { color: #1b5e20; margin-bottom: 10px; }
+        .toc a {
+            display: block; color: #2e7d32; text-decoration: none; padding: 4px 0;
+            font-size: 0.95em; transition: color 0.2s;
+        }
+        .toc a:hover { color: #1b5e20; text-decoration: underline; }
+
+        .section { margin-bottom: 35px; padding-bottom: 25px; border-bottom: 1px solid #eee; }
+        .section:last-child { border-bottom: none; }
+        .section h2 {
+            color: #1b5e20; font-size: 1.5em; margin-bottom: 15px;
+            padding-bottom: 8px; border-bottom: 3px solid #c8e6c9;
+        }
+        .section h3 { color: #2e7d32; font-size: 1.15em; margin: 15px 0 8px; }
+        .section p { line-height: 1.7; margin-bottom: 12px; font-size: 0.95em; }
+        .section ul, .section ol { padding-left: 24px; margin-bottom: 12px; }
+        .section li { line-height: 1.7; margin-bottom: 6px; font-size: 0.95em; }
+
+        .tip-box {
+            background: #fff3e0; border-left: 4px solid #ff9800; padding: 15px;
+            border-radius: 0 8px 8px 0; margin: 15px 0; font-size: 0.92em; line-height: 1.6;
+        }
+        .tip-box strong { color: #e65100; }
+        .example-box {
+            background: #f1f8e9; border-left: 4px solid #8bc34a; padding: 15px;
+            border-radius: 0 8px 8px 0; margin: 15px 0;
+        }
+        .example-box strong { color: #33691e; }
+        .example-box p { font-family: Georgia, serif; font-style: italic; line-height: 1.7; font-size: 0.93em; color: #333; }
+        .warning-box {
+            background: #fce4ec; border-left: 4px solid #e91e63; padding: 15px;
+            border-radius: 0 8px 8px 0; margin: 15px 0; font-size: 0.92em; line-height: 1.6;
+        }
+        .warning-box strong { color: #c62828; }
+
+        .comparison-table {
+            width: 100%; border-collapse: collapse; margin: 15px 0;
+        }
+        .comparison-table th, .comparison-table td {
+            padding: 10px 14px; text-align: left; border: 1px solid #ddd; font-size: 0.9em;
+        }
+        .comparison-table th { background: #e8f5e9; color: #1b5e20; font-weight: 700; }
+        .comparison-table tr:nth-child(even) { background: #fafafa; }
+
+        .structure-diagram {
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            border-radius: 12px; padding: 25px; margin: 20px 0; text-align: center;
+        }
+        .structure-diagram .layer {
+            padding: 12px 20px; margin: 6px auto; border-radius: 6px;
+            font-weight: 600; color: white; font-size: 0.9em;
+        }
+        .layer-lead { background: #2e7d32; max-width: 200px; }
+        .layer-nut { background: #388e3c; max-width: 280px; }
+        .layer-tq { background: #43a047; max-width: 360px; }
+        .layer-tq2 { background: #4caf50; max-width: 440px; }
+        .layer-tq3 { background: #66bb6a; max-width: 520px; }
+        .layer-close { background: #1b5e20; max-width: 240px; }
+
+        /* Dark mode */
+        .dark-toggle {
+            position: fixed; top: 12px; right: 12px; z-index: 300;
+            background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 20px; padding: 6px 14px; cursor: pointer;
+            font-size: 13px; font-weight: 600; transition: all 0.2s; color: white;
+        }
+        .dark-toggle:hover { background: rgba(255,255,255,0.3); }
+        body.dark-mode { background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%); }
+        body.dark-mode .container { background: #1e1e2e; color: #ddd; }
+        body.dark-mode .toc { background: #2a2a3e; }
+        body.dark-mode .toc h3 { color: #a5d6a7; }
+        body.dark-mode .toc a { color: #81c784; }
+        body.dark-mode .section h2 { color: #a5d6a7; border-color: #2e7d32; }
+        body.dark-mode .section h3 { color: #81c784; }
+        body.dark-mode .tip-box { background: #3e2723; border-color: #ff9800; }
+        body.dark-mode .example-box { background: #1b3a1b; border-color: #66bb6a; }
+        body.dark-mode .example-box p { color: #c8e6c9; }
+        body.dark-mode .warning-box { background: #3e1e1e; border-color: #ef5350; }
+        body.dark-mode .comparison-table th { background: #2a3a2a; color: #a5d6a7; }
+        body.dark-mode .comparison-table td { border-color: #444; }
+        body.dark-mode .comparison-table tr:nth-child(even) { background: #252535; }
+        body.dark-mode .structure-diagram { background: linear-gradient(135deg, #1b3a1b, #2a3a2a); }
+        body.dark-mode .section { border-color: #333; }
+
+        @media (max-width: 600px) {
+            .header h1 { font-size: 1.6em; }
+            .content { padding: 20px; }
+            .nav-links { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+    <button class="dark-toggle" id="dark-toggle" onclick="toggleDarkMode()">Dark Mode</button>
+
+    <div class="container">
+        <div class="header">
+            <h1>&#128221; Feature Writing Tutorial</h1>
+            <p>Master the art of UIL feature writing — creative leads, nut graphs, and storytelling</p>
+            <a href="../index.html" class="back-link">&#8592; Back to All Contests</a>
+        </div>
+
+        <div class="content">
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Practice</a>
+                <a href="tutorial.html" class="nav-link active">Tutorial</a>
+                <a href="drills.html" class="nav-link">Skill Drills</a>
+            </div>
+
+            <div class="toc">
+                <h3>Table of Contents</h3>
+                <a href="#overview">1. Contest Overview</a>
+                <a href="#vs-news">2. Feature vs. News Writing</a>
+                <a href="#leads">3. The Feature Lead (Hook)</a>
+                <a href="#nutgraph">4. The Nut Graph</a>
+                <a href="#structure">5. Story Structure & Transition-Quote Formula</a>
+                <a href="#quotes">6. Quotes & Attribution</a>
+                <a href="#storytelling">7. Storytelling & Human Element</a>
+                <a href="#closing">8. The Closing</a>
+                <a href="#donts">9. Common Mistakes</a>
+                <a href="#time">10. Time Management (60 Minutes)</a>
+            </div>
+
+            <!-- 1. Overview -->
+            <div class="section" id="overview">
+                <h2>1. Contest Overview</h2>
+                <p>In UIL Feature Writing, you receive a <strong>fact sheet</strong> about an interesting person or situation at Leaguetown High School. Your job is to write a compelling <strong>feature story</strong> — a human interest story that brings the subject to life for the reader.</p>
+                <ul>
+                    <li><strong>Time limit:</strong> 1 hour (60 minutes)</li>
+                    <li><strong>Format:</strong> Fact sheet with background information and 4-5 named source quotes</li>
+                    <li><strong>Goal:</strong> Write a feature story that grabs the reader, tells a story, and uses quotes effectively</li>
+                    <li><strong>Key skills:</strong> Creative leads, nut graphs, transition-quote formula, storytelling</li>
+                </ul>
+                <div class="tip-box">
+                    <strong>Key difference from News Writing:</strong> A news story leads with the most important facts. A feature story leads with a HOOK — a scene, a moment, or a vivid detail that draws the reader in. The facts come in the nut graph.
+                </div>
+            </div>
+
+            <!-- 2. Feature vs. News -->
+            <div class="section" id="vs-news">
+                <h2>2. Feature vs. News Writing</h2>
+                <p>Many students lose points by writing a news story instead of a feature story. Here are the key differences:</p>
+                <table class="comparison-table">
+                    <tr><th>Element</th><th>News Writing</th><th>Feature Writing</th></tr>
+                    <tr><td><strong>Lead</strong></td><td>Summary lead with 5Ws (Who, What, When, Where, Why)</td><td>Creative lead — scene, moment, vivid detail, or hook</td></tr>
+                    <tr><td><strong>Tone</strong></td><td>Objective, straightforward, factual</td><td>Narrative, descriptive, storytelling (but still objective)</td></tr>
+                    <tr><td><strong>Structure</strong></td><td>Inverted pyramid (most to least important)</td><td>Lead → Nut graph → Transition-quote formula → Closing quote</td></tr>
+                    <tr><td><strong>Focus</strong></td><td>The event or decision</td><td>The person and their story</td></tr>
+                    <tr><td><strong>Quotes</strong></td><td>Support the facts</td><td>Reveal character, emotion, and personality</td></tr>
+                    <tr><td><strong>Ending</strong></td><td>Least important info (can be cut)</td><td>Strong closing quote that gives resolution</td></tr>
+                </table>
+                <div class="warning-box">
+                    <strong>Common mistake:</strong> Starting with a news-style summary lead like "Leaguetown High School will honor..." or "A teacher at Leaguetown was recognized for..." This is a NEWS lead, not a FEATURE lead, and will cost you significant points.
+                </div>
+            </div>
+
+            <!-- 3. The Feature Lead -->
+            <div class="section" id="leads">
+                <h2>3. The Feature Lead (Hook)</h2>
+                <p>Your lead is the most important part of a feature story. It must <strong>grab the reader's attention</strong> and draw them into the story. Unlike a news lead, a feature lead does NOT need to include the 5Ws. Instead, it should create a scene, evoke a feeling, or present an intriguing detail.</p>
+
+                <h3>Types of Feature Leads</h3>
+                <ul>
+                    <li><strong>Scene-setting lead:</strong> Describe a specific moment as if the reader were there</li>
+                    <li><strong>Anecdotal lead:</strong> Start with a short story or incident that illustrates the theme</li>
+                    <li><strong>Contrast/irony lead:</strong> Present a surprising contrast or ironic detail</li>
+                    <li><strong>Descriptive lead:</strong> Use vivid sensory details to paint a picture</li>
+                    <li><strong>Question lead:</strong> (Use sparingly) Pose a compelling question</li>
+                    <li><strong>Quote lead:</strong> Start with a powerful, attention-grabbing quote</li>
+                </ul>
+
+                <div class="example-box">
+                    <strong>Scene-setting lead (from real UIL State 2025):</strong>
+                    <p>Physics teacher John Ashton is literally a knight in shining armor — both in and out of the classroom.</p>
+                    <p>In the classroom, students describe him as patient and helpful. He makes sure they learn before moving on to the next physics concept.</p>
+                    <p>Out of the classroom, Ashton's knighthood became official May 10.</p>
+                </div>
+
+                <div class="example-box">
+                    <strong>Anecdotal lead (from real UIL Invitational B 2025):</strong>
+                    <p>He had settled in for the night with a book — "The Shining" by Stephen King. AP English teacher Owen McFarland liked to end his long days of teaching by reading before bed. But on this night, a knock on his Toyota Corolla's passenger side window would change everything.</p>
+                </div>
+
+                <div class="example-box">
+                    <strong>Contrast lead (from real UIL Invitational A 2025):</strong>
+                    <p>Two medals. Two heroes.</p>
+                    <p>Sophomore Helen Santos was babysitting her neighbor's two children, like she did every week. The three were upstairs making plates of Play-Doh spaghetti when the piercing shriek of the smoke alarm stopped them.</p>
+                </div>
+
+                <div class="tip-box">
+                    <strong>Lead tips:</strong> Stay close to the fact sheet. Judges want you to use the facts creatively, not invent new scenes. Find a vivid detail or moment in the prompt that makes a natural hook. Your lead can be 2-5 paragraphs long.
+                </div>
+            </div>
+
+            <!-- 4. Nut Graph -->
+            <div class="section" id="nutgraph">
+                <h2>4. The Nut Graph</h2>
+                <p>The nut graph is the <strong>summary paragraph</strong> that tells the reader what the story is about. It comes AFTER your creative lead and grounds the reader with the key facts. Think of it as the "so what?" paragraph — it explains why this story matters.</p>
+
+                <h3>What goes in a nut graph?</h3>
+                <ul>
+                    <li>Who the story is about</li>
+                    <li>What happened or is happening</li>
+                    <li>When the key event is (the upcoming ceremony, meeting, etc.)</li>
+                    <li>Why this is significant</li>
+                </ul>
+
+                <div class="example-box">
+                    <strong>Nut graph example (Invitational A 2025):</strong>
+                    <p>After her act of bravery, Santos will receive her own medal — the Hometown Hero Award — at a ceremony before Friday's city council meeting.</p>
+                </div>
+
+                <div class="example-box">
+                    <strong>Nut graph example (State 2025):</strong>
+                    <p>The inaugural meeting of the Society for Medieval Culture (SMC) chapter will be this Wednesday after school in Ashton's classroom, where students will begin planning activities for the upcoming year.</p>
+                </div>
+
+                <div class="tip-box">
+                    <strong>Structure rule:</strong> Lead → Nut graph → Direct quote. Always follow your nut graph with a direct quote before going into the transition-quote pattern.
+                </div>
+            </div>
+
+            <!-- 5. Structure -->
+            <div class="section" id="structure">
+                <h2>5. Story Structure & Transition-Quote Formula</h2>
+                <p>After the lead and nut graph, the rest of your story follows the <strong>transition-quote formula</strong> — the same pattern used in news writing, but with more descriptive transitions.</p>
+
+                <div class="structure-diagram">
+                    <div class="layer layer-lead">&#127912; Creative Lead</div>
+                    <div class="layer layer-nut">Nut Graph (summary)</div>
+                    <div class="layer layer-tq">Direct Quote</div>
+                    <div class="layer layer-tq2">Transition (new information)</div>
+                    <div class="layer layer-tq3">Direct Quote</div>
+                    <div class="layer layer-tq2">Transition (new information)</div>
+                    <div class="layer layer-tq3">Direct Quote</div>
+                    <div class="layer layer-close">&#128172; Strong Closing Quote</div>
+                </div>
+
+                <h3>Transition rules</h3>
+                <ul>
+                    <li><strong>Never stack quotes</strong> — always put a transition between quotes from different sources</li>
+                    <li><strong>Transitions should provide new information</strong> — don't just say "She also said..." Use transitions to advance the story</li>
+                    <li><strong>Don't repeat</strong> — the transition should NOT repeat what the quote is about to say</li>
+                    <li><strong>Use narrative transitions</strong> — in feature writing, transitions can be more descriptive and storytelling</li>
+                </ul>
+
+                <div class="warning-box">
+                    <strong>Stacking quotes = big penalty.</strong> Never put two quotes from different sources back-to-back without a transition paragraph between them. This is one of the most common mistakes in feature writing.
+                </div>
+            </div>
+
+            <!-- 6. Quotes & Attribution -->
+            <div class="section" id="quotes">
+                <h2>6. Quotes & Attribution</h2>
+                <p>Feature writing uses the same attribution rules as news writing. These rules are strict in UIL competition.</p>
+
+                <h3>Attribution Rules</h3>
+                <ul>
+                    <li><strong>Always use "said"</strong> — never use "says," "stated," "feels," "expressed," "exclaimed," or any other synonym</li>
+                    <li><strong>Name before verb:</strong> "Santos said" NOT "said Santos"</li>
+                    <li><strong>Attribution after the quote</strong> or after the first sentence of a multi-sentence quote</li>
+                    <li><strong>First reference:</strong> Full name and identifier — "sophomore Helen Santos"</li>
+                    <li><strong>Second reference:</strong> Last name only — "Santos said"</li>
+                </ul>
+
+                <div class="example-box">
+                    <strong>Correct attribution:</strong>
+                    <p>"I know I'm getting an award from the mayor, but I really don't feel like any kind of hero," Santos said. "When someone hires me to babysit, they are putting the most precious part of their lives in my hands."</p>
+                </div>
+
+                <div class="warning-box">
+                    <strong>Wrong:</strong> "I don't feel like a hero," <em>said Santos</em>. (verb before name)<br>
+                    <strong>Wrong:</strong> "I don't feel like a hero," Santos <em>stated</em>. (wrong verb)<br>
+                    <strong>Wrong:</strong> "I don't feel like a hero," Santos <em>says</em>. (wrong tense)
+                </div>
+
+                <h3>Using quotes effectively in features</h3>
+                <ul>
+                    <li>Pick the <strong>best and most emotional quotes</strong> — you don't need to use everything</li>
+                    <li>Use quotes that <strong>reveal character and personality</strong>, not just facts</li>
+                    <li>Paraphrase factual information; save direct quotes for <strong>opinions, feelings, and colorful language</strong></li>
+                    <li>You can use <strong>partial quotes</strong> woven into your transitions</li>
+                </ul>
+            </div>
+
+            <!-- 7. Storytelling -->
+            <div class="section" id="storytelling">
+                <h2>7. Storytelling & Human Element</h2>
+                <p>Feature writing is <strong>storytelling</strong>. The best feature stories make the reader feel like they know the subject. Here's how to bring your story to life:</p>
+
+                <h3>Show, don't tell</h3>
+                <ul>
+                    <li>Use specific details from the fact sheet to paint pictures</li>
+                    <li>Let quotes reveal character — don't describe emotions, let the subject express them</li>
+                    <li>Use action verbs and sensory language in transitions</li>
+                </ul>
+
+                <h3>Find the theme</h3>
+                <p>Every great feature has a <strong>central theme</strong> — a unifying idea that ties the story together. Before you start writing, ask yourself: What is this story REALLY about?</p>
+                <ul>
+                    <li>A teacher who is a knight both in and out of the classroom</li>
+                    <li>Two medals, two heroes — a student's bravery mirrors a soldier's valor</li>
+                    <li>A community that rallies around a teacher in need</li>
+                </ul>
+
+                <div class="tip-box">
+                    <strong>Theme tip:</strong> Your theme can appear in your lead, nut graph, and closing. A great feature story starts and ends in the same place thematically — the closing quote should bring the reader back to where the story began.
+                </div>
+
+                <h3>Remember: objective storytelling</h3>
+                <p>Feature writing is narrative and descriptive, but you must still be <strong>objective</strong>. You are a storyteller, not a cheerleader.</p>
+                <ul>
+                    <li>Don't editorialize: never write "amazingly" or "incredibly" or "inspiring"</li>
+                    <li>Don't use first or second person (I, we, our, you) outside of quotes</li>
+                    <li>Let the sources express opinions — you just tell the story</li>
+                </ul>
+            </div>
+
+            <!-- 8. The Closing -->
+            <div class="section" id="closing">
+                <h2>8. The Closing</h2>
+                <p>A feature story needs a <strong>strong closing</strong> — usually a powerful quote that gives the reader a sense of resolution or circles back to the beginning of the story.</p>
+
+                <h3>What makes a good closing?</h3>
+                <ul>
+                    <li>A quote that wraps up the story emotionally</li>
+                    <li>A quote that connects back to the theme from the lead</li>
+                    <li>A quote that gives the reader something to think about</li>
+                    <li>A brief transition before the closing quote can set it up effectively</li>
+                </ul>
+
+                <div class="example-box">
+                    <strong>Strong closing (State 2025):</strong>
+                    <p>"I've been a teacher at this school for 18 years," Ashton said. "I got into teaching because I love physics, but I stayed in it because I love my kids. Before this, I wasn't sure if my students knew how much they meant to me. Now, I'm pretty sure they know."</p>
+                </div>
+
+                <div class="example-box">
+                    <strong>Strong closing with callback (Invitational A 2025):</strong>
+                    <p>"His was an act of valor, but not too dissimilar from what Helen did," she said. "Not to be too dramatic, but they both put others' lives before their own. The fact that she grabbed his medal is no coincidence for us. Helen is pretty special."</p>
+                </div>
+
+                <div class="tip-box">
+                    <strong>Closing tip:</strong> Read through all the quotes in the fact sheet and find the one that would make the most satisfying ending. It should feel like a period at the end of the story, not a comma.
+                </div>
+            </div>
+
+            <!-- 9. Common Mistakes -->
+            <div class="section" id="donts">
+                <h2>9. Common Mistakes</h2>
+                <ol>
+                    <li><strong>Writing a news lead instead of a feature lead</strong> — "The school will honor..." is a news lead. Set a scene instead.</li>
+                    <li><strong>Missing the nut graph</strong> — Readers get lost without a summary paragraph after the creative lead.</li>
+                    <li><strong>Stacking quotes</strong> — Always put a transition paragraph between quotes from different people.</li>
+                    <li><strong>Using "said" alternatives</strong> — "says," "stated," "feels," "expressed" all lose points. Only use "said."</li>
+                    <li><strong>"Said Name" instead of "Name said"</strong> — The subject always comes before the verb of attribution.</li>
+                    <li><strong>Editorializing</strong> — Words like "amazing," "incredible," "inspiring," "wonderful" are opinions. Remove them.</li>
+                    <li><strong>Using first/second person</strong> — No "I," "we," "our school," or "you" outside of quotes.</li>
+                    <li><strong>Misspelling names</strong> — Copy names exactly from the fact sheet. This is a serious error.</li>
+                    <li><strong>Trying to use every quote</strong> — Be selective. Use the best quotes, not all of them.</li>
+                    <li><strong>Weak closing</strong> — Don't just stop writing. End with a powerful quote that resolves the story.</li>
+                </ol>
+            </div>
+
+            <!-- 10. Time Management -->
+            <div class="section" id="time">
+                <h2>10. Time Management (60 Minutes)</h2>
+                <p>You have one hour. Here's a suggested breakdown:</p>
+                <table class="comparison-table">
+                    <tr><th>Time</th><th>Activity</th><th>Details</th></tr>
+                    <tr><td><strong>0-10 min</strong></td><td>Read & Plan</td><td>Read the fact sheet carefully. Identify the theme. Find your lead detail. Choose your best quotes. Plan your structure.</td></tr>
+                    <tr><td><strong>10-15 min</strong></td><td>Write the Lead</td><td>Craft a creative, scene-setting lead. This is worth spending extra time on — it's what judges notice first.</td></tr>
+                    <tr><td><strong>15-20 min</strong></td><td>Nut Graph + First Quote</td><td>Write a clear nut graph. Follow with a strong first direct quote.</td></tr>
+                    <tr><td><strong>20-45 min</strong></td><td>Body (Transition-Quote)</td><td>Build the rest of the story using the transition-quote formula. Use 3-4 sources.</td></tr>
+                    <tr><td><strong>45-50 min</strong></td><td>Closing</td><td>Write a strong closing transition and end with a powerful closing quote.</td></tr>
+                    <tr><td><strong>50-60 min</strong></td><td>Proofread</td><td>Check spelling (especially names), AP style, attribution format, and flow.</td></tr>
+                </table>
+
+                <div class="tip-box">
+                    <strong>Pro tip:</strong> Before you start writing, mark up the fact sheet with your highlighter. Use different colors for: key facts (yellow), best quotes (green), lead details (pink), and closing quote (blue). This saves time when writing.
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            var isDark = document.body.classList.contains('dark-mode');
+            document.getElementById('dark-toggle').textContent = isDark ? 'Light Mode' : 'Dark Mode';
+            try { localStorage.setItem('uil-dark-mode', isDark ? '1' : '0'); } catch (e) {}
+        }
+        try { if (localStorage.getItem('uil-dark-mode') === '1') { document.body.classList.add('dark-mode'); document.getElementById('dark-toggle').textContent = 'Light Mode'; } } catch (e) {}
+    </script>
+</body>
+</html>

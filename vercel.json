@@ -7,6 +7,8 @@
     "api/editorial/generate-prompt.js": { "memory": 1024, "maxDuration": 60 },
     "api/editorial/evaluate.js": { "memory": 1024, "maxDuration": 60 },
     "api/news/generate-prompt.js": { "memory": 1024, "maxDuration": 60 },
-    "api/news/evaluate.js": { "memory": 1024, "maxDuration": 60 }
+    "api/news/evaluate.js": { "memory": 1024, "maxDuration": 60 },
+    "api/feature/generate-prompt.js": { "memory": 1024, "maxDuration": 60 },
+    "api/feature/evaluate.js": { "memory": 1024, "maxDuration": 60 }
   }
 }

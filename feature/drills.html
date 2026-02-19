@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feature Writing Skill Drills — UIL Journalism Trainer</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 50%, #43a047 100%);
+            min-height: 100vh; padding: 20px;
+        }
+        .container {
+            max-width: 900px; margin: 0 auto; background: white;
+            border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #1b5e20 0%, #388e3c 100%);
+            color: white; padding: 30px; text-align: center;
+        }
+        .header h1 { font-size: 2.2em; margin-bottom: 10px; }
+        .header p { font-size: 1.1em; opacity: 0.9; }
+        .header .back-link { color: rgba(255,255,255,0.8); font-size: 0.9em; margin-top: 8px; display: inline-block; text-decoration: none; }
+        .header .back-link:hover { color: white; }
+        .content { padding: 30px; color: #333; }
+
+        .nav-links {
+            display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+        .nav-link {
+            padding: 10px 20px; border: 2px solid #2e7d32; border-radius: 6px;
+            text-decoration: none; color: #2e7d32; font-weight: 600; font-size: 0.9em;
+            transition: all 0.2s;
+        }
+        .nav-link:hover { background: #2e7d32; color: white; }
+        .nav-link.active { background: #2e7d32; color: white; }
+
+        .btn {
+            background: linear-gradient(135deg, #2e7d32, #66bb6a);
+            color: white; border: none; padding: 14px 28px; font-size: 16px;
+            border-radius: 6px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: 600;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(46,125,50,0.4); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .btn-sm { padding: 8px 16px; font-size: 13px; border-radius: 4px; }
+
+        /* Drill selector grid */
+        .drill-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px; margin-bottom: 25px;
+        }
+        .drill-card {
+            background: #f8f9fa; border: 2px solid #eee; border-radius: 10px;
+            padding: 20px; cursor: pointer; transition: all 0.2s; text-align: center;
+        }
+        .drill-card:hover { border-color: #2e7d32; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(46,125,50,0.15); }
+        .drill-card.active { border-color: #2e7d32; background: #e8f5e9; }
+        .drill-icon { font-size: 2em; margin-bottom: 8px; }
+        .drill-name { font-weight: bold; color: #1b5e20; margin-bottom: 4px; }
+        .drill-desc { font-size: 0.85em; color: #777; line-height: 1.4; }
+        .drill-best { font-size: 0.78em; color: #2e7d32; margin-top: 6px; font-weight: 600; }
+
+        /* Drill area */
+        .drill-area { display: none; }
+        .drill-area.visible { display: block; }
+        .drill-header-bar {
+            background: #e8f5e9; border-radius: 8px; padding: 15px 20px;
+            margin-bottom: 20px; display: flex; justify-content: space-between;
+            align-items: center; flex-wrap: wrap; gap: 10px;
+        }
+        .drill-title { font-weight: bold; color: #1b5e20; }
+        .drill-score-bar { font-size: 0.95em; color: #555; }
+        .drill-score-bar strong { color: #1b5e20; }
+
+        /* Question card */
+        .q-card {
+            background: #f8f9fa; border-radius: 8px; padding: 20px; margin-bottom: 15px;
+            border: 2px solid #eee; transition: border-color 0.2s;
+        }
+        .q-card.correct { border-color: #4caf50; background: #e8f5e9; }
+        .q-card.incorrect { border-color: #f44336; background: #fce4ec; }
+        .q-text { font-size: 1.05em; line-height: 1.7; margin-bottom: 12px; }
+        .q-options { display: flex; flex-direction: column; gap: 8px; }
+        .q-option {
+            padding: 10px 16px; border: 2px solid #ddd; border-radius: 6px;
+            cursor: pointer; transition: all 0.15s; font-size: 0.95em; background: white;
+        }
+        .q-option:hover { border-color: #a5d6a7; background: #f1f8e9; }
+        .q-option.selected { border-color: #2e7d32; background: #e8f5e9; font-weight: 600; }
+        .q-option.correct-answer { border-color: #4caf50; background: #e8f5e9; }
+        .q-option.wrong-answer { border-color: #f44336; background: #ffebee; }
+        .q-explanation {
+            display: none; margin-top: 10px; padding: 10px 14px;
+            background: #fff3e0; border-radius: 4px; border-left: 3px solid #ff9800;
+            font-size: 0.9em; line-height: 1.5; color: #555;
+        }
+        .q-explanation.visible { display: block; }
+
+        .results-bar {
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            border-radius: 8px; padding: 20px; text-align: center; margin-top: 20px;
+        }
+        .results-bar h3 { color: #1b5e20; margin-bottom: 6px; }
+        .results-bar .big-score { font-size: 2.5em; font-weight: 800; color: #2e7d32; }
+        .results-bar .actions { margin-top: 12px; display: flex; gap: 10px; justify-content: center; }
+
+        /* Dark mode */
+        .dark-toggle {
+            position: fixed; top: 12px; right: 12px; z-index: 300;
+            background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 20px; padding: 6px 14px; cursor: pointer;
+            font-size: 13px; font-weight: 600; transition: all 0.2s; color: white;
+        }
+        .dark-toggle:hover { background: rgba(255,255,255,0.3); }
+        body.dark-mode { background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%); }
+        body.dark-mode .container { background: #1e1e2e; color: #ddd; }
+        body.dark-mode .drill-card { background: #252535; border-color: #444; }
+        body.dark-mode .drill-card.active { background: #1b3a1b; border-color: #2e7d32; }
+        body.dark-mode .drill-name { color: #a5d6a7; }
+        body.dark-mode .drill-header-bar { background: #2a3a2a; }
+        body.dark-mode .drill-title { color: #a5d6a7; }
+        body.dark-mode .q-card { background: #252535; border-color: #444; }
+        body.dark-mode .q-option { background: #2a2a3e; border-color: #555; color: #ddd; }
+        body.dark-mode .q-option:hover { background: #1b3a1b; border-color: #66bb6a; }
+        body.dark-mode .q-explanation { background: #3e2723; border-color: #ff9800; color: #ddd; }
+        body.dark-mode .results-bar { background: linear-gradient(135deg, #1b3a1b, #2a3a2a); }
+
+        @media (max-width: 600px) {
+            .header h1 { font-size: 1.6em; }
+            .content { padding: 20px; }
+            .drill-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <button class="dark-toggle" id="dark-toggle" onclick="toggleDarkMode()">Dark Mode</button>
+
+    <div class="container">
+        <div class="header">
+            <h1>&#128221; Feature Writing Skill Drills</h1>
+            <p>Practice the key skills for UIL feature writing — leads, nut graphs, attribution, and more</p>
+            <a href="../index.html" class="back-link">&#8592; Back to All Contests</a>
+        </div>
+
+        <div class="content">
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Practice</a>
+                <a href="tutorial.html" class="nav-link">Tutorial</a>
+                <a href="drills.html" class="nav-link active">Skill Drills</a>
+            </div>
+
+            <div id="drill-selector">
+                <div class="drill-grid" id="drill-grid"></div>
+            </div>
+
+            <div class="drill-area" id="drill-area">
+                <div class="drill-header-bar">
+                    <span class="drill-title" id="drill-title"></span>
+                    <span class="drill-score-bar">Score: <strong id="drill-score">0</strong>/10</span>
+                </div>
+                <div id="questions-container"></div>
+                <div id="results-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var drills = {
+            leads: {
+                name: 'Feature Leads',
+                icon: '&#127912;',
+                desc: 'Identify the strongest creative lead for a feature story',
+                questions: [
+                    { q: 'Which lead is BEST for a feature story about a student who saved a family heirloom from a fire?', options: ['Two medals. Two heroes. Sophomore Helen Santos was babysitting her neighbor\'s children when the smoke alarm went off.', 'Sophomore Helen Santos will receive the Hometown Hero Award at a ceremony before the city council meeting Friday.', 'A Leaguetown High School student saved two children and a family heirloom from a house fire last week.', 'Helen Santos, a sophomore at Leaguetown High School, is being honored for her bravery during a fire.'], correct: 0, explain: 'The first option uses a contrast lead ("Two medals. Two heroes.") and immediately sets a scene. The other options are news-style summary leads, which are weak for feature writing.' },
+                    { q: 'Which lead technique is being used? "He had settled in for the night with a book — \'The Shining\' by Stephen King. But on this night, a knock on his Toyota Corolla\'s window would change everything."', options: ['Scene-setting / anecdotal lead', 'Summary lead', 'Question lead', 'Quote lead'], correct: 0, explain: 'This is a scene-setting lead that puts the reader into a specific moment with vivid details (the book title, the car, the knock).' },
+                    { q: 'Which lead would a UIL judge score LOWEST?', options: ['Leaguetown High School will honor teacher John Ashton at a ceremony Wednesday for his service.', 'The crowd chanted his name. In full armor, he knelt before the king.', 'Physics teacher John Ashton is literally a knight in shining armor — both in and out of the classroom.', 'A YouTube video changed everything for juniors Jason Flaherty and Mark Kozoman.'], correct: 0, explain: 'The first option is a standard news summary lead, which is the weakest type for feature writing. UIL judges want creative, scene-setting leads that grab the reader.' },
+                    { q: 'What type of lead is this? "Physics teacher John Ashton is literally a knight in shining armor — both in and out of the classroom."', options: ['Contrast / irony lead', 'Scene-setting lead', 'Question lead', 'Direct address lead'], correct: 0, explain: 'This lead uses irony/contrast — "knight in shining armor" works both literally (he does medieval combat) and figuratively (he\'s a great teacher). The contrast between these two meanings hooks the reader.' },
+                    { q: 'A feature lead should generally be...', options: ['2-5 paragraphs long, setting a scene before the nut graph', 'One sentence summarizing the 5Ws', 'A direct quote from the main subject', 'A question asking the reader to imagine something'], correct: 0, explain: 'Feature leads are typically 2-5 paragraphs that set a scene, establish a mood, or present an intriguing situation before the nut graph provides the summary.' },
+                    { q: 'Which detail from a fact sheet would make the BEST feature lead detail? The story is about a teacher who was living in his car.', options: ['He was reading "The Shining" by Stephen King when a student knocked on his car window at night.', 'The teacher has been teaching for six years.', 'His GoFundMe raised $16,700.', 'The principal plans to meet with the superintendent this week.'], correct: 0, explain: 'The first detail is vivid, specific, and creates a scene (night, the book title, the unexpected knock). It draws the reader in. The other details are facts that belong in the body, not the lead.' },
+                    { q: 'Which lead opening uses the STRONGEST verb?', options: ['"The smoke alarm shrieked through the house."', '"The smoke alarm went off in the house."', '"There was a smoke alarm going off."', '"A smoke alarm was heard by the babysitter."'], correct: 0, explain: '"Shrieked" is a vivid, active verb that creates a sensory experience. "Went off" is bland, "there was" is weak construction, and passive voice ("was heard") should be avoided.' },
+                    { q: 'What is WRONG with this feature lead? "I think everyone should know about our amazing janitor Mr. Davis."', options: ['Uses first person ("I"), second person ("everyone"), and editorializes ("amazing")', 'It\'s too short', 'It doesn\'t mention Leaguetown', 'It uses a quote incorrectly'], correct: 0, explain: 'This lead breaks multiple rules: "I" is first person (not allowed outside quotes), "our" is possessive first person, and "amazing" is editorializing. Feature stories must be objective.' },
+                    { q: 'A strong feature lead should accomplish which of the following?', options: ['Grab the reader\'s attention and draw them into the story', 'Summarize all the key facts in the first paragraph', 'Include the date, time, and location of the main event', 'Directly state what the story is about in one sentence'], correct: 0, explain: 'The primary job of a feature lead is to hook the reader. The facts and summary come later in the nut graph. Feature leads prioritize engagement over information.' },
+                    { q: 'Which lead uses the most effective descriptive language?', options: ['The metallic clang of swords echoed through the arena as 50 students in homemade "Sir Ashton" shirts leapt to their feet.', 'Students went to a medieval tournament to watch their teacher compete.', 'Ashton competed in a tournament and his students were there.', 'On Saturday, May 10, a group of students attended an SMC Knighthood event.'], correct: 0, explain: 'The first option uses sensory details (metallic clang, echoed), specific details (50 students, "Sir Ashton" shirts), and action (leapt to their feet). It puts the reader in the scene.' }
+                ]
+            },
+            nutgraph: {
+                name: 'Nut Graphs',
+                icon: '&#129516;',
+                desc: 'Identify and write effective nut graphs',
+                questions: [
+                    { q: 'What is the purpose of a nut graph in a feature story?', options: ['To summarize what the story is about after the creative lead', 'To provide the most dramatic quote in the story', 'To describe the setting in vivid detail', 'To present the writer\'s opinion about the subject'], correct: 0, explain: 'The nut graph is the summary paragraph that tells the reader what the story is about. It comes after the creative lead and before the first direct quote.' },
+                    { q: 'Where should the nut graph appear in a feature story?', options: ['After the creative lead, before the first direct quote', 'As the very first paragraph', 'At the end of the story', 'Immediately after the closing quote'], correct: 0, explain: 'The structure is: Creative Lead → Nut Graph → Direct Quote → Transition-Quote pattern → Closing Quote.' },
+                    { q: 'Which is the BEST nut graph for a story about a student saving children from a fire? "After her act of bravery..."', options: ['Santos will receive the Hometown Hero Award at a ceremony before Friday\'s city council meeting.', 'Fire is very dangerous and everyone should have working smoke detectors.', 'Santos is a sophomore at Leaguetown High School who babysits for her neighbors.', 'The fire department arrived quickly and contained the damage.'], correct: 0, explain: 'The first option tells the reader the "so what" — what is happening next as a result of the story. It grounds the reader after the creative lead. The others provide background but don\'t summarize the story.' },
+                    { q: 'A nut graph should answer which key question?', options: ['Why should the reader care about this story?', 'What color was the person wearing?', 'How many direct quotes will follow?', 'What time did the reporter start writing?'], correct: 0, explain: 'The nut graph answers "so what?" — it tells the reader why this story matters and what it\'s about, connecting the creative lead to the rest of the story.' },
+                    { q: 'What usually comes immediately AFTER the nut graph?', options: ['A direct quote from a key source', 'Another background paragraph', 'The closing of the story', 'An opinion from the writer'], correct: 0, explain: 'The pattern is: Lead → Nut Graph → Direct Quote. The first direct quote should follow the nut graph, then you continue with the transition-quote formula.' },
+                    { q: 'Which nut graph works best for a story about a teacher who does medieval role-playing?', options: ['The inaugural meeting of the school\'s SMC chapter will be this Wednesday after school in Ashton\'s classroom, where students will begin planning activities.', 'Medieval role-playing is a popular hobby across the country.', 'Ashton has been teaching physics for 18 years.', 'YouTube has many videos of people doing medieval sword fighting.'], correct: 0, explain: 'The first option tells the reader the timely news element (what\'s coming up) and the significance (new student club). It summarizes what the story leads to.' },
+                    { q: 'What is WRONG with this as a nut graph? "It was such an incredible story of bravery and courage that the whole town was talking about it."', options: ['It editorializes ("incredible," "bravery," "courage") instead of stating facts', 'It\'s too long', 'It mentions the town', 'It doesn\'t use a direct quote'], correct: 0, explain: 'Words like "incredible," "bravery," and "courage" are editorializing — the writer is telling the reader what to think. A nut graph should state facts and let the reader draw their own conclusions.' },
+                    { q: 'How long should a nut graph typically be?', options: ['1-3 sentences — concise and informative', 'At least 5 sentences with full detail', 'One word or phrase', 'A full page of background'], correct: 0, explain: 'A nut graph should be brief — 1 to 3 sentences that clearly summarize the story. It\'s a bridge between the creative lead and the body, not a lengthy essay.' },
+                    { q: 'If a feature story is missing a nut graph, what happens?', options: ['The reader gets lost because they don\'t know what the story is about', 'The story is automatically better because it stays creative', 'Nothing — nut graphs are optional in feature writing', 'The quotes become more effective'], correct: 0, explain: 'Without a nut graph, the reader finishes the creative lead without understanding the story\'s focus. They\'re intrigued but confused. The nut graph orients them.' },
+                    { q: 'Which element should NOT be in a nut graph?', options: ['The writer\'s personal opinion about the subject', 'The upcoming event or ceremony that makes the story timely', 'The subject\'s name and role', 'The basic facts of what happened'], correct: 0, explain: 'A nut graph is factual — it summarizes the who, what, and why. The writer\'s opinion belongs nowhere in a feature story, and especially not in the nut graph.' }
+                ]
+            },
+            attribution: {
+                name: 'Quotes & Attribution',
+                icon: '&#128172;',
+                desc: 'Master attribution rules for feature writing',
+                questions: [
+                    { q: 'Which attribution is CORRECT for UIL feature writing?', options: ['"I couldn\'t believe it," Ashton said.', '"I couldn\'t believe it," said Ashton.', '"I couldn\'t believe it," Ashton says.', '"I couldn\'t believe it," Ashton stated.'], correct: 0, explain: 'UIL requires: (1) subject before verb ("Ashton said" not "said Ashton"), (2) past tense "said" (not "says"), and (3) the verb "said" only (not "stated," "expressed," etc.).' },
+                    { q: 'What is the ONLY acceptable verb of attribution in UIL journalism?', options: ['said', 'says', 'stated', 'explained'], correct: 0, explain: 'UIL rules require the verb "said" for all attribution. "Says" (present tense), "stated," "explained," "expressed," and all other synonyms are not acceptable.' },
+                    { q: 'How should you handle the first reference to a source?', options: ['Full name with identifier: "sophomore Helen Santos"', 'Last name only: "Santos"', 'First name only: "Helen"', 'Title then name: "Student Helen Santos"'], correct: 0, explain: 'First reference uses the full name with an identifier (role, title, grade level). Example: "sophomore Helen Santos," "physics teacher John Ashton," "junior Jason Flaherty."' },
+                    { q: 'For a multi-sentence quote, where should the attribution go?', options: ['After the first sentence of the quote', 'Before the quote begins', 'After the entire quote ends', 'In the middle of the first sentence'], correct: 0, explain: 'For multi-sentence quotes, place attribution after the first sentence: "I love this school," Ashton said. "The students make it all worthwhile."' },
+                    { q: 'What is "stacking quotes" and why is it a problem?', options: ['Placing quotes from different sources back-to-back without a transition — it confuses the reader', 'Using too many quotes from the same person', 'Putting the attribution at the beginning of a quote', 'Writing quotes in all capital letters'], correct: 0, explain: 'Stacking quotes means putting quotes from different people right next to each other without a transition paragraph. Always write a transition between quotes from different sources.' },
+                    { q: 'Which is the correct way to paraphrase and attribute?', options: ['Santos said she was grateful for the opportunity.', 'Santos felt grateful for the opportunity.', 'Santos expressed her gratitude for the opportunity.', 'She was grateful for the opportunity, Santos said.'], correct: 0, explain: '"Santos said" is correct (subject-verb order, uses "said"). "Felt" and "expressed" are wrong verbs. The last option puts attribution at the end of a statement which is awkward for indirect quotes.' },
+                    { q: 'On second reference, how do you refer to student Will Bailey?', options: ['Bailey', 'Will', 'Mr. Bailey', 'Will Bailey'], correct: 0, explain: 'On second and subsequent references, use last name only: "Bailey." First names alone are too informal, "Mr./Ms." is not used for students, and full name is only for first reference.' },
+                    { q: 'Which transition between quotes is BEST?', options: ['Santos\' friend sophomore Will Bailey said he wasn\'t surprised to hear about her actions.', 'Another person also talked about Santos.', 'Will Bailey also said something about it.', 'The next quote comes from Will Bailey.'], correct: 0, explain: 'The first option introduces the new source with context (friend, grade level) and provides story information (he wasn\'t surprised). The others are lazy transitions that don\'t advance the story.' },
+                    { q: 'A direct quote should be used for which type of content?', options: ['Opinions, emotions, colorful language, and personal stories', 'Dates, numbers, and factual background', 'AP style-heavy information like addresses', 'Anything the source said'], correct: 0, explain: 'Reserve direct quotes for content that reveals personality, emotion, and voice. Use paraphrasing (indirect quotes) for basic factual information.' },
+                    { q: 'What is WRONG with this: Ashton said that "he was excited about the new club."', options: ['Mixing indirect and direct quote — "that" signals an indirect quote but quotation marks signal direct', 'Nothing is wrong', 'It should say "says" instead of "said"', 'The quote is too short'], correct: 0, explain: 'You can\'t mix indirect and direct attribution. Either use a direct quote: "I\'m excited about the new club," Ashton said. Or indirect: Ashton said he was excited about the new club. (no quotation marks).' }
+                ]
+            },
+            storytelling: {
+                name: 'Storytelling',
+                icon: '&#128214;',
+                desc: 'Craft compelling narrative and human interest elements',
+                questions: [
+                    { q: 'What is the "theme" of a feature story?', options: ['The central idea or message that ties the entire story together', 'The topic sentence of the first paragraph', 'The headline of the story', 'The word count target'], correct: 0, explain: 'The theme is the unifying idea — like "a knight in and out of the classroom" or "two medals, two heroes." It connects the lead to the closing and gives the story meaning.' },
+                    { q: 'Which sentence uses "show, don\'t tell" effectively?', options: ['His face fell to his hands, and he cried and hugged the students.', 'He was very emotional when he heard the news.', 'The teacher had a strong reaction.', 'It was a very touching moment for everyone.'], correct: 0, explain: 'The first option shows the emotion through specific actions (face fell, cried, hugged). The others tell the reader how to feel instead of showing what happened.' },
+                    { q: 'In a feature story, which approach is BEST for describing the subject?', options: ['Let quotes and actions reveal their character', 'Tell the reader they are an "amazing person"', 'List their accomplishments in bullet-point style', 'Compare them to a famous person'], correct: 0, explain: 'Feature writing shows character through quotes and actions, not by the writer telling the reader what to think. Let the subject\'s words and deeds speak for themselves.' },
+                    { q: 'A strong feature story makes the reader...', options: ['Feel like they know the subject personally', 'Want to write a letter to the school', 'Agree with the writer\'s opinion', 'Focus only on the facts and dates'], correct: 0, explain: 'The best feature stories create a human connection — the reader should feel they understand the person, their motivations, and their story.' },
+                    { q: 'Which transition adds the MOST to the story?', options: ['Santos grabbed the small glass box off the mantle on her way out the door. She didn\'t know what it was, but it looked important.', 'Santos also saved something from the fire.', 'Then another thing happened.', 'The next part of the story involves a glass box.'], correct: 0, explain: 'The first option uses narrative details to advance the story — it describes the action, adds suspense (she didn\'t know what it was), and shows her character (she thought it looked important).' },
+                    { q: 'How should you handle details that are NOT in the fact sheet?', options: ['Stay close to the prompt — don\'t invent new details or scenes', 'Add dramatic details to make the story more exciting', 'Make up dialogue that sounds realistic', 'Include what you think probably happened'], correct: 0, explain: 'UIL judges want you to use the facts creatively but accurately. You can describe scenes based on the given details, but inventing new information is not allowed.' },
+                    { q: 'Which is a better way to introduce a new source in the body of the story?', options: ['"Santos\' mother said the family has always emphasized doing the right thing."', '"The next person who had something to say was Santos\' mother."', '"Also, Erin Santos, Helen\'s mother, had a quote."', '"Moving on to the next quote..."'], correct: 0, explain: 'The first option weaves the new source into the story naturally with context. The others are clunky transitions that break the narrative flow.' },
+                    { q: 'What makes a feature story different from an essay?', options: ['It uses quotes from real sources and tells a story about real people', 'It includes the writer\'s personal argument', 'It uses more adjectives', 'It\'s longer than an essay'], correct: 0, explain: 'A feature story is journalism — it\'s based on real sources, uses quotes, and maintains objectivity. An essay is a personal argument. Feature writing tells OTHER people\'s stories.' },
+                    { q: 'When selecting which quotes to use from the fact sheet, you should...', options: ['Choose the most emotional, revealing, and colorful quotes', 'Use every single quote provided', 'Only use the longest quotes', 'Alternate between positive and negative quotes'], correct: 0, explain: 'Be selective — pick quotes that reveal character, show emotion, and advance the story. You don\'t need to use everything. Quality over quantity.' },
+                    { q: 'A feature story\'s closing should ideally...', options: ['Circle back to the theme from the lead, giving the reader resolution', 'Summarize all the facts one more time', 'End with the writer\'s opinion', 'Stop abruptly after the last quote'], correct: 0, explain: 'The best closings create a sense of completion by connecting back to the lead\'s theme. This gives the reader a satisfying "full circle" experience.' }
+                ]
+            },
+            objectivity: {
+                name: 'Objectivity & Voice',
+                icon: '&#9878;',
+                desc: 'Maintain objective voice and avoid editorializing',
+                questions: [
+                    { q: 'Which sentence contains editorializing?', options: ['The incredible act of bravery left the entire community in awe.', 'Santos grabbed the children and led them out of the house.', 'The fire destroyed one section of the house and more than half the family\'s belongings.', '"She makes the rest of us look good," Bailey said.'], correct: 0, explain: '"Incredible" and "bravery" and "in awe" are the writer\'s opinions. The other options are factual statements or attributed quotes. Opinions must come from sources, not the writer.' },
+                    { q: 'Which word should NEVER appear outside a quote in a feature story?', options: ['Amazing', 'Meanwhile', 'However', 'According'], correct: 0, explain: '"Amazing" is an opinion word — it tells the reader what to think. Words like "meanwhile" and "however" are neutral transition words that are acceptable in the writer\'s voice.' },
+                    { q: 'A student writes: "Our beloved janitor Mr. Davis is finally getting the recognition he deserves." What\'s wrong?', options: ['All of the above — "our" (first person), "beloved" (editorializing), "deserves" (opinion)', '"Our" uses first person', '"Beloved" is editorializing', '"Deserves" is an opinion'], correct: 0, explain: 'This sentence has three problems: "Our" uses first person (the writer is not part of the story), "beloved" is the writer\'s opinion, and "deserves" expresses a judgment.' },
+                    { q: 'How should you express that someone did something admirable?', options: ['Let the sources say it in quotes and show it through actions', 'Write "admirably" or "heroically" in your transition', 'Use an exclamation point to show enthusiasm', 'Tell the reader "this was truly remarkable"'], correct: 0, explain: 'In feature writing, you show character through actions and let sources express opinions. The writer stays objective and lets the story speak for itself.' },
+                    { q: 'Which is acceptable in a feature writer\'s narrative voice?', options: ['Santos led the children down the stairs through thick smoke.', 'Santos bravely led the children to safety.', 'Santos was a true hero that day.', 'Fortunately, Santos was there to save the children.'], correct: 0, explain: 'The first option describes what happened factually. "Bravely" is an adverb of opinion, "true hero" is editorializing, and "fortunately" is the writer expressing relief — all inappropriate.' },
+                    { q: 'Is it acceptable to use descriptive language in feature writing?', options: ['Yes, but describe actions and scenes objectively — don\'t insert opinions', 'No, feature writing should be completely dry and factual', 'Yes, you can use as many adjectives as you want', 'Only in the lead paragraph'], correct: 0, explain: 'Feature writing uses descriptive, narrative language throughout — but objectively. Describe what happened vividly without telling the reader how to feel about it.' },
+                    { q: 'Which sentence maintains proper objectivity?', options: ['More than 50 students packed the stands, wearing homemade "Sir Ashton" shirts.', 'An awesome group of 50 students showed up to support their favorite teacher.', 'It was heartwarming to see so many students care about their teacher.', 'The students did an incredible thing by showing up for Ashton.'], correct: 0, explain: 'The first option is factual and descriptive (packed, wearing, homemade). The others insert the writer\'s opinions: "awesome," "heartwarming," and "incredible" are all editorializing.' },
+                    { q: 'A classmate asks you to read their feature story. You notice they wrote "you can\'t help but smile reading about this teacher." What feedback do you give?', options: ['Remove "you" (second person) and the editorializing — let the quotes show why the story makes people smile', 'It\'s fine, it connects with the reader', 'Just change "you" to "one"', 'Add an exclamation point'], correct: 0, explain: '"You" is second person (not allowed) and "can\'t help but smile" is editorializing. The fix is to remove it entirely and let the source quotes and actions show the subject\'s positive impact.' },
+                    { q: 'Which closing transition is MOST objective?', options: ['Ashton said he plans to share his passion for medieval culture with his students through the new club.', 'What an inspiring story of a teacher who goes above and beyond.', 'Everyone at Leaguetown loves Mr. Ashton, and they should.', 'This story proves that teachers are the real heroes.'], correct: 0, explain: 'The first option is factual — it introduces the closing quote with relevant information. The others are editorializing: "inspiring," "everyone loves," and "real heroes" are all opinions.' },
+                    { q: 'In feature writing, the writer\'s role is to be a...', options: ['Storyteller who presents the facts and lets the reader draw conclusions', 'Cheerleader who promotes the subject', 'Critic who evaluates the subject\'s actions', 'Friend who shares their personal connection to the story'], correct: 0, explain: 'A feature writer is a storyteller — they craft a compelling narrative from facts and quotes, but they don\'t advocate, evaluate, or personally connect. The story speaks for itself.' }
+                ]
+            },
+            apstyle: {
+                name: 'AP Style for Features',
+                icon: '&#128218;',
+                desc: 'AP style rules commonly tested in feature writing',
+                questions: [
+                    { q: 'On first reference, how do you write a student\'s name and grade? The student is Helen Santos, a 10th grader.', options: ['sophomore Helen Santos', 'Helen Santos, a Sophomore', 'Sophomore Helen Santos', '10th-grader Helen Santos'], correct: 0, explain: 'Grade levels (freshman, sophomore, junior, senior) are lowercase and precede the name on first reference. Don\'t capitalize them or use numerical grade levels.' },
+                    { q: 'How should you write a teacher\'s title on first reference?', options: ['physics teacher John Ashton', 'Physics Teacher John Ashton', 'John Ashton, Physics Teacher', 'Mr. John Ashton, physics teacher'], correct: 0, explain: 'Job titles are lowercase before a name in AP style. Don\'t capitalize "physics teacher." Also, don\'t use courtesy titles (Mr., Mrs.) in journalism unless it\'s a personal preference.' },
+                    { q: 'Which date format is correct in AP style?', options: ['May 10', 'May 10th', 'the 10th of May', 'May tenth'], correct: 0, explain: 'AP style uses the month and cardinal number without "th," "st," or "nd." Write "May 10" not "May 10th."' },
+                    { q: 'How do you write dollar amounts in AP style?', options: ['$16,700', '$16700', '16,700 dollars', 'sixteen thousand, seven hundred dollars'], correct: 0, explain: 'AP style uses the dollar sign with numerals and commas for amounts over 999: $16,700. Don\'t spell out dollar amounts or omit the comma.' },
+                    { q: 'Which is correct AP style for numbers?', options: ['She saved two children, ages 4 and 10 months.', 'She saved 2 children, ages four and ten months.', 'She saved two children, ages four and 10 months old.', 'She saved 2 children, ages 4 and ten-months.'], correct: 0, explain: 'AP style spells out numbers one through nine and uses numerals for 10 and above. Ages always use numerals: "4-year-old" and "10-month-old."' },
+                    { q: 'Should you use the Oxford comma (serial comma) in AP style?', options: ['No — write "fencing, archery and axe-throwing"', 'Yes — write "fencing, archery, and axe-throwing"', 'Only in feature writing, not news writing', 'It depends on the sentence'], correct: 0, explain: 'AP style does NOT use the Oxford comma. Write the last item in a series with just "and" — no comma before it: "fencing, archery and axe-throwing."' },
+                    { q: 'How do you abbreviate months in AP style?', options: ['Jan., Feb., Aug., Sept., Oct., Nov., Dec. (March, April, May, June, July are never abbreviated)', 'All months are abbreviated to three letters', 'Months are never abbreviated', 'Only abbreviate in dates, never standalone'], correct: 0, explain: 'AP abbreviates months with 6+ letters when used with a specific date: Jan., Feb., Aug., Sept., Oct., Nov., Dec. March, April, May, June, and July are always spelled out.' },
+                    { q: 'When writing about time, which is correct AP style?', options: ['3 p.m.', '3:00 PM', '3:00 p.m.', 'three o\'clock in the afternoon'], correct: 0, explain: 'AP style uses numerals with lowercase "a.m." and "p.m." with periods. Don\'t include ":00" for on-the-hour times. Write "3 p.m." not "3:00 p.m."' },
+                    { q: 'How do you write a school name on second reference?', options: ['the school (lowercase)', 'The School', 'LHS', 'Leaguetown'], correct: 0, explain: 'On second reference, use "the school" (lowercase) or "Leaguetown" (the city name). Don\'t use abbreviations like "LHS" unless the abbreviation was established in the story.' },
+                    { q: 'Which sentence has correct AP style for titles?', options: ['Leaguetown Mayor Annabeth Schott will present the award.', 'Leaguetown mayor Annabeth Schott will present the award.', 'Mayor of Leaguetown, Annabeth Schott, will present the award.', 'The Mayor Annabeth Schott will present the award.'], correct: 0, explain: 'Formal titles are capitalized when they appear directly before a name: "Mayor Annabeth Schott." Lowercase when used alone or after the name: "the mayor."' }
+                ]
+            },
+            closing: {
+                name: 'Closings & Structure',
+                icon: '&#127919;',
+                desc: 'Write strong closings and identify structural issues',
+                questions: [
+                    { q: 'What makes the BEST closing for a feature story?', options: ['A powerful quote that gives the reader a sense of resolution or circles back to the theme', 'A summary of all the facts mentioned in the story', 'The writer\'s personal reaction to the story', 'A question asking the reader what they think'], correct: 0, explain: 'The best closings use a strong quote that resolves the story emotionally or connects back to the theme established in the lead. It should feel like a satisfying ending.' },
+                    { q: 'Which closing quote is STRONGEST for a story about a teacher who is a "knight in shining armor"?', options: ['"I got into teaching because I love physics, but I stayed in it because I love my kids," Ashton said.', '"The club will meet on Wednesdays after school," Ashton said.', '"I like medieval culture," Ashton said.', '"Thanks to everyone who came to the event," Ashton said.'], correct: 0, explain: 'The first quote has emotional depth — it reveals Ashton\'s true motivation (love for students) and creates a satisfying conclusion. The others are too factual or generic for a closing.' },
+                    { q: 'What is WRONG with ending a feature story like this: "And that\'s why everyone at Leaguetown loves Mr. Ashton."', options: ['It editorializes and uses the writer\'s voice instead of ending with a quote', 'It\'s too long', 'It mentions the school name', 'Nothing is wrong with it'], correct: 0, explain: 'This ending editorializes ("everyone loves") and uses the writer\'s voice. Feature stories should end with a strong direct quote, not the writer\'s commentary.' },
+                    { q: 'A "full circle" closing means...', options: ['The closing connects back to the theme or imagery from the lead', 'The story repeats the lead word-for-word', 'Every source gets a final quote', 'The story summarizes each paragraph'], correct: 0, explain: 'A full-circle closing echoes the lead\'s theme or imagery without repeating it. If the lead was about "two medals, two heroes," the closing might reference both acts of heroism.' },
+                    { q: 'Which structural problem would cost the MOST points in UIL?', options: ['No nut graph — the reader never learns what the story is about', 'The story is slightly too long', 'One paragraph has three sentences instead of two', 'The story uses both direct and indirect quotes'], correct: 0, explain: 'Missing the nut graph is a major structural problem — without it, the reader has no context after the creative lead. The other issues are minor or not problems at all.' },
+                    { q: 'In feature story structure, what comes immediately after the creative lead?', options: ['The nut graph (summary paragraph)', 'A direct quote', 'Background information', 'The writer\'s thesis statement'], correct: 0, explain: 'The nut graph follows the lead: Lead → Nut Graph → Quote → Transition-Quote pattern. The nut graph bridges the creative opening with the body of the story.' },
+                    { q: 'How many sources should you typically use in a UIL feature story?', options: ['3-4 sources with good transitions between them', 'All sources from the fact sheet', 'Only the main subject', 'Exactly 2 sources'], correct: 0, explain: 'Use 3-4 sources for a well-rounded story. You don\'t need to use every source — select the ones whose quotes are most compelling and advance your story.' },
+                    { q: 'What should you do with a quote that repeats information from your transition?', options: ['Rewrite the transition to provide NEW information that sets up the quote', 'Use the quote anyway', 'Delete the transition', 'Add "additionally" before the quote'], correct: 0, explain: 'Transitions should provide new information, not preview what the quote says. If your transition says the same thing as the quote, rewrite the transition to add context the reader doesn\'t have yet.' },
+                    { q: 'Which structural sequence is CORRECT for a UIL feature story?', options: ['Creative lead → Nut graph → Quote → Transition → Quote → Transition → Quote → Closing quote', 'Summary lead → Background → Quote → Quote → Quote → Summary', 'Quote → Lead → Nut graph → Background → Closing', 'Nut graph → Lead → Quote → Opinion → Closing'], correct: 0, explain: 'The correct UIL feature structure starts with a creative lead, followed by the nut graph, then alternates transitions and quotes (never stacking), ending with a strong closing quote.' },
+                    { q: 'How should you handle the fact sheet during the contest?', options: ['Highlight key details, best quotes, and potential lead moments before writing', 'Start writing immediately without reading the whole sheet', 'Read it once quickly and start writing from memory', 'Only read the quotes and skip the background'], correct: 0, explain: 'Spend 5-10 minutes reading and marking up the fact sheet. Highlight vivid details for your lead, the best quotes, key facts for your nut graph, and a potential closing quote. This planning saves time.' }
+                ]
+            }
+        };
+
+        var currentDrill = null;
+        var answered = 0;
+        var correct = 0;
+
+        function init() {
+            var grid = document.getElementById('drill-grid');
+            var html = '';
+            var bestScores = {};
+            try { bestScores = JSON.parse(localStorage.getItem('uil-feature-drills') || '{}'); } catch(e) {}
+            for (var key in drills) {
+                var d = drills[key];
+                var best = bestScores[key] !== undefined ? bestScores[key] : null;
+                html += '<div class="drill-card" onclick="startDrill(\'' + key + '\')">';
+                html += '<div class="drill-icon">' + d.icon + '</div>';
+                html += '<div class="drill-name">' + d.name + '</div>';
+                html += '<div class="drill-desc">' + d.desc + '</div>';
+                if (best !== null) html += '<div class="drill-best">Best: ' + best + '/10</div>';
+                html += '</div>';
+            }
+            grid.innerHTML = html;
+        }
+
+        function startDrill(key) {
+            currentDrill = key;
+            answered = 0; correct = 0;
+            document.getElementById('drill-selector').style.display = 'none';
+            document.getElementById('drill-area').classList.add('visible');
+            document.getElementById('drill-title').textContent = drills[key].icon + ' ' + drills[key].name;
+            document.getElementById('drill-score').textContent = '0';
+            document.getElementById('results-container').innerHTML = '';
+
+            var questions = drills[key].questions.slice();
+            // Shuffle questions
+            for (var i = questions.length - 1; i > 0; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+                var temp = questions[i]; questions[i] = questions[j]; questions[j] = temp;
+            }
+            questions = questions.slice(0, 10);
+
+            var container = document.getElementById('questions-container');
+            var html = '';
+            questions.forEach(function(q, idx) {
+                // Shuffle options but track correct
+                var opts = q.options.map(function(o, oi) { return { text: o, isCorrect: oi === q.correct }; });
+                for (var i = opts.length - 1; i > 0; i--) {
+                    var j = Math.floor(Math.random() * (i + 1));
+                    var temp = opts[i]; opts[i] = opts[j]; opts[j] = temp;
+                }
+                var correctIdx = opts.findIndex(function(o) { return o.isCorrect; });
+
+                html += '<div class="q-card" id="q-' + idx + '" data-correct="' + correctIdx + '">';
+                html += '<div class="q-text"><strong>Q' + (idx + 1) + '.</strong> ' + q.q + '</div>';
+                html += '<div class="q-options">';
+                opts.forEach(function(o, oi) {
+                    html += '<div class="q-option" data-q="' + idx + '" data-o="' + oi + '" onclick="answer(' + idx + ',' + oi + ')">' + o.text + '</div>';
+                });
+                html += '</div>';
+                html += '<div class="q-explanation" id="exp-' + idx + '">' + q.explain + '</div>';
+                html += '</div>';
+            });
+            container.innerHTML = html;
+        }
+
+        function answer(qIdx, oIdx) {
+            var card = document.getElementById('q-' + qIdx);
+            if (card.classList.contains('correct') || card.classList.contains('incorrect')) return;
+
+            var correctIdx = parseInt(card.getAttribute('data-correct'));
+            var options = card.querySelectorAll('.q-option');
+
+            options.forEach(function(o) {
+                var oi = parseInt(o.getAttribute('data-o'));
+                if (oi === correctIdx) o.classList.add('correct-answer');
+                if (oi === oIdx && oi !== correctIdx) o.classList.add('wrong-answer');
+                o.style.pointerEvents = 'none';
+            });
+
+            answered++;
+            if (oIdx === correctIdx) {
+                card.classList.add('correct');
+                correct++;
+            } else {
+                card.classList.add('incorrect');
+            }
+            document.getElementById('drill-score').textContent = correct;
+            document.getElementById('exp-' + qIdx).classList.add('visible');
+
+            if (answered === 10) finishDrill();
+        }
+
+        function finishDrill() {
+            try {
+                var bestScores = JSON.parse(localStorage.getItem('uil-feature-drills') || '{}');
+                if (!bestScores[currentDrill] || correct > bestScores[currentDrill]) {
+                    bestScores[currentDrill] = correct;
+                    localStorage.setItem('uil-feature-drills', JSON.stringify(bestScores));
+                }
+            } catch(e) {}
+
+            var rc = document.getElementById('results-container');
+            var pct = Math.round(correct / 10 * 100);
+            var color = pct >= 80 ? '#2e7d32' : pct >= 60 ? '#f57c00' : '#c62828';
+            rc.innerHTML = '<div class="results-bar">' +
+                '<h3>Drill Complete!</h3>' +
+                '<div class="big-score" style="color:' + color + '">' + correct + '/10 (' + pct + '%)</div>' +
+                '<div class="actions">' +
+                '<button class="btn btn-sm" onclick="startDrill(\'' + currentDrill + '\')">Retry</button>' +
+                '<button class="btn btn-sm" onclick="backToSelector()" style="background:#757575;">All Drills</button>' +
+                '</div></div>';
+            rc.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function backToSelector() {
+            document.getElementById('drill-area').classList.remove('visible');
+            document.getElementById('drill-selector').style.display = '';
+            document.getElementById('questions-container').innerHTML = '';
+            document.getElementById('results-container').innerHTML = '';
+            init(); // refresh best scores
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            var isDark = document.body.classList.contains('dark-mode');
+            document.getElementById('dark-toggle').textContent = isDark ? 'Light Mode' : 'Dark Mode';
+            try { localStorage.setItem('uil-dark-mode', isDark ? '1' : '0'); } catch (e) {}
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            try { if (localStorage.getItem('uil-dark-mode') === '1') { document.body.classList.add('dark-mode'); document.getElementById('dark-toggle').textContent = 'Light Mode'; } } catch (e) {}
+            init();
+        });
+    </script>
+</body>
+</html>

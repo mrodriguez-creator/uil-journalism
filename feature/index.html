@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UIL Feature Writing Trainer</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 50%, #43a047 100%);
+            min-height: 100vh; padding: 20px; color: #333;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        /* Header */
+        .header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 15px 0; flex-wrap: wrap; gap: 10px;
+        }
+        .header h1 { color: white; font-size: 1.6em; }
+        .header-links { display: flex; gap: 10px; }
+        .header-links a {
+            color: rgba(255,255,255,0.85); text-decoration: none; font-size: 0.85em;
+            padding: 6px 14px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.3);
+            transition: all 0.2s;
+        }
+        .header-links a:hover { background: rgba(255,255,255,0.15); color: white; }
+        .header-links a.active { background: rgba(255,255,255,0.2); color: white; }
+
+        /* Dark toggle */
+        .dark-toggle {
+            position: fixed; top: 12px; right: 12px; z-index: 300;
+            background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 20px; padding: 6px 14px; cursor: pointer;
+            font-size: 13px; font-weight: 600; transition: all 0.2s; color: white;
+        }
+        .dark-toggle:hover { background: rgba(255,255,255,0.3); }
+
+        /* Card */
+        .card {
+            background: white; border-radius: 12px; padding: 30px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2); margin-top: 10px;
+        }
+
+        /* Mode selector */
+        .mode-selector {
+            display: flex; gap: 10px; justify-content: center; margin-bottom: 20px;
+        }
+        .mode-btn {
+            padding: 10px 24px; border: 2px solid #2e7d32; border-radius: 8px;
+            background: white; color: #2e7d32; font-weight: 600; cursor: pointer;
+            font-size: 0.9em; transition: all 0.2s;
+        }
+        .mode-btn:hover { background: #e8f5e9; }
+        .mode-btn.active { background: #2e7d32; color: white; }
+
+        /* Info box */
+        .info-box {
+            background: #e8f5e9; border-radius: 8px; padding: 18px;
+            margin-bottom: 20px; line-height: 1.6; font-size: 0.9em;
+        }
+        .info-box strong { color: #1b5e20; }
+        .info-box a { color: #2e7d32; font-weight: 600; }
+
+        .generate-btn {
+            display: block; margin: 0 auto; padding: 14px 40px;
+            background: linear-gradient(135deg, #2e7d32, #66bb6a); color: white;
+            border: none; border-radius: 8px; font-size: 1.1em; font-weight: 600;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .generate-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(46,125,50,0.4); }
+        .generate-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        /* Loading */
+        .loading { text-align: center; padding: 40px; display: none; }
+        .spinner {
+            width: 40px; height: 40px; border: 4px solid #e8f5e9;
+            border-top-color: #2e7d32; border-radius: 50%;
+            animation: spin 0.8s linear infinite; margin: 0 auto 15px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Timer bar */
+        .timer-bar {
+            display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+            background: #1b5e20; color: white; text-align: center;
+            padding: 8px; font-weight: 700; font-size: 1.1em;
+        }
+        .timer-bar.warning { background: #e65100; }
+        .timer-bar.danger { background: #b71c1c; animation: pulse 1s ease-in-out infinite; }
+        @keyframes pulse { 50% { opacity: 0.7; } }
+
+        /* Writing layout */
+        .writing-section { display: none; }
+        .fact-sheet-container {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+        }
+
+        .fact-sheet {
+            background: #f8f9fa; border: 2px solid #ddd; border-radius: 8px;
+            padding: 20px; max-height: 600px; overflow-y: auto; line-height: 1.7;
+            font-size: 0.95em;
+        }
+        .fact-sheet-header {
+            background: #e8f5e9; padding: 10px 14px; border-radius: 6px;
+            margin-bottom: 8px; font-weight: 600; color: #1b5e20; font-size: 0.9em;
+        }
+
+        /* Highlighter toolbar */
+        .hl-toolbar {
+            display: flex; align-items: center; gap: 6px; margin-bottom: 10px;
+            padding: 8px 12px; background: #e8f5e9; border-radius: 6px;
+            flex-wrap: wrap; border: 1px solid #c8e6c9;
+        }
+        .hl-label { font-size: 0.8em; font-weight: 600; color: #666; margin-right: 4px; }
+        .hl-btn {
+            width: 26px; height: 26px; border-radius: 50%; border: 2px solid transparent;
+            cursor: pointer; transition: all 0.15s; position: relative;
+        }
+        .hl-btn:hover { transform: scale(1.15); }
+        .hl-btn.active { border-color: #333; box-shadow: 0 0 0 2px rgba(0,0,0,0.2); }
+        .hl-btn.yellow { background: #fff176; }
+        .hl-btn.green { background: #a5d6a7; }
+        .hl-btn.blue { background: #90caf9; }
+        .hl-btn.pink { background: #f48fb1; }
+        .hl-btn.orange { background: #ffcc80; }
+        .hl-eraser {
+            padding: 4px 10px; border: 1px solid #ccc; border-radius: 4px;
+            background: white; cursor: pointer; font-size: 0.78em; font-weight: 600;
+            color: #666; transition: all 0.15s; margin-left: 4px;
+        }
+        .hl-eraser:hover { background: #f44336; color: white; border-color: #f44336; }
+        .hl-eraser.active { background: #f44336; color: white; border-color: #f44336; }
+        .hl-off {
+            padding: 4px 10px; border: 1px solid #ccc; border-radius: 4px;
+            background: white; cursor: pointer; font-size: 0.78em; font-weight: 600;
+            color: #666; transition: all 0.15s;
+        }
+        .hl-off:hover { background: #eee; }
+        .hl-off.active { background: #2e7d32; color: white; border-color: #2e7d32; }
+        .fact-sheet.hl-mode { cursor: crosshair; }
+        .fact-sheet.hl-erase-mode { cursor: not-allowed; }
+        .fact-sheet .hl-mark { border-radius: 2px; padding: 0 1px; }
+        .fact-sheet .hl-mark.hl-yellow { background: rgba(255,241,118,0.6); }
+        .fact-sheet .hl-mark.hl-green { background: rgba(165,214,167,0.6); }
+        .fact-sheet .hl-mark.hl-blue { background: rgba(144,202,249,0.6); }
+        .fact-sheet .hl-mark.hl-pink { background: rgba(244,143,177,0.5); }
+        .fact-sheet .hl-mark.hl-orange { background: rgba(255,204,128,0.6); }
+
+        .fact-sheet-instructions {
+            background: #e8f5e9; border-left: 3px solid #2e7d32; padding: 10px 14px;
+            border-radius: 4px; margin-bottom: 15px; font-size: 0.85em;
+            color: #1b5e20; line-height: 1.5;
+        }
+
+        .editor-panel { display: flex; flex-direction: column; }
+        .editor-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 10px;
+        }
+        .editor-label { font-weight: 700; color: #1b5e20; font-size: 1em; }
+        .word-count { font-size: 0.85em; color: #888; font-weight: 600; }
+        .word-count.good { color: #4caf50; }
+        .word-count.warning { color: #ff9800; }
+        .word-count.over { color: #f44336; }
+
+        /* Writing checklist */
+        .writing-checks { margin-top: 10px; display: none; }
+        .writing-checks.visible { display: block; }
+        .check-item {
+            display: flex; align-items: flex-start; gap: 8px; padding: 5px 0;
+            font-size: 0.82em; line-height: 1.4;
+        }
+        .check-icon { flex-shrink: 0; width: 18px; text-align: center; font-size: 1em; }
+        .check-text { color: #666; }
+        .check-item.done .check-icon { color: #4caf50; }
+        .check-item.done .check-text { color: #4caf50; }
+        .check-item.warn .check-icon { color: #f44336; }
+        .check-item.warn .check-text { color: #c62828; font-weight: 600; }
+        .check-item.pending .check-icon { color: #ccc; }
+        .check-item.pending .check-text { color: #aaa; }
+
+        .story-input {
+            width: 100%; flex: 1; min-height: 500px; padding: 18px; border: 2px solid #ddd;
+            border-radius: 8px; font-size: 1em; font-family: Georgia, serif;
+            resize: vertical; line-height: 1.8; transition: border-color 0.2s;
+        }
+        .story-input:focus { border-color: #2e7d32; outline: none; }
+
+        .submit-section { text-align: center; margin-top: 20px; }
+        .submit-btn {
+            padding: 14px 40px; background: linear-gradient(135deg, #1565c0, #42a5f5);
+            color: white; border: none; border-radius: 8px; font-size: 1.1em;
+            font-weight: 600; cursor: pointer; transition: all 0.2s;
+        }
+        .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(21,101,192,0.4); }
+        .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        /* Results */
+        .results { display: none; margin-top: 25px; }
+        .results-header {
+            text-align: center; padding: 20px; border-radius: 8px;
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9); margin-bottom: 20px;
+        }
+        .results-header h2 { color: #1b5e20; margin-bottom: 6px; }
+        .results-header .score-big { font-size: 2.8em; font-weight: 800; color: #2e7d32; }
+        .results-header .score-max { font-size: 1em; color: #666; }
+        .results-header .ranking { font-size: 1.2em; font-weight: 600; margin-top: 6px; }
+        .ranking.strong { color: #2e7d32; }
+        .ranking.average { color: #f57c00; }
+        .ranking.needs-work { color: #c62828; }
+
+        .score-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 12px; margin-bottom: 20px;
+        }
+        .score-card {
+            background: #f8f9fa; border-radius: 8px; padding: 15px;
+            border-left: 4px solid #2e7d32;
+        }
+        .score-card .score-label { font-weight: 700; color: #1b5e20; font-size: 0.9em; }
+        .score-card .score-num { font-size: 1.4em; font-weight: 800; color: #2e7d32; float: right; }
+        .score-card .score-feedback { font-size: 0.85em; color: #555; margin-top: 6px; line-height: 1.5; }
+
+        .feedback-section { margin-bottom: 15px; }
+        .feedback-section h3 { color: #1b5e20; font-size: 1em; margin-bottom: 8px; }
+        .feedback-section ul { padding-left: 20px; }
+        .feedback-section li { font-size: 0.9em; line-height: 1.6; color: #555; margin: 4px 0; }
+
+        .lead-suggestion {
+            background: #fff3e0; border-radius: 8px; padding: 15px; margin-bottom: 15px;
+            border-left: 4px solid #ff9800;
+        }
+        .lead-suggestion h3 { color: #e65100; font-size: 0.95em; margin-bottom: 6px; }
+        .lead-suggestion p { font-size: 0.9em; color: #333; line-height: 1.6; font-style: italic; }
+
+        .action-row {
+            display: flex; gap: 10px; justify-content: center; margin-top: 20px; flex-wrap: wrap;
+        }
+        .action-btn {
+            padding: 10px 22px; border-radius: 8px; border: none; font-weight: 600;
+            font-size: 0.9em; cursor: pointer; transition: all 0.2s;
+        }
+        .btn-primary { background: #2e7d32; color: white; }
+        .btn-primary:hover { background: #1b5e20; }
+        .btn-secondary { background: #e0e0e0; color: #333; }
+        .btn-secondary:hover { background: #ccc; }
+
+        /* Share modal */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5); z-index: 400; align-items: center; justify-content: center;
+        }
+        .modal-overlay.visible { display: flex; }
+        .modal-box {
+            background: white; border-radius: 12px; padding: 30px;
+            max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto;
+        }
+        .modal-box h3 { color: #1b5e20; margin-bottom: 15px; }
+        .share-code {
+            width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px;
+            font-family: monospace; font-size: 0.8em; resize: vertical; min-height: 80px;
+        }
+        .modal-actions { display: flex; gap: 10px; margin-top: 15px; justify-content: flex-end; }
+
+        /* Toast */
+        .toast {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: #333; color: white; padding: 12px 24px; border-radius: 8px;
+            font-size: 0.9em; z-index: 500; opacity: 0; transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        .toast.visible { opacity: 1; }
+
+        /* Dark mode */
+        body.dark-mode { background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%); }
+        body.dark-mode .card { background: #1e1e2e; color: #ddd; }
+        body.dark-mode .info-box { background: #2a2a3e; }
+        body.dark-mode .info-box strong { color: #a5d6a7; }
+        body.dark-mode .fact-sheet { background: #252535; border-color: #444; color: #ddd; }
+        body.dark-mode .fact-sheet-header { background: #1b5e20; color: #a5d6a7; }
+        body.dark-mode .fact-sheet-instructions { background: #1b5e20; border-color: #43a047; color: #a5d6a7; }
+        body.dark-mode .story-input { background: #252535; border-color: #444; color: #ddd; }
+        body.dark-mode .score-card { background: #252535; }
+        body.dark-mode .score-card .score-feedback { color: #bbb; }
+        body.dark-mode .results-header { background: linear-gradient(135deg, #1b5e20, #2e7d32); }
+        body.dark-mode .lead-suggestion { background: #4e342e; border-color: #ff9800; }
+        body.dark-mode .lead-suggestion p { color: #ffe0b2; }
+        body.dark-mode .feedback-section li { color: #bbb; }
+        body.dark-mode .modal-box { background: #1e1e2e; color: #ddd; }
+        body.dark-mode .share-code { background: #252535; border-color: #444; color: #ddd; }
+        body.dark-mode .hl-toolbar { background: #2a3a2a; border-color: #444; }
+        body.dark-mode .hl-label { color: #aaa; }
+        body.dark-mode .hl-eraser { background: #333; border-color: #555; color: #ccc; }
+        body.dark-mode .hl-off { background: #333; border-color: #555; color: #ccc; }
+        body.dark-mode .fact-sheet .hl-mark.hl-yellow { background: rgba(255,241,118,0.3); }
+        body.dark-mode .fact-sheet .hl-mark.hl-green { background: rgba(165,214,167,0.3); }
+        body.dark-mode .fact-sheet .hl-mark.hl-blue { background: rgba(144,202,249,0.3); }
+        body.dark-mode .fact-sheet .hl-mark.hl-pink { background: rgba(244,143,177,0.3); }
+        body.dark-mode .fact-sheet .hl-mark.hl-orange { background: rgba(255,204,128,0.3); }
+        body.dark-mode .check-item.pending .check-text { color: #666; }
+        body.dark-mode .check-item .check-text { color: #999; }
+        body.dark-mode .check-item.warn .check-text { color: #ef9a9a; }
+        body.dark-mode .check-item.done .check-text { color: #a5d6a7; }
+
+        /* Responsive */
+        @media (max-width: 800px) {
+            .fact-sheet-container { grid-template-columns: 1fr; }
+            .header { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+    <button class="dark-toggle" id="dark-toggle" onclick="toggleDarkMode()">Dark Mode</button>
+
+    <div class="container">
+        <div class="header">
+            <h1>&#128221; Feature Writing</h1>
+            <div class="header-links">
+                <a href="index.html" class="active">Practice</a>
+                <a href="tutorial.html">Tutorial</a>
+                <a href="drills.html">Skill Drills</a>
+                <a href="../index.html">&#8592; All Contests</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <!-- Start section -->
+            <div id="start-section">
+                <div class="info-box">
+                    <strong>UIL Feature Writing Contest</strong> — Read a fact sheet about an interesting person or situation at Leaguetown High School, then write a compelling feature story. Your lead should grab the reader — set a scene, paint a picture, or hook with a vivid detail. Follow with a nut graph, then use the transition-quote formula. You have <strong>1 hour</strong>.<br>
+                    <a href="tutorial.html">Read the tutorial</a> to learn about creative leads, nut graphs, and storytelling. Try <a href="drills.html">Skill Drills</a> to practice leads, transitions, and attribution.
+                </div>
+
+                <div class="mode-selector" id="mode-selector">
+                    <button class="mode-btn active" id="mode-practice" onclick="setMode('practice')">Practice</button>
+                    <button class="mode-btn" id="mode-timed" onclick="setMode('timed')">Timed (60 min)</button>
+                    <button class="mode-btn" id="mode-mock" onclick="setMode('mock')">Mock Contest</button>
+                </div>
+
+                <button class="generate-btn" id="generate-btn" onclick="generatePrompt()">Generate Feature Prompt</button>
+            </div>
+
+            <!-- Loading -->
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Generating your fact sheet...</p>
+            </div>
+
+            <!-- Timer -->
+            <div class="timer-bar" id="timer-bar">60:00</div>
+
+            <!-- Writing Section -->
+            <div class="writing-section" id="writing-section">
+                <div class="fact-sheet-container">
+                    <div>
+                        <div class="fact-sheet-header">FACT SHEET — Leaguetown Press</div>
+                        <div class="hl-toolbar" id="hl-toolbar">
+                            <span class="hl-label">Highlighter:</span>
+                            <button class="hl-btn yellow" onclick="setHighlighter('yellow')" title="Yellow"></button>
+                            <button class="hl-btn green" onclick="setHighlighter('green')" title="Green"></button>
+                            <button class="hl-btn blue" onclick="setHighlighter('blue')" title="Blue"></button>
+                            <button class="hl-btn pink" onclick="setHighlighter('pink')" title="Pink"></button>
+                            <button class="hl-btn orange" onclick="setHighlighter('orange')" title="Orange"></button>
+                            <button class="hl-eraser" onclick="setHighlighter('erase')" title="Remove highlights">Eraser</button>
+                            <button class="hl-off active" onclick="setHighlighter('off')" title="Turn off highlighter">Off</button>
+                        </div>
+                        <div class="fact-sheet-instructions">
+                            You are a reporter for the Leaguetown Press, the student newspaper of Leaguetown High School. From the given information, write a feature story as you would for the high school newspaper. You may use statements attributed to individuals as direct or indirect quotes. You may not change the meaning of a statement. You have one hour.
+                        </div>
+                        <div class="fact-sheet" id="fact-sheet"></div>
+                    </div>
+                    <div class="editor-panel">
+                        <div class="editor-header">
+                            <span class="editor-label">Your Feature Story</span>
+                            <span class="word-count" id="word-count">0 words</span>
+                        </div>
+                        <div class="writing-checks" id="writing-checks">
+                            <div class="check-item pending" id="chk-lead"><span class="check-icon">&#9675;</span><span class="check-text">Creative lead (scene, moment, or hook)</span></div>
+                            <div class="check-item pending" id="chk-nutgraph"><span class="check-icon">&#9675;</span><span class="check-text">Nut graph summarizes the story</span></div>
+                            <div class="check-item pending" id="chk-thirdperson"><span class="check-icon">&#9675;</span><span class="check-text">Third person only (no I, we, you)</span></div>
+                            <div class="check-item pending" id="chk-quotes"><span class="check-icon">&#9675;</span><span class="check-text">Uses direct quotes with attribution</span></div>
+                            <div class="check-item pending" id="chk-attribution"><span class="check-icon">&#9675;</span><span class="check-text">Attribution: "Name said" format</span></div>
+                            <div class="check-item pending" id="chk-noeditorial"><span class="check-icon">&#9675;</span><span class="check-text">No editorializing or opinions</span></div>
+                        </div>
+                        <textarea class="story-input" id="story-input" placeholder="Write your feature story here...
+
+Start with a creative lead that grabs the reader — set a scene, describe a moment, or hook with a vivid detail.
+Follow with a nut graph that tells the reader what the story is about.
+Then use the transition-quote formula.
+End with a strong closing quote." oninput="updateWordCount()"></textarea>
+                    </div>
+                </div>
+
+                <div class="submit-section">
+                    <button class="submit-btn" id="submit-btn" onclick="submitStory()">Submit Story</button>
+                </div>
+            </div>
+
+            <!-- Results -->
+            <div class="results" id="results"></div>
+        </div>
+    </div>
+
+    <!-- Share modal -->
+    <div class="modal-overlay" id="share-modal">
+        <div class="modal-box">
+            <h3>Share with Coach</h3>
+            <p style="font-size: 0.9em; color: #666; margin-bottom: 10px;">Copy this code and give it to your coach to import into the Coach Dashboard.</p>
+            <textarea class="share-code" id="share-code" readonly></textarea>
+            <div class="modal-actions">
+                <button class="action-btn btn-secondary" onclick="document.getElementById('share-modal').classList.remove('visible')">Close</button>
+                <button class="action-btn btn-primary" onclick="copyShareCode()">Copy Code</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        var currentMode = 'practice';
+        var promptData = null;
+        var timerInterval = null;
+        var timeRemaining = 3600; // 60 minutes
+        var lastEvaluation = null;
+        var hlColor = 'off';
+
+        // ===== HIGHLIGHTER =====
+        function setHighlighter(color) {
+            hlColor = color;
+            document.querySelectorAll('.hl-btn, .hl-eraser, .hl-off').forEach(function(b) { b.classList.remove('active'); });
+            if (color === 'off') {
+                document.querySelector('.hl-off').classList.add('active');
+            } else if (color === 'erase') {
+                document.querySelector('.hl-eraser').classList.add('active');
+            } else {
+                var btn = document.querySelector('.hl-btn.' + color);
+                if (btn) btn.classList.add('active');
+            }
+            var fs = document.getElementById('fact-sheet');
+            fs.classList.remove('hl-mode', 'hl-erase-mode');
+            if (color !== 'off' && color !== 'erase') fs.classList.add('hl-mode');
+            if (color === 'erase') fs.classList.add('hl-erase-mode');
+        }
+
+        document.addEventListener('mouseup', function(e) {
+            if (hlColor === 'off') return;
+            var fs = document.getElementById('fact-sheet');
+            if (!fs || !fs.contains(e.target)) return;
+            if (hlColor === 'erase') {
+                var target = e.target;
+                if (target.classList && target.classList.contains('hl-mark')) {
+                    var parent = target.parentNode;
+                    while (target.firstChild) parent.insertBefore(target.firstChild, target);
+                    parent.removeChild(target);
+                    parent.normalize();
+                }
+                return;
+            }
+            var sel = window.getSelection();
+            if (!sel || sel.isCollapsed || !sel.rangeCount) return;
+            var range = sel.getRangeAt(0);
+            if (!fs.contains(range.commonAncestorContainer)) return;
+            var text = sel.toString().trim();
+            if (!text) return;
+            try {
+                var span = document.createElement('span');
+                span.className = 'hl-mark hl-' + hlColor;
+                range.surroundContents(span);
+            } catch (ex) {
+                try {
+                    var fragment = range.extractContents();
+                    var span = document.createElement('span');
+                    span.className = 'hl-mark hl-' + hlColor;
+                    span.appendChild(fragment);
+                    range.insertNode(span);
+                } catch (ex2) {}
+            }
+            sel.removeAllRanges();
+        });
+
+        function setMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.mode-btn').forEach(function(b) { b.classList.remove('active'); });
+            document.getElementById('mode-' + mode).classList.add('active');
+        }
+
+        function startTimer() {
+            timeRemaining = 3600; // 60 minutes
+            document.getElementById('timer-bar').style.display = 'block';
+            updateTimerDisplay();
+            timerInterval = setInterval(function() {
+                timeRemaining--;
+                updateTimerDisplay();
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    if (currentMode === 'mock') submitStory();
+                    else showToast('Time is up!');
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            var m = Math.floor(timeRemaining / 60);
+            var s = timeRemaining % 60;
+            var el = document.getElementById('timer-bar');
+            el.textContent = m + ':' + (s < 10 ? '0' : '') + s;
+            el.className = 'timer-bar' + (timeRemaining <= 300 ? ' danger' : timeRemaining <= 900 ? ' warning' : '');
+        }
+
+        function stopTimer() { clearInterval(timerInterval); document.getElementById('timer-bar').style.display = 'none'; }
+
+        function updateWordCount() {
+            var text = document.getElementById('story-input').value.trim();
+            var count = text ? text.split(/\s+/).length : 0;
+            var el = document.getElementById('word-count');
+            el.textContent = count + ' words';
+            el.className = 'word-count' + (count >= 200 && count <= 600 ? ' good' : count > 600 ? ' over' : count >= 100 ? ' warning' : '');
+
+            var checksEl = document.getElementById('writing-checks');
+            if (count > 5) {
+                checksEl.classList.add('visible');
+                runWritingChecks(text, count);
+            } else {
+                checksEl.classList.remove('visible');
+            }
+        }
+
+        function runWritingChecks(text, count) {
+            var lower = text.toLowerCase();
+            var lines = text.split('\n').filter(function(l) { return l.trim(); });
+
+            // 1. Creative lead — check first ~50 words for scene-setting/descriptive language
+            var firstChunk = text.split(/\s+/).slice(0, 50).join(' ').toLowerCase();
+            // A feature lead should NOT start with a standard news summary. Look for descriptive language.
+            var hasCreative = /\bwhen\b/.test(firstChunk) || /\bthe\s+(sound|smell|sight|light|room|crowd|door|hall|day|night|morning)\b/.test(firstChunk) ||
+                /\bwas\s+(sitting|standing|walking|running|reading|watching|looking|holding|wearing)\b/.test(firstChunk) ||
+                /\b(scene|imagine|picture|moment)\b/.test(firstChunk) ||
+                /\b(never|always|every|one|two|three)\b/.test(firstChunk) ||
+                /[—–]/.test(firstChunk) || // em/en dashes suggest literary style
+                /\.{3}|…/.test(firstChunk) || // ellipsis
+                count > 50; // Once they've written enough, give benefit of doubt
+            var isSummaryLead = /^(the\s+(school|district|city|leaguetown|a)\s)/.test(firstChunk) ||
+                /^(on\s+(monday|tuesday|wednesday|thursday|friday|saturday|sunday))/.test(firstChunk) ||
+                (/\bwill\b/.test(firstChunk.split(/\s+/).slice(0, 15).join(' ')) && !/\bwould\b/.test(firstChunk.split(/\s+/).slice(0, 15).join(' ')));
+            setCheck('chk-lead',
+                isSummaryLead && count > 50 ? 'warn' : hasCreative ? 'done' : count > 50 ? 'done' : 'pending',
+                isSummaryLead && count > 50 ? 'Lead may be a summary lead — try a creative/scene-setting lead instead' :
+                hasCreative ? 'Lead appears creative/descriptive' :
+                'Creative lead (scene, moment, or hook)');
+
+            // 2. Nut graph — look for a summary-like paragraph in the first ~150 words (after lead)
+            var first150 = text.split(/\s+/).slice(20, 150).join(' ').toLowerCase();
+            var hasNutGraph = /\bwill\b/.test(first150) || /\bwas\b/.test(first150) ||
+                /\bhas\b/.test(first150) || /\breceive\b/.test(first150) ||
+                /\bawarded?\b/.test(first150) || /\bhonoree?\b/.test(first150) ||
+                /\bmeeting\b/.test(first150) || /\bceremony\b/.test(first150) ||
+                count > 150;
+            setCheck('chk-nutgraph', hasNutGraph && count > 80 ? 'done' : count > 150 ? 'warn' : 'pending',
+                hasNutGraph && count > 80 ? 'Nut graph likely present' :
+                count > 150 ? 'Make sure you include a nut graph after your lead' :
+                'Nut graph summarizes the story');
+
+            // 3. Third person only — check outside quotes
+            var iMatches = text.match(/\b(I|me|my|mine|myself)\b/g);
+            var realI = [];
+            if (iMatches) {
+                iMatches.forEach(function(m) {
+                    var idx = text.indexOf(m);
+                    var after = text.charAt(idx + m.length);
+                    var before = text.charAt(idx - 1);
+                    if (m === 'I' && (after === '-' || after === '.' || before === '-')) return;
+                    var beforeText = text.substring(0, idx);
+                    var openQuotes = (beforeText.match(/\u201c/g) || []).length - (beforeText.match(/\u201d/g) || []).length;
+                    var straightQuotes = (beforeText.match(/"/g) || []).length;
+                    if (openQuotes > 0 || straightQuotes % 2 === 1) return;
+                    realI.push(m);
+                });
+            }
+            var weMatches = text.match(/\b(we|our|ours|ourselves)\b/gi);
+            var realWe = [];
+            if (weMatches) {
+                weMatches.forEach(function(m) {
+                    var idx = text.indexOf(m);
+                    var beforeText = text.substring(0, idx);
+                    var openQuotes = (beforeText.match(/\u201c/g) || []).length - (beforeText.match(/\u201d/g) || []).length;
+                    var straightQuotes = (beforeText.match(/"/g) || []).length;
+                    if (openQuotes > 0 || straightQuotes % 2 === 1) return;
+                    realWe.push(m);
+                });
+            }
+            var youMatches = text.match(/\b(you|your|yours|yourself)\b/gi);
+            var realYou = [];
+            if (youMatches) {
+                youMatches.forEach(function(m) {
+                    var idx = text.indexOf(m);
+                    var beforeText = text.substring(0, idx);
+                    var openQuotes = (beforeText.match(/\u201c/g) || []).length - (beforeText.match(/\u201d/g) || []).length;
+                    var straightQuotes = (beforeText.match(/"/g) || []).length;
+                    if (openQuotes > 0 || straightQuotes % 2 === 1) return;
+                    realYou.push(m);
+                });
+            }
+            var personIssue = realI.length > 0 ? realI[0] : realWe.length > 0 ? realWe[0] : realYou.length > 0 ? realYou[0] : null;
+            setCheck('chk-thirdperson', personIssue ? 'warn' : count > 30 ? 'done' : 'pending',
+                personIssue ? 'Found "' + personIssue + '" outside quotes \u2014 use third person only' :
+                count > 30 ? 'Third person maintained \u2014 good!' : 'Third person only (no I, we, you)');
+
+            // 4. Uses direct quotes
+            var quoteCount = (text.match(/"/g) || []).length;
+            var smartQuoteCount = (text.match(/\u201c/g) || []).length;
+            var hasQuotes = quoteCount >= 2 || smartQuoteCount >= 1;
+            setCheck('chk-quotes', hasQuotes ? 'done' : count > 100 ? 'warn' : 'pending',
+                hasQuotes ? 'Direct quotes found' :
+                count > 100 ? 'No direct quotes yet \u2014 add quotes after the nut graph' :
+                'Uses direct quotes with attribution');
+
+            // 5. Attribution format: "Name said" not "said Name"
+            var badAttrib = text.match(/\bsaid\s+[A-Z][a-z]+/g);
+            var goodAttrib = text.match(/[A-Z][a-z]+\s+said\b/g);
+            var badVerbs = text.match(/\b(says|stated|feels|expressed|exclaimed|remarked|noted|explained)\b/gi);
+            var badVerbsOutsideQuotes = [];
+            if (badVerbs) {
+                badVerbs.forEach(function(m) {
+                    var idx = lower.indexOf(m.toLowerCase());
+                    var beforeText = text.substring(0, idx);
+                    var straightQuotes = (beforeText.match(/"/g) || []).length;
+                    if (straightQuotes % 2 === 0) badVerbsOutsideQuotes.push(m);
+                });
+            }
+            var hasBadAttrib = (badAttrib && badAttrib.length > 0) || badVerbsOutsideQuotes.length > 0;
+            var hasGoodAttrib = goodAttrib && goodAttrib.length > 0;
+            setCheck('chk-attribution',
+                badAttrib && badAttrib.length > 0 ? 'warn' :
+                badVerbsOutsideQuotes.length > 0 ? 'warn' :
+                hasGoodAttrib ? 'done' : 'pending',
+                badAttrib && badAttrib.length > 0 ? 'Found "said Name" \u2014 use "Name said" instead' :
+                badVerbsOutsideQuotes.length > 0 ? 'Found "' + badVerbsOutsideQuotes[0] + '" \u2014 use "said" for attribution' :
+                hasGoodAttrib ? 'Attribution format correct ("Name said")' :
+                'Attribution: "Name said" format');
+
+            // 6. No editorializing
+            var editorialWords = lower.match(/\b(unfortunately|hopefully|luckily|amazingly|clearly|obviously|sadly|thankfully|incredible|amazing|inspiring|wonderful|beautiful|awesome|fantastic|remarkable|unbelievable)\b/g);
+            var outsideQuotes = [];
+            if (editorialWords) {
+                editorialWords.forEach(function(m) {
+                    var idx = lower.indexOf(m);
+                    var beforeText = text.substring(0, idx);
+                    var straightQuotes = (beforeText.match(/"/g) || []).length;
+                    if (straightQuotes % 2 === 0) outsideQuotes.push(m);
+                });
+            }
+            setCheck('chk-noeditorial', outsideQuotes.length > 0 ? 'warn' : count > 50 ? 'done' : 'pending',
+                outsideQuotes.length > 0 ? 'Found "' + outsideQuotes[0] + '" outside quotes \u2014 may be editorializing' :
+                count > 50 ? 'No editorializing detected' :
+                'No editorializing or opinions');
+        }
+
+        function setCheck(id, state, text) {
+            var el = document.getElementById(id);
+            el.className = 'check-item ' + state;
+            el.querySelector('.check-icon').textContent = state === 'done' ? '\u2713' : state === 'warn' ? '\u2715' : '\u25CB';
+            el.querySelector('.check-text').textContent = text;
+        }
+
+        async function generatePrompt() {
+            var btn = document.getElementById('generate-btn');
+            btn.disabled = true; btn.textContent = 'Generating prompt...';
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('mode-selector').style.display = 'none';
+            try {
+                var resp = await fetch('/api/feature/generate-prompt', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+                var data = await resp.json();
+                if (data.error) throw new Error(data.error);
+                promptData = data;
+                renderFactSheet();
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('start-section').style.display = 'none';
+                document.getElementById('writing-section').style.display = 'block';
+                document.getElementById('writing-checks').style.display = currentMode === 'mock' ? 'none' : '';
+                if (currentMode !== 'practice') startTimer();
+            } catch (e) {
+                document.getElementById('loading').style.display = 'none';
+                btn.disabled = false; btn.textContent = 'Generate Feature Prompt';
+                document.getElementById('mode-selector').style.display = 'flex';
+                showToast('Error: ' + e.message);
+            }
+        }
+
+        function renderFactSheet() {
+            var fs = document.getElementById('fact-sheet');
+            var html = '';
+            var parts = promptData.factSheet.split('\n\n');
+            parts.forEach(function(p) {
+                p = p.trim();
+                if (!p) return;
+                if (p.startsWith('\u25a0')) {
+                    var lines = p.split('\n');
+                    var header = lines[0].replace('\u25a0', '').trim();
+                    var rest = lines.slice(1).join('<br>');
+                    html += '<p style="margin-top:18px;"><strong style="color:#1b5e20;">\u25a0 ' + header + '</strong></p>';
+                    if (rest.trim()) {
+                        html += '<p style="margin:6px 0;font-style:italic;color:#444;">' + rest + '</p>';
+                    }
+                } else {
+                    html += '<p style="margin:10px 0;">' + p.replace(/\n/g, '<br>') + '</p>';
+                }
+            });
+            fs.innerHTML = html;
+        }
+
+        async function submitStory() {
+            var story = document.getElementById('story-input').value.trim();
+            if (!story) { showToast('Write your feature story first!'); return; }
+            if (story.split(/\s+/).length < 50) { showToast('Your story is very short. Write more before submitting.'); return; }
+
+            stopTimer();
+            var btn = document.getElementById('submit-btn');
+            btn.disabled = true; btn.textContent = 'Evaluating...';
+
+            try {
+                var resp = await fetch('/api/feature/evaluate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ story: story, promptData: promptData })
+                });
+                var data = await resp.json();
+                if (data.error) throw new Error(data.error);
+                lastEvaluation = data;
+                lastEvaluation.story = story;
+                lastEvaluation.promptTopic = promptData.topic;
+                renderResults(data);
+                saveToHistory(data);
+            } catch (e) {
+                btn.disabled = false; btn.textContent = 'Submit Story';
+                showToast('Error: ' + e.message);
+            }
+        }
+
+        function renderResults(data) {
+            var r = document.getElementById('results');
+            var rankClass = data.overallRanking.toLowerCase().includes('strong') ? 'strong' :
+                data.overallRanking.toLowerCase().includes('needs') ? 'needs-work' : 'average';
+
+            var html = '<div class="results-header">';
+            html += '<h2>Evaluation Results</h2>';
+            html += '<div class="score-big">' + data.totalScore + '</div>';
+            html += '<div class="score-max">out of ' + data.maxScore + '</div>';
+            html += '<div class="ranking ' + rankClass + '">' + data.overallRanking + '</div>';
+            html += '</div>';
+
+            // Score cards
+            var labels = {
+                lead: 'Lead / Hook', structure: 'Nut Graph & Structure', quotes: 'Quotes & Attribution',
+                storytelling: 'Storytelling & Human Element', writing: 'Writing Quality',
+                apStyle: 'AP Style & Mechanics', objectivity: 'Objectivity & Voice'
+            };
+            html += '<div class="score-grid">';
+            for (var key in labels) {
+                if (data.scores[key]) {
+                    html += '<div class="score-card">';
+                    html += '<span class="score-num">' + data.scores[key].score + '/10</span>';
+                    html += '<div class="score-label">' + labels[key] + '</div>';
+                    html += '<div class="score-feedback">' + data.scores[key].feedback + '</div>';
+                    html += '</div>';
+                }
+            }
+            html += '</div>';
+
+            // Lead suggestion
+            if (data.leadSuggestion) {
+                html += '<div class="lead-suggestion">';
+                html += '<h3>Suggested Feature Lead</h3>';
+                html += '<p>' + data.leadSuggestion + '</p>';
+                html += '</div>';
+            }
+
+            // Strengths & Improvements
+            html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;">';
+            html += '<div class="feedback-section"><h3 style="color:#2e7d32;">&#9989; Strengths</h3><ul>';
+            (data.strengths || []).forEach(function(s) { html += '<li>' + s + '</li>'; });
+            html += '</ul></div>';
+            html += '<div class="feedback-section"><h3 style="color:#c62828;">&#9888; Improvements</h3><ul>';
+            (data.improvements || []).forEach(function(s) { html += '<li>' + s + '</li>'; });
+            html += '</ul></div></div>';
+
+            // Errors
+            if ((data.factualErrors && data.factualErrors.length) || (data.styleErrors && data.styleErrors.length) || (data.structureNotes && data.structureNotes.length)) {
+                html += '<div class="feedback-section"><h3>Errors & Notes</h3><ul>';
+                (data.factualErrors || []).forEach(function(e) { html += '<li style="color:#c62828;"><strong>Factual:</strong> ' + e + '</li>'; });
+                (data.styleErrors || []).forEach(function(e) { html += '<li style="color:#e65100;"><strong>Style:</strong> ' + e + '</li>'; });
+                (data.structureNotes || []).forEach(function(e) { html += '<li style="color:#2e7d32;"><strong>Structure:</strong> ' + e + '</li>'; });
+                html += '</ul></div>';
+            }
+
+            // Overall feedback
+            html += '<div class="feedback-section"><h3>Overall</h3><p style="font-size:0.95em;line-height:1.6;color:#555;">' + data.overallFeedback + '</p></div>';
+
+            // Actions
+            html += '<div class="action-row">';
+            html += '<button class="action-btn btn-primary" onclick="tryAgain()">Try Another</button>';
+            html += '<button class="action-btn btn-secondary" onclick="copyResults()">Copy Results</button>';
+            html += '<button class="action-btn btn-secondary" onclick="shareWithCoach()">Share with Coach</button>';
+            html += '</div>';
+
+            r.innerHTML = html;
+            r.style.display = 'block';
+            r.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function saveToHistory(data) {
+            try {
+                var history = JSON.parse(localStorage.getItem('uil-feature-history') || '[]');
+                history.unshift({
+                    date: new Date().toISOString(),
+                    topic: promptData.topic,
+                    mode: currentMode,
+                    totalScore: data.totalScore,
+                    maxScore: data.maxScore,
+                    wordCount: data.wordCount,
+                    ranking: data.overallRanking
+                });
+                if (history.length > 50) history = history.slice(0, 50);
+                localStorage.setItem('uil-feature-history', JSON.stringify(history));
+            } catch (e) {}
+        }
+
+        function tryAgain() {
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('writing-section').style.display = 'none';
+            document.getElementById('start-section').style.display = '';
+            document.getElementById('mode-selector').style.display = 'flex';
+            var btn = document.getElementById('generate-btn');
+            btn.disabled = false; btn.textContent = 'Generate Feature Prompt';
+            document.getElementById('submit-btn').disabled = false;
+            document.getElementById('submit-btn').textContent = 'Submit Story';
+            document.getElementById('story-input').value = '';
+            document.getElementById('word-count').textContent = '0 words';
+            document.getElementById('word-count').className = 'word-count';
+            document.getElementById('writing-checks').classList.remove('visible');
+            document.getElementById('writing-checks').style.display = '';
+            setHighlighter('off');
+            promptData = null; lastEvaluation = null;
+        }
+
+        function copyResults() {
+            if (!lastEvaluation) return;
+            var e = lastEvaluation;
+            var t = 'UIL Feature Writing \u2014 ' + e.promptTopic + '\n';
+            t += 'Score: ' + e.totalScore + '/' + e.maxScore + ' (' + e.overallRanking + ')\n';
+            t += 'Words: ' + e.wordCount + ' | Mode: ' + currentMode + '\n\n';
+            var labels = { lead: 'Lead/Hook', structure: 'Structure', quotes: 'Quotes', storytelling: 'Storytelling', writing: 'Writing', apStyle: 'AP Style', objectivity: 'Objectivity' };
+            for (var k in labels) {
+                if (e.scores[k]) t += labels[k] + ': ' + e.scores[k].score + '/10\n';
+            }
+            t += '\n' + e.overallFeedback;
+            navigator.clipboard.writeText(t).then(function() { showToast('Results copied!'); });
+        }
+
+        function shareWithCoach() {
+            if (!lastEvaluation) return;
+            var shareData = {
+                type: 'feature',
+                date: new Date().toISOString(),
+                topic: lastEvaluation.promptTopic,
+                mode: currentMode,
+                scores: lastEvaluation.scores,
+                totalScore: lastEvaluation.totalScore,
+                maxScore: lastEvaluation.maxScore,
+                wordCount: lastEvaluation.wordCount,
+                ranking: lastEvaluation.overallRanking,
+                feedback: lastEvaluation.overallFeedback,
+                story: lastEvaluation.story
+            };
+            var code = 'UIL:' + btoa(unescape(encodeURIComponent(JSON.stringify(shareData))));
+            document.getElementById('share-code').value = code;
+            document.getElementById('share-modal').classList.add('visible');
+        }
+
+        function copyShareCode() {
+            var el = document.getElementById('share-code');
+            el.select();
+            navigator.clipboard.writeText(el.value).then(function() { showToast('Share code copied!'); });
+        }
+
+        function showToast(m) { var t = document.getElementById('toast'); t.textContent = m; t.classList.add('visible'); setTimeout(function() { t.classList.remove('visible'); }, 2500); }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            var isDark = document.body.classList.contains('dark-mode');
+            document.getElementById('dark-toggle').textContent = isDark ? 'Light Mode' : 'Dark Mode';
+            try { localStorage.setItem('uil-dark-mode', isDark ? '1' : '0'); } catch (e) {}
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            try { if (localStorage.getItem('uil-dark-mode') === '1') { document.body.classList.add('dark-mode'); document.getElementById('dark-toggle').textContent = 'Light Mode'; } } catch (e) {}
+        });
+    </script>
+</body>
+</html>
