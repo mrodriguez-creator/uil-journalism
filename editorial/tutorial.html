@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UIL Editorial Writing Tutorial</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #4fc3f7 0%, #0288d1 100%);
+            min-height: 100vh; padding: 20px;
+        }
+        .container {
+            max-width: 900px; margin: 0 auto; background: white;
+            border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #01579b 0%, #0288d1 100%);
+            color: white; padding: 30px; text-align: center;
+        }
+        .header h1 { font-size: 2.2em; margin-bottom: 10px; }
+        .header p { font-size: 1.1em; opacity: 0.9; }
+        .header .back-link { color: rgba(255,255,255,0.8); font-size: 0.9em; margin-top: 8px; display: inline-block; text-decoration: none; }
+        .header .back-link:hover { color: white; }
+        .sf { font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+        .content { padding: 40px; }
+
+        .nav-links {
+            display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 25px;
+        }
+        .nav-link {
+            padding: 10px 20px; border: 2px solid #0288d1; border-radius: 6px;
+            text-decoration: none; color: #0288d1; font-weight: 600;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 0.9em;
+            transition: all 0.2s;
+        }
+        .nav-link:hover { background: #0288d1; color: white; }
+        .nav-link.active { background: #0288d1; color: white; }
+
+        .section { margin-bottom: 40px; }
+        .section-title {
+            font-size: 1.8em; color: #01579b; margin-bottom: 20px;
+            padding-bottom: 10px; border-bottom: 3px solid #0288d1;
+        }
+        .rule-box {
+            background: #f8f9fa; border-left: 4px solid #0288d1;
+            padding: 20px; margin: 20px 0; border-radius: 4px;
+        }
+        .rule-box h3 { color: #01579b; margin-bottom: 10px; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+        .rule-list { margin: 15px 0; padding-left: 25px; }
+        .rule-list li {
+            margin: 10px 0; line-height: 1.6;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 0.95em;
+        }
+        .example-box {
+            background: #e1f5fe; padding: 18px 20px; border-radius: 6px; margin: 15px 0;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 0.95em; line-height: 1.7;
+        }
+        .example-box .label {
+            font-weight: 700; color: #01579b; font-size: 0.85em; margin-bottom: 6px;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .good { color: #2e7d32; }
+        .bad { color: #c62828; }
+        .tip-box {
+            background: #fff3e0; border-left: 4px solid #ff9800; padding: 15px 20px;
+            border-radius: 4px; margin: 15px 0;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 0.95em; line-height: 1.6;
+        }
+        .tip-box strong { color: #e65100; }
+        .structure-step {
+            display: flex; gap: 15px; margin: 15px 0; padding: 15px;
+            background: #f8f9fa; border-radius: 8px; border: 1px solid #eee;
+        }
+        .step-num {
+            background: #0288d1; color: white; width: 36px; height: 36px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            flex-shrink: 0; font-size: 1.1em;
+        }
+        .step-content { flex: 1; }
+        .step-content h4 { color: #01579b; margin-bottom: 4px; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+        .step-content p { font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 0.93em; color: #555; line-height: 1.5; }
+
+        .do-dont { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 15px 0; }
+        @media (max-width: 600px) { .do-dont { grid-template-columns: 1fr; } }
+        .do-col { background: #e8f5e9; border-radius: 8px; padding: 15px; border-top: 3px solid #4caf50; }
+        .dont-col { background: #ffebee; border-radius: 8px; padding: 15px; border-top: 3px solid #f44336; }
+        .do-col h4 { color: #2e7d32; font-family: -apple-system, BlinkMacSystemFont, sans-serif; margin-bottom: 8px; }
+        .dont-col h4 { color: #c62828; font-family: -apple-system, BlinkMacSystemFont, sans-serif; margin-bottom: 8px; }
+        .do-col li, .dont-col li {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 0.9em;
+            margin: 6px 0; line-height: 1.5;
+        }
+
+        /* Dark mode */
+        .dark-toggle {
+            position: fixed; top: 12px; right: 12px; z-index: 300;
+            background: rgba(255,255,255,0.9); border: 1px solid #ccc; border-radius: 20px;
+            padding: 6px 14px; cursor: pointer; font-size: 13px;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 600;
+            transition: all 0.2s; color: #333;
+        }
+        .dark-toggle:hover { background: #0288d1; color: white; border-color: #0288d1; }
+        body.dark-mode { background: linear-gradient(135deg, #0d1b2a 0%, #1b2838 100%); }
+        body.dark-mode .container { background: #1e1e1e; }
+        body.dark-mode .content { color: #eee; }
+        body.dark-mode .rule-box { background: #2a2a2a; color: #ddd; }
+        body.dark-mode .example-box { background: #1a2a3a; color: #ddd; }
+        body.dark-mode .tip-box { background: #2d2520; color: #ddd; }
+        body.dark-mode .section-title { color: #4fc3f7; border-color: #0288d1; }
+        body.dark-mode .structure-step { background: #2a2a2a; border-color: #444; }
+        body.dark-mode .step-content h4 { color: #4fc3f7; }
+        body.dark-mode .step-content p { color: #bbb; }
+        body.dark-mode .do-col { background: #1b3320; }
+        body.dark-mode .dont-col { background: #2d2030; }
+        body.dark-mode .nav-link { color: #4fc3f7; border-color: #4fc3f7; }
+        body.dark-mode .nav-link:hover, body.dark-mode .nav-link.active { background: #0288d1; color: white; }
+        body.dark-mode .dark-toggle { background: rgba(30,30,30,0.9); color: #eee; border-color: #555; }
+    </style>
+</head>
+<body>
+    <button class="dark-toggle" id="dark-toggle" onclick="toggleDarkMode()">Dark Mode</button>
+    <div class="container">
+        <div class="header">
+            <h1>Editorial Writing Tutorial</h1>
+            <p>How to write a winning UIL staff editorial</p>
+            <a href="./" class="back-link">&larr; Back to Editorial Writing Trainer</a>
+        </div>
+        <div class="content">
+            <div class="nav-links">
+                <a href="./" class="nav-link">Practice</a>
+                <a href="tutorial.html" class="nav-link active">Tutorial</a>
+            </div>
+
+            <!-- Section 1: Overview -->
+            <div class="section">
+                <h2 class="section-title">What Is UIL Editorial Writing?</h2>
+                <div class="rule-box">
+                    <h3>Contest Format</h3>
+                    <ul class="rule-list">
+                        <li><strong>Time limit:</strong> 45 minutes</li>
+                        <li><strong>What you receive:</strong> A fact sheet about a school policy issue at Leaguetown High School</li>
+                        <li><strong>What you write:</strong> A staff editorial for the school newspaper (the Leaguetown Press)</li>
+                        <li><strong>Your goal:</strong> Take a clear stance FOR or AGAINST the proposal and persuade readers</li>
+                        <li><strong>Length:</strong> 300-450 words (no more than 450)</li>
+                        <li><strong>Allowed resources:</strong> AP Stylebook, dictionary, thesaurus</li>
+                        <li><strong>Judging:</strong> At least 3 judges rank the top 6 papers. No ties allowed.</li>
+                    </ul>
+                </div>
+                <div class="tip-box">
+                    <strong>Key principle:</strong> An editorial supports or opposes a policy or action. It does NOT sermonize. Your job is to make thoughtful, logical arguments — not to lecture or moralize.
+                </div>
+            </div>
+
+            <!-- Section 2: Structure -->
+            <div class="section">
+                <h2 class="section-title">The Editorial Formula</h2>
+                <p class="sf" style="color:#666;margin-bottom:15px;line-height:1.5;">UIL editorials follow a clear structure. Here are the building blocks:</p>
+
+                <div class="structure-step">
+                    <div class="step-num">1</div>
+                    <div class="step-content">
+                        <h4>Lead — State the Situation</h4>
+                        <p>Open with 1-2 sentences summarizing the issue. What's happening? What's at stake? Get right to the point — don't waddle into it.</p>
+                    </div>
+                </div>
+                <div class="structure-step">
+                    <div class="step-num">2</div>
+                    <div class="step-content">
+                        <h4>Stance — Take a Clear Position</h4>
+                        <p>Within the first 2-3 paragraphs, state your position clearly and definitively. "The school board should reject the proposal." No ambiguity.</p>
+                    </div>
+                </div>
+                <div class="structure-step">
+                    <div class="step-num">3</div>
+                    <div class="step-content">
+                        <h4>Body — Support Your Stance (2-3 reasons)</h4>
+                        <p>Give 2-3 strong reasons supporting your position. Use specific facts, numbers, and details from the fact sheet. Each reason should be its own paragraph.</p>
+                    </div>
+                </div>
+                <div class="structure-step">
+                    <div class="step-num">4</div>
+                    <div class="step-content">
+                        <h4>Rebuttal — Address the Opposition</h4>
+                        <p>Acknowledge the other side's strongest argument, then explain why your position is still better. Use specific examples to refute them.</p>
+                    </div>
+                </div>
+                <div class="structure-step">
+                    <div class="step-num">5</div>
+                    <div class="step-content">
+                        <h4>Solution — Offer a Specific Action</h4>
+                        <p>What should happen next? Be specific. "The board should vote against the proposal" or "The administration should form a student committee to..."</p>
+                    </div>
+                </div>
+                <div class="structure-step">
+                    <div class="step-num">6</div>
+                    <div class="step-content">
+                        <h4>Conclusion — Recap the Stance</h4>
+                        <p>End with a strong final sentence that reinforces your position. Leave the reader with no doubt about where you stand.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Do's and Don'ts -->
+            <div class="section">
+                <h2 class="section-title">Do's and Don'ts</h2>
+                <div class="do-dont">
+                    <div class="do-col">
+                        <h4>DO</h4>
+                        <ul style="padding-left:18px;">
+                            <li>Get right to the point</li>
+                            <li>Take a clear, definitive stance early</li>
+                            <li>Use first person plural: <strong>"we"</strong> (= the newspaper staff)</li>
+                            <li>Use specific facts and numbers from the fact sheet</li>
+                            <li>Refute the opposition with evidence</li>
+                            <li>Offer a specific solution or call to action</li>
+                            <li>Use the future angle (your paper comes out BEFORE the vote)</li>
+                            <li>Paraphrase information rather than using direct quotes</li>
+                            <li>Stay under 450 words</li>
+                        </ul>
+                    </div>
+                    <div class="dont-col">
+                        <h4>DON'T</h4>
+                        <ul style="padding-left:18px;">
+                            <li>Use first person singular: <strong>"I, me, mine"</strong></li>
+                            <li>Use second person: <strong>"you, your"</strong></li>
+                            <li>Ask questions — editorials <em>answer</em> questions</li>
+                            <li>Sermonize or lecture the reader</li>
+                            <li>Use direct quotes from the fact sheet</li>
+                            <li>Be wishy-washy or take both sides</li>
+                            <li>Write more than 450 words</li>
+                            <li>Start with "In my opinion..." or "I think..."</li>
+                            <li>Make factual errors (check names, numbers, dates)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: Voice -->
+            <div class="section">
+                <h2 class="section-title">Finding Your Voice</h2>
+                <div class="rule-box">
+                    <h3>Pronoun Rules</h3>
+                    <ul class="rule-list">
+                        <li><strong>Best approach:</strong> Avoid pronouns entirely. Write "The district should..." instead of "We believe the district should..."</li>
+                        <li><strong>If you must use a pronoun:</strong> Use first person plural — <em>we, us, our</em> (meaning "we, the newspaper staff")</li>
+                        <li><strong>Never use:</strong> I, me, my, mine (first person singular) or you, your (second person)</li>
+                    </ul>
+                </div>
+
+                <div class="example-box">
+                    <div class="label bad">Bad — uses "I" and "you"</div>
+                    "I think the school board should reject this proposal. You should care about this because it affects your education."
+                </div>
+                <div class="example-box">
+                    <div class="label good">Good — uses third person and "we" (staff)</div>
+                    "The school board should reject this proposal. Students deserve a quality education, and this policy threatens that."
+                </div>
+            </div>
+
+            <!-- Section 5: Lead Examples -->
+            <div class="section">
+                <h2 class="section-title">Writing a Strong Lead</h2>
+                <div class="tip-box">
+                    <strong>The lead is the most important part.</strong> Judges form their first impression in the opening paragraph. State the situation quickly and take your stance early.
+                </div>
+
+                <div class="example-box">
+                    <div class="label bad">Weak lead — too vague, no stance</div>
+                    "There has been a lot of discussion about a new policy at our school. Some people think it's good and some people think it's bad. This is a complicated issue."
+                </div>
+                <div class="example-box">
+                    <div class="label good">Strong lead — situation + stance</div>
+                    "Eight seniors face three days of out-of-school suspension after staging a peaceful walkout to raise awareness about climate change. A disciplinary committee will vote on their appeal Tuesday. The committee should overturn the suspension and allow the seniors to attend their last days of school."
+                </div>
+            </div>
+
+            <!-- Section 6: Using the Fact Sheet -->
+            <div class="section">
+                <h2 class="section-title">Using Information from the Fact Sheet</h2>
+                <div class="rule-box">
+                    <h3>How to Use Facts Effectively</h3>
+                    <ul class="rule-list">
+                        <li><strong>Paraphrase, don't quote:</strong> Pull information from the quotes but put it in your own words. Avoid direct quotes unless the source has substantial credibility.</li>
+                        <li><strong>Use specific numbers:</strong> Instead of "many students," write "the school's 1,430 students"</li>
+                        <li><strong>Reference the timeline:</strong> Mention when the vote/meeting happens and when your paper comes out</li>
+                        <li><strong>Attribution is optional:</strong> You don't need to say "According to the superintendent..." — just state the fact</li>
+                        <li><strong>Check for accuracy:</strong> Double-check names, numbers, and dates from the fact sheet. Factual errors hurt your ranking.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Section 7: Time Management -->
+            <div class="section">
+                <h2 class="section-title">Time Management (45 minutes)</h2>
+                <div class="rule-box">
+                    <h3>Suggested Breakdown</h3>
+                    <ul class="rule-list">
+                        <li><strong>Minutes 1-8:</strong> Read the fact sheet carefully. Highlight key facts. Decide your stance.</li>
+                        <li><strong>Minutes 8-12:</strong> Outline your editorial (stance, 2-3 reasons, rebuttal, solution).</li>
+                        <li><strong>Minutes 12-38:</strong> Write your editorial. Follow your outline.</li>
+                        <li><strong>Minutes 38-45:</strong> Proofread for grammar, AP style, factual errors, and word count.</li>
+                    </ul>
+                </div>
+                <div class="tip-box">
+                    <strong>Pro tip:</strong> If you finish early, use the remaining time to proofread — not to add more content. Clean, concise writing scores higher than long, rambling writing. The best editorials are often 350-400 words.
+                </div>
+            </div>
+
+            <!-- Section 8: Common Mistakes -->
+            <div class="section">
+                <h2 class="section-title">Common Mistakes to Avoid</h2>
+                <div class="rule-box">
+                    <h3>Why Editorials Lose Points</h3>
+                    <ul class="rule-list">
+                        <li><strong>No clear stance:</strong> The #1 mistake. Judges need to know your position immediately.</li>
+                        <li><strong>Sermonizing:</strong> "Students need to understand that education is important and they should value it." This is lecturing, not arguing.</li>
+                        <li><strong>No rebuttal:</strong> Ignoring the opposition makes your argument look one-sided.</li>
+                        <li><strong>No solution:</strong> Saying "something should be done" isn't enough. Be specific.</li>
+                        <li><strong>Using "I":</strong> This is a staff editorial, not a personal essay.</li>
+                        <li><strong>Asking questions:</strong> "Shouldn't we care about our students?" — Editorials answer questions, not ask them.</li>
+                        <li><strong>Too long:</strong> Going over 450 words suggests poor editing skills.</li>
+                        <li><strong>Factual errors:</strong> Getting a name, number, or date wrong from the fact sheet is a serious mistake.</li>
+                        <li><strong>No future angle:</strong> Your paper comes out BEFORE the vote. Use that. "The board should vote tomorrow to..."</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="nav-links" style="margin-top:30px;">
+                <a href="./" class="nav-link">Start Practicing</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            var isDark = document.body.classList.contains('dark-mode');
+            document.getElementById('dark-toggle').textContent = isDark ? 'Light Mode' : 'Dark Mode';
+            try { localStorage.setItem('uil-dark-mode', isDark ? '1' : '0'); } catch (e) {}
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            try { if (localStorage.getItem('uil-dark-mode') === '1') { document.body.classList.add('dark-mode'); document.getElementById('dark-toggle').textContent = 'Light Mode'; } } catch (e) {}
+        });
+    </script>
+</body>
+</html>
