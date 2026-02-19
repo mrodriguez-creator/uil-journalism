@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UIL Copy Editing Tutorial</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh; padding: 20px;
+        }
+        .container {
+            max-width: 900px; margin: 0 auto; background: white;
+            border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #ad1457 0%, #e91e63 100%);
+            color: white; padding: 30px; text-align: center;
+        }
+        .header h1 { font-size: 2.2em; margin-bottom: 10px; }
+        .header p { font-size: 1.1em; opacity: 0.9; }
+        .header .back-link { color: rgba(255,255,255,0.8); font-size: 0.9em; margin-top: 8px; display: inline-block; text-decoration: none; }
+        .header .back-link:hover { color: white; }
+        .sf { font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+        .content { padding: 40px; }
+
+        .section { margin-bottom: 40px; }
+        .section-title {
+            font-size: 1.8em; color: #ad1457; margin-bottom: 20px;
+            padding-bottom: 10px; border-bottom: 3px solid #e91e63;
+        }
+        .rule-box {
+            background: #f8f9fa; border-left: 4px solid #e91e63;
+            padding: 20px; margin: 20px 0; border-radius: 4px;
+        }
+        .rule-box h3 { color: #ad1457; margin-bottom: 10px; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+        .rule-list { margin: 15px 0; padding-left: 25px; }
+        .rule-list li {
+            margin: 10px 0; line-height: 1.6;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 0.95em;
+        }
+        .example-box {
+            background: #fce4ec; padding: 15px 20px; border-radius: 6px; margin: 10px 0;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 0.95em; line-height: 1.6;
+        }
+        .wrong { color: #c62828; text-decoration: line-through; }
+        .right { color: #2e7d32; font-weight: 600; }
+        .tip-box {
+            background: #fff3e0; border-left: 4px solid #ff9800; padding: 15px 20px;
+            border-radius: 4px; margin: 15px 0;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 0.95em; line-height: 1.6;
+        }
+        .tip-box strong { color: #e65100; }
+        .marks-table {
+            width: 100%; border-collapse: collapse; margin: 15px 0;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 0.95em;
+        }
+        .marks-table th {
+            background: #fce4ec; padding: 10px 14px; text-align: left;
+            border-bottom: 2px solid #e91e63; color: #ad1457;
+        }
+        .marks-table td { padding: 10px 14px; border-bottom: 1px solid #eee; }
+        .marks-table tr:hover { background: #fef9fa; }
+        .mark-symbol { font-size: 1.3em; font-weight: bold; color: #e91e63; text-align: center; }
+        .nav-links {
+            display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+        .nav-link {
+            padding: 10px 20px; border: 2px solid #e91e63; border-radius: 6px;
+            text-decoration: none; color: #e91e63; font-weight: 600;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 0.9em;
+            transition: all 0.2s;
+        }
+        .nav-link:hover { background: #e91e63; color: white; }
+        .nav-link.active { background: #e91e63; color: white; }
+
+        /* Dark mode */
+        .dark-toggle {
+            position: fixed; top: 12px; right: 12px; z-index: 300;
+            background: rgba(255,255,255,0.9); border: 1px solid #ccc; border-radius: 20px;
+            padding: 6px 14px; cursor: pointer; font-size: 13px;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 600;
+            transition: all 0.2s; color: #333;
+        }
+        .dark-toggle:hover { background: #e91e63; color: white; border-color: #e91e63; }
+        body.dark-mode { background: linear-gradient(135deg, #1a1a2e 0%, #2d1b33 100%); }
+        body.dark-mode .container { background: #1e1e1e; }
+        body.dark-mode .content { color: #eee; }
+        body.dark-mode .rule-box { background: #2a2a2a; color: #ddd; }
+        body.dark-mode .example-box { background: #2d2030; color: #ddd; }
+        body.dark-mode .tip-box { background: #2d2520; color: #ddd; }
+        body.dark-mode .marks-table th { background: #2d2030; }
+        body.dark-mode .marks-table td { border-color: #444; color: #ddd; }
+        body.dark-mode .marks-table tr:hover { background: #2a2a2a; }
+        body.dark-mode .section-title { color: #f48fb1; border-color: #e91e63; }
+        body.dark-mode .nav-link { color: #f48fb1; border-color: #f48fb1; }
+        body.dark-mode .nav-link:hover, body.dark-mode .nav-link.active { background: #e91e63; color: white; }
+        body.dark-mode .dark-toggle { background: rgba(30,30,30,0.9); color: #eee; border-color: #555; }
+
+        @media print {
+            body { background: white !important; padding: 0 !important; }
+            .container { box-shadow: none !important; }
+            .dark-toggle, .nav-links { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+    <button class="dark-toggle" id="dark-toggle" onclick="toggleDarkMode()">Dark Mode</button>
+    <div class="container">
+        <div class="header">
+            <h1>Copy Editing Tutorial</h1>
+            <p>AP Style rules, editing marks, and strategies for the UIL Copy Editing contest</p>
+            <a href="./" class="back-link">&larr; Back to Copy Editing Trainer</a>
+        </div>
+        <div class="content">
+            <div class="nav-links">
+                <a href="./" class="nav-link">Practice Test</a>
+                <a href="tutorial.html" class="nav-link active">Tutorial</a>
+                <a href="drills.html" class="nav-link">Skill Drills</a>
+            </div>
+
+            <!-- Section 1: Contest Overview -->
+            <div class="section">
+                <h2 class="section-title">What Is UIL Copy Editing?</h2>
+                <div class="rule-box">
+                    <h3>Contest Format</h3>
+                    <ul class="rule-list">
+                        <li><strong>Time limit:</strong> 15 minutes</li>
+                        <li><strong>Part 1 (15 pts):</strong> 15 questions — pick the correct option from inline choices in a sentence</li>
+                        <li><strong>Part 2 (20 pts):</strong> 5 sentences with exactly 4 errors each (4 pts per sentence) — use editing marks or rewrite</li>
+                        <li><strong>Part 3 (tiebreaker):</strong> Edit a news brief for all errors — required but used only to break ties</li>
+                        <li><strong>Total:</strong> 35 points (Part 1 + Part 2)</li>
+                        <li><strong>Allowed resources:</strong> AP Stylebook, dictionary, thesaurus</li>
+                    </ul>
+                </div>
+                <div class="tip-box">
+                    <strong>Strategy:</strong> Part 1 is the fastest way to earn points — each question is worth 1 point and can be answered quickly. Spend about 4-5 minutes on Part 1, 6-7 minutes on Part 2, and the remaining time on Part 3. Never skip Part 3 or your entry may be disqualified!
+                </div>
+            </div>
+
+            <!-- Section 2: AP Style Rules -->
+            <div class="section">
+                <h2 class="section-title">Most-Tested AP Style Rules</h2>
+
+                <div class="rule-box">
+                    <h3>Numbers</h3>
+                    <ul class="rule-list">
+                        <li>Spell out <strong>one through nine</strong>; use figures for <strong>10 and above</strong></li>
+                        <li>Always use figures for <strong>ages, percents, dollars, addresses, dates, scores</strong></li>
+                        <li>Spell out a number at the <strong>start of a sentence</strong> (or rephrase)</li>
+                        <li>Use <strong>percent</strong> (one word), not % in regular text</li>
+                    </ul>
+                    <div class="example-box">
+                        <span class="wrong">She has 3 cats and 15 dogs.</span><br>
+                        <span class="right">She has three cats and 15 dogs.</span><br><br>
+                        <span class="wrong">The girl is nine years old.</span><br>
+                        <span class="right">The girl is 9 years old.</span> (ages always use figures)
+                    </div>
+                </div>
+
+                <div class="rule-box">
+                    <h3>Capitalization</h3>
+                    <ul class="rule-list">
+                        <li><strong>Titles before names:</strong> capitalize. After or alone: lowercase.<br>
+                        <em>President Smith</em> vs. <em>Smith, the president</em></li>
+                        <li><strong>Seasons:</strong> always lowercase (<em>spring, fall</em>) unless part of a proper name</li>
+                        <li><strong>Directions:</strong> lowercase when compass direction (<em>drove north</em>), capitalize when region (<em>the South</em>)</li>
+                        <li><strong>School subjects:</strong> lowercase unless a language or proper noun (<em>math, English, history</em>)</li>
+                    </ul>
+                    <div class="example-box">
+                        <span class="wrong">The Mayor spoke at the Fall festival.</span><br>
+                        <span class="right">The mayor spoke at the fall festival.</span><br><br>
+                        <span class="wrong">She teaches History and english.</span><br>
+                        <span class="right">She teaches history and English.</span>
+                    </div>
+                </div>
+
+                <div class="rule-box">
+                    <h3>Abbreviations</h3>
+                    <ul class="rule-list">
+                        <li><strong>States:</strong> Abbreviate after a city name using AP abbreviations (not postal codes): <em>Austin, Texas</em> — never <em>Austin, TX</em></li>
+                        <li><strong>Months:</strong> Abbreviate months with 6+ letters when used with a specific date: <em>Feb. 14</em> but <em>February 2025</em></li>
+                        <li>Never abbreviate: <strong>March, April, May, June, July</strong></li>
+                        <li><strong>a.m. / p.m.</strong> — lowercase with periods. <em>10 a.m.</em> (not AM or A.M.)</li>
+                        <li><strong>Titles:</strong> Abbreviate Mr., Mrs., Dr., Gov., Rep., Sen. before a full name</li>
+                    </ul>
+                    <div class="example-box">
+                        <span class="wrong">The meeting is at 3 PM on January 5.</span><br>
+                        <span class="right">The meeting is at 3 p.m. on Jan. 5.</span><br><br>
+                        <span class="wrong">He moved to Houston, TX in May.</span><br>
+                        <span class="right">He moved to Houston, Texas, in May.</span> (state name after city gets commas around it)
+                    </div>
+                </div>
+
+                <div class="rule-box">
+                    <h3>Commas</h3>
+                    <ul class="rule-list">
+                        <li><strong>No Oxford comma</strong> in AP style: <em>red, white and blue</em></li>
+                        <li><strong>City-state:</strong> Comma after city AND after state: <em>Dallas, Texas, is big.</em></li>
+                        <li><strong>Ages as appositives:</strong> Commas around age: <em>John Smith, 42, said...</em></li>
+                        <li><strong>Introductory clauses:</strong> Comma after intro clause: <em>After the game, the team celebrated.</em></li>
+                        <li><strong>Compound sentences:</strong> Comma before the conjunction: <em>She ran, and he walked.</em></li>
+                    </ul>
+                    <div class="example-box">
+                        <span class="wrong">She bought apples, oranges, and bananas.</span><br>
+                        <span class="right">She bought apples, oranges and bananas.</span> (no Oxford comma)<br><br>
+                        <span class="wrong">John Smith 42 of Dallas Texas said he was happy.</span><br>
+                        <span class="right">John Smith, 42, of Dallas, Texas, said he was happy.</span>
+                    </div>
+                </div>
+
+                <div class="rule-box">
+                    <h3>Commonly Confused Words</h3>
+                    <ul class="rule-list">
+                        <li><strong>affect</strong> (verb) vs. <strong>effect</strong> (noun)</li>
+                        <li><strong>its</strong> (possessive) vs. <strong>it's</strong> (it is)</li>
+                        <li><strong>their/there/they're</strong></li>
+                        <li><strong>who</strong> (subject) vs. <strong>whom</strong> (object)</li>
+                        <li><strong>that</strong> (restrictive, no comma) vs. <strong>which</strong> (non-restrictive, use commas)</li>
+                        <li><strong>fewer</strong> (countable) vs. <strong>less</strong> (uncountable)</li>
+                        <li><strong>farther</strong> (physical distance) vs. <strong>further</strong> (figurative)</li>
+                    </ul>
+                    <div class="example-box">
+                        <span class="wrong">The team, that won the game, celebrated.</span><br>
+                        <span class="right">The team that won the game celebrated.</span> (restrictive — no commas)<br><br>
+                        <span class="wrong">Less than 10 students showed up.</span><br>
+                        <span class="right">Fewer than 10 students showed up.</span> (countable)
+                    </div>
+                </div>
+
+                <div class="rule-box">
+                    <h3>Punctuation</h3>
+                    <ul class="rule-list">
+                        <li><strong>Quotation marks:</strong> Periods and commas go INSIDE. Colons and semicolons go OUTSIDE.</li>
+                        <li><strong>Possessives:</strong> Singular: add <em>'s</em> (even for names ending in s: <em>James's</em>). Plural: add <em>s'</em></li>
+                        <li><strong>Hyphens:</strong> Use hyphens in compound modifiers before a noun: <em>well-known author</em> but <em>the author is well known</em></li>
+                        <li><strong>Semicolons:</strong> Join two independent clauses without a conjunction</li>
+                    </ul>
+                </div>
+
+                <div class="rule-box">
+                    <h3>Other Frequently Tested Rules</h3>
+                    <ul class="rule-list">
+                        <li><strong>Datelines:</strong> CITY NAME in caps, state or country: <em>DALLAS, Texas —</em></li>
+                        <li><strong>Courtesy titles:</strong> Generally not used on first reference in news stories. Use full name first reference, last name only on subsequent references.</li>
+                        <li><strong>Said:</strong> Use <em>said</em> for attribution — avoid <em>stated, exclaimed, expressed</em></li>
+                        <li><strong>Days/dates:</strong> Don't use <em>last</em> or <em>next</em> — use the actual day or date</li>
+                        <li><strong>Compositions:</strong> Book titles, movie titles, etc. — use quotation marks (AP does not use italics)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Section 3: Editing Marks -->
+            <div class="section">
+                <h2 class="section-title">Standard Editing Marks</h2>
+                <p class="sf" style="color:#666;margin-bottom:15px;line-height:1.5;">On the real UIL test, Part 2 uses editing marks. Here are the standard marks you should know:</p>
+                <table class="marks-table">
+                    <thead>
+                        <tr><th style="width:80px;">Mark</th><th>Meaning</th><th>Example</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="mark-symbol">=</td><td>Capitalize</td><td><span class="wrong">dallas</span> → <span class="right">Dallas</span> (draw triple underline under letter)</td></tr>
+                        <tr><td class="mark-symbol">/</td><td>Lowercase</td><td><span class="wrong">The Mayor</span> → <span class="right">The mayor</span> (slash through capital letter)</td></tr>
+                        <tr><td class="mark-symbol">⌃</td><td>Insert</td><td>Insert a missing word, letter, comma, or punctuation (caret mark)</td></tr>
+                        <tr><td class="mark-symbol">⌒</td><td>Delete</td><td>Remove a word or letter (loop around it)</td></tr>
+                        <tr><td class="mark-symbol">⊙</td><td>Insert period</td><td>Circle where a period should go</td></tr>
+                        <tr><td class="mark-symbol">⊘</td><td>Close up space</td><td><span class="wrong">base ball</span> → <span class="right">baseball</span></td></tr>
+                        <tr><td class="mark-symbol">#</td><td>Add space</td><td><span class="wrong">cannot</span> → <span class="right">can not</span></td></tr>
+                        <tr><td class="mark-symbol">⤺</td><td>Transpose</td><td>Swap the order of two adjacent words or letters</td></tr>
+                        <tr><td class="mark-symbol">¶</td><td>New paragraph</td><td>Start a new paragraph here</td></tr>
+                        <tr><td class="mark-symbol">stet</td><td>Let it stand</td><td>Undo a previous correction (write "stet" and dot under the change)</td></tr>
+                    </tbody>
+                </table>
+                <div class="tip-box">
+                    <strong>Part 2 tip:</strong> On the real test, you use editing marks directly on the printed sentences. In this digital trainer, you rewrite the corrected sentence instead. The skills are the same — spotting the 4 errors is what matters!
+                </div>
+            </div>
+
+            <!-- Section 4: Strategy -->
+            <div class="section">
+                <h2 class="section-title">Contest Strategy</h2>
+
+                <div class="rule-box">
+                    <h3>Time Management (15 minutes total)</h3>
+                    <ul class="rule-list">
+                        <li><strong>Part 1 (4-5 min):</strong> These are fast. Read each sentence, pick the correct option. If you're stuck, skip it and come back.</li>
+                        <li><strong>Part 2 (6-7 min):</strong> Read each sentence slowly. Look for exactly 4 errors. Common categories: spelling, AP style, grammar, punctuation.</li>
+                        <li><strong>Part 3 (3-4 min):</strong> Don't overthink it — correct everything you can see. This is only used for tiebreakers, but you MUST attempt it.</li>
+                    </ul>
+                </div>
+
+                <div class="rule-box">
+                    <h3>What to Look For (Error Checklist)</h3>
+                    <ul class="rule-list">
+                        <li><strong>Spelling:</strong> Commonly misspelled words (accommodate, occurrence, separate, cemetery, etc.)</li>
+                        <li><strong>AP numbers:</strong> One-nine spelled out? 10+ as figures? Ages/dates/money as figures?</li>
+                        <li><strong>Capitalization:</strong> Titles, seasons, directions, school subjects</li>
+                        <li><strong>Commas:</strong> Oxford comma removed? City/state commas? Age appositives?</li>
+                        <li><strong>Abbreviations:</strong> State names, months, a.m./p.m., titles</li>
+                        <li><strong>Word choice:</strong> affect/effect, its/it's, fewer/less, that/which</li>
+                        <li><strong>Subject-verb agreement:</strong> Collective nouns (team, committee) take singular verbs</li>
+                        <li><strong>Punctuation:</strong> Quotation marks placement, possessives, hyphens</li>
+                    </ul>
+                </div>
+
+                <div class="tip-box">
+                    <strong>Pro tip:</strong> In Part 2, the judges only look at your <strong>first 4 corrections</strong>. If you mark more than 4, only the first 4 count. So be confident in your corrections — quality over quantity. A compound error (like a misspelled word that's also miscapitalized) counts as one error.
+                </div>
+            </div>
+
+            <!-- Section 5: Practice Resources -->
+            <div class="section">
+                <h2 class="section-title">Study Resources</h2>
+                <div class="rule-box">
+                    <h3>How to Prepare</h3>
+                    <ul class="rule-list">
+                        <li><strong>AP Stylebook:</strong> Read the entries for numbers, abbreviations, capitalization, and punctuation first</li>
+                        <li><strong>Practice tests:</strong> Use the trainer to run timed mock contests regularly</li>
+                        <li><strong>Skill drills:</strong> <a href="drills.html" style="color:#e91e63;font-weight:bold;">Target specific skills</a> like AP numbers, commas, or word choice</li>
+                        <li><strong>Read newspaper articles:</strong> Train your eye by reading professionally edited copy</li>
+                        <li><strong>Study commonly misspelled words:</strong> Keep a personal list of words you miss</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="nav-links" style="margin-top:30px;">
+                <a href="./" class="nav-link">Practice Test</a>
+                <a href="drills.html" class="nav-link">Skill Drills</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            var isDark = document.body.classList.contains('dark-mode');
+            document.getElementById('dark-toggle').textContent = isDark ? 'Light Mode' : 'Dark Mode';
+            try { localStorage.setItem('uil-dark-mode', isDark ? '1' : '0'); } catch (e) {}
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            try { if (localStorage.getItem('uil-dark-mode') === '1') { document.body.classList.add('dark-mode'); document.getElementById('dark-toggle').textContent = 'Light Mode'; } } catch (e) {}
+        });
+    </script>
+</body>
+</html>
