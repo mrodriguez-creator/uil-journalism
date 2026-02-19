@@ -174,6 +174,29 @@
         .word-count.warning { color: #ff9800; }
         .word-count.over { color: #f44336; }
 
+        /* Writing checklist & warnings */
+        .writing-checks {
+            margin-top: 10px; display: none;
+        }
+        .writing-checks.visible { display: block; }
+        .check-item {
+            display: flex; align-items: flex-start; gap: 8px; padding: 5px 0;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 0.82em;
+            line-height: 1.4;
+        }
+        .check-icon { flex-shrink: 0; width: 18px; text-align: center; font-size: 1em; }
+        .check-text { color: #666; }
+        .check-item.done .check-icon { color: #4caf50; }
+        .check-item.done .check-text { color: #4caf50; }
+        .check-item.warn .check-icon { color: #f44336; }
+        .check-item.warn .check-text { color: #c62828; font-weight: 600; }
+        .check-item.pending .check-icon { color: #ccc; }
+        .check-item.pending .check-text { color: #aaa; }
+        body.dark-mode .check-item.pending .check-text { color: #666; }
+        body.dark-mode .check-item .check-text { color: #999; }
+        body.dark-mode .check-item.warn .check-text { color: #ef9a9a; }
+        body.dark-mode .check-item.done .check-text { color: #a5d6a7; }
+
         .editorial-input {
             width: 100%; flex: 1; min-height: 500px; padding: 18px; border: 2px solid #ddd;
             border-radius: 8px; font-size: 1em; font-family: Georgia, serif;
@@ -353,6 +376,14 @@
                             <span class="editor-label">Your Editorial</span>
                             <span class="word-count" id="word-count">0 words</span>
                         </div>
+                        <div class="writing-checks" id="writing-checks">
+                            <div class="check-item pending" id="chk-words"><span class="check-icon">○</span><span class="check-text">Word count: 300-450 words</span></div>
+                            <div class="check-item pending" id="chk-stance"><span class="check-icon">○</span><span class="check-text">Clear stance in opening</span></div>
+                            <div class="check-item pending" id="chk-noi"><span class="check-icon">○</span><span class="check-text">No first person (I, me, my)</span></div>
+                            <div class="check-item pending" id="chk-noyou"><span class="check-icon">○</span><span class="check-text">No second person (you, your)</span></div>
+                            <div class="check-item pending" id="chk-noquestion"><span class="check-icon">○</span><span class="check-text">No questions asked</span></div>
+                            <div class="check-item pending" id="chk-solution"><span class="check-icon">○</span><span class="check-text">Contains a solution/call to action</span></div>
+                        </div>
                         <textarea class="editorial-input" id="editorial-input" placeholder="Write your editorial here...
 
 Lead with the situation, then take a clear stance.
@@ -510,6 +541,85 @@ End with a specific solution." oninput="updateWordCount()"></textarea>
             var el = document.getElementById('word-count');
             el.textContent = count + ' words';
             el.className = 'word-count' + (count >= 300 && count <= 450 ? ' good' : count > 450 ? ' over' : count >= 200 ? ' warning' : '');
+
+            // Show checklist once student starts writing
+            var checksEl = document.getElementById('writing-checks');
+            if (count > 5) {
+                checksEl.classList.add('visible');
+                runWritingChecks(text, count);
+            } else {
+                checksEl.classList.remove('visible');
+            }
+        }
+
+        function runWritingChecks(text, count) {
+            var lower = text.toLowerCase();
+
+            // 1. Word count 300-450
+            setCheck('chk-words', count >= 300 && count <= 450 ? 'done' : count > 450 ? 'warn' : 'pending',
+                count >= 300 && count <= 450 ? 'Word count: ' + count + ' (good range)' :
+                count > 450 ? 'Word count: ' + count + ' (over 450 — trim it down)' :
+                'Word count: ' + count + ' / 300-450');
+
+            // 2. Clear stance — look for "should" in first ~80 words
+            var firstChunk = text.split(/\s+/).slice(0, 80).join(' ').toLowerCase();
+            var hasStance = /\bshould\b/.test(firstChunk) || /\bmust\b/.test(firstChunk) || /\bneed(s)? to\b/.test(firstChunk) || /\bourge\b/.test(firstChunk);
+            setCheck('chk-stance', hasStance ? 'done' : count > 80 ? 'warn' : 'pending',
+                hasStance ? 'Clear stance detected in opening' :
+                count > 80 ? 'No clear stance yet — use "should" or "must" early' :
+                'Clear stance in opening');
+
+            // 3. No first person singular (I, me, my, mine, myself)
+            // Match word boundaries, skip "I-35" type patterns, skip words like "mine" in "determine"
+            var iMatches = text.match(/\b(I|me|my|mine|myself)\b/g);
+            // Filter out false positives: "I-35", "I-10", etc.
+            var realI = [];
+            if (iMatches) {
+                iMatches.forEach(function(m) {
+                    // Check it's actually first person, not part of a highway name
+                    var idx = text.indexOf(m);
+                    var after = text.charAt(idx + m.length);
+                    var before = text.charAt(idx - 1);
+                    if (m === 'I' && (after === '-' || after === '.' || before === '-')) return; // I-35, etc.
+                    realI.push(m);
+                });
+            }
+            var hasFirstPerson = realI.length > 0;
+            setCheck('chk-noi', hasFirstPerson ? 'warn' : count > 20 ? 'done' : 'pending',
+                hasFirstPerson ? 'Found "' + realI[0] + '" — avoid first person (I, me, my)' :
+                count > 20 ? 'No first person — good!' : 'No first person (I, me, my)');
+
+            // 4. No second person (you, your, yours, yourself)
+            var youMatch = text.match(/\b(you|your|yours|yourself)\b/gi);
+            var hasYou = youMatch && youMatch.length > 0;
+            setCheck('chk-noyou', hasYou ? 'warn' : count > 20 ? 'done' : 'pending',
+                hasYou ? 'Found "' + youMatch[0] + '" — avoid second person' :
+                count > 20 ? 'No second person — good!' : 'No second person (you, your)');
+
+            // 5. No questions (sentences ending with ?)
+            var hasQuestion = /\?\s/.test(text + ' ') || text.endsWith('?');
+            setCheck('chk-noquestion', hasQuestion ? 'warn' : count > 50 ? 'done' : 'pending',
+                hasQuestion ? 'Found a question — editorials answer questions, not ask them' :
+                count > 50 ? 'No questions — good!' : 'No questions asked');
+
+            // 6. Solution/call to action — look for solution language in latter half
+            var latterHalf = text.split(/\s+/).slice(Math.floor(count / 2)).join(' ').toLowerCase();
+            var hasSolution = /\bshould\b/.test(latterHalf) || /\bsolution\b/.test(latterHalf) ||
+                /\binstead\b/.test(latterHalf) || /\brecommend\b/.test(latterHalf) ||
+                /\burge\b/.test(latterHalf) || /\bvote\b/.test(latterHalf) ||
+                /\bstep\b/.test(latterHalf) || /\baction\b/.test(latterHalf) ||
+                /\bimplement\b/.test(latterHalf) || /\bpropose\b/.test(latterHalf);
+            setCheck('chk-solution', hasSolution ? 'done' : count > 250 ? 'warn' : 'pending',
+                hasSolution ? 'Solution/call to action detected' :
+                count > 250 ? 'No solution yet — end with a specific action' :
+                'Contains a solution/call to action');
+        }
+
+        function setCheck(id, state, text) {
+            var el = document.getElementById(id);
+            el.className = 'check-item ' + state;
+            el.querySelector('.check-icon').textContent = state === 'done' ? '✓' : state === 'warn' ? '✕' : '○';
+            el.querySelector('.check-text').textContent = text;
         }
 
         async function generatePrompt() {
@@ -526,6 +636,8 @@ End with a specific solution." oninput="updateWordCount()"></textarea>
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('start-section').style.display = 'none';
                 document.getElementById('writing-section').style.display = 'block';
+                // Hide checklist in mock contest mode (simulates real test)
+                document.getElementById('writing-checks').style.display = currentMode === 'mock' ? 'none' : '';
                 if (currentMode !== 'practice') startTimer();
             } catch (e) {
                 document.getElementById('loading').style.display = 'none';
@@ -678,6 +790,9 @@ End with a specific solution." oninput="updateWordCount()"></textarea>
             document.getElementById('editorial-input').value = '';
             document.getElementById('word-count').textContent = '0 words';
             document.getElementById('word-count').className = 'word-count';
+            document.getElementById('writing-checks').classList.remove('visible');
+            document.getElementById('writing-checks').style.display = '';
+            setHighlighter('off');
             promptData = null; lastEvaluation = null;
         }
 
