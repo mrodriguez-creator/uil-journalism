@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Writing Skill Drills — UIL Journalism Trainer</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0d47a1 0%, #1565c0 50%, #42a5f5 100%);
+            min-height: 100vh; padding: 20px;
+        }
+        .container {
+            max-width: 900px; margin: 0 auto; background: white;
+            border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #0d47a1 0%, #1976d2 100%);
+            color: white; padding: 30px; text-align: center;
+        }
+        .header h1 { font-size: 2.2em; margin-bottom: 10px; }
+        .header p { font-size: 1.1em; opacity: 0.9; }
+        .header .back-link { color: rgba(255,255,255,0.8); font-size: 0.9em; margin-top: 8px; display: inline-block; text-decoration: none; }
+        .header .back-link:hover { color: white; }
+        .content { padding: 30px; color: #333; }
+
+        .nav-links {
+            display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+        .nav-link {
+            padding: 10px 20px; border: 2px solid #1565c0; border-radius: 6px;
+            text-decoration: none; color: #1565c0; font-weight: 600; font-size: 0.9em;
+            transition: all 0.2s;
+        }
+        .nav-link:hover { background: #1565c0; color: white; }
+        .nav-link.active { background: #1565c0; color: white; }
+
+        .btn {
+            background: linear-gradient(135deg, #1565c0, #42a5f5);
+            color: white; border: none; padding: 14px 28px; font-size: 16px;
+            border-radius: 6px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: 600;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(21,101,192,0.4); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .btn-sm { padding: 8px 16px; font-size: 13px; border-radius: 4px; }
+
+        /* Drill selector grid */
+        .drill-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px; margin-bottom: 25px;
+        }
+        .drill-card {
+            background: #f8f9fa; border: 2px solid #eee; border-radius: 10px;
+            padding: 20px; cursor: pointer; transition: all 0.2s; text-align: center;
+        }
+        .drill-card:hover { border-color: #1565c0; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(21,101,192,0.15); }
+        .drill-card.active { border-color: #1565c0; background: #e3f2fd; }
+        .drill-icon { font-size: 2em; margin-bottom: 8px; }
+        .drill-name { font-weight: bold; color: #0d47a1; margin-bottom: 4px; }
+        .drill-desc { font-size: 0.85em; color: #777; line-height: 1.4; }
+        .drill-best { font-size: 0.78em; color: #1565c0; margin-top: 6px; font-weight: 600; }
+
+        /* Drill area */
+        .drill-area { display: none; }
+        .drill-area.visible { display: block; }
+        .drill-header-bar {
+            background: #e3f2fd; border-radius: 8px; padding: 15px 20px;
+            margin-bottom: 20px; display: flex; justify-content: space-between;
+            align-items: center; flex-wrap: wrap; gap: 10px;
+        }
+        .drill-title { font-weight: bold; color: #0d47a1; }
+        .drill-score-bar { font-size: 0.95em; color: #555; }
+        .drill-score-bar strong { color: #0d47a1; }
+
+        /* Question card */
+        .q-card {
+            background: #f8f9fa; border-radius: 8px; padding: 20px; margin-bottom: 15px;
+            border: 2px solid #eee; transition: border-color 0.2s;
+        }
+        .q-card.correct { border-color: #4caf50; background: #e8f5e9; }
+        .q-card.incorrect { border-color: #f44336; background: #fce4ec; }
+        .q-text { font-size: 1.05em; line-height: 1.7; margin-bottom: 12px; }
+        .q-options { display: flex; flex-direction: column; gap: 8px; }
+        .q-option {
+            padding: 10px 16px; border: 2px solid #ddd; border-radius: 6px;
+            cursor: pointer; transition: all 0.15s; font-size: 0.95em; background: white;
+        }
+        .q-option:hover { border-color: #90caf9; background: #f0f7ff; }
+        .q-option.selected { border-color: #1565c0; background: #e3f2fd; font-weight: 600; }
+        .q-option.correct-answer { border-color: #4caf50; background: #e8f5e9; }
+        .q-option.wrong-answer { border-color: #f44336; background: #ffebee; }
+        .q-explanation {
+            display: none; margin-top: 10px; padding: 10px 14px;
+            background: #fff3e0; border-radius: 4px; border-left: 3px solid #ff9800;
+            font-size: 0.9em; line-height: 1.5; color: #555;
+        }
+        .q-explanation.visible { display: block; }
+        .q-number { font-size: 0.8em; font-weight: 600; color: #999; margin-bottom: 6px; }
+
+        .results-box {
+            background: #e3f2fd; border-radius: 10px; padding: 25px; text-align: center;
+            margin-top: 20px; display: none;
+        }
+        .results-box h3 { color: #0d47a1; margin-bottom: 8px; }
+        .results-score { font-size: 2em; font-weight: bold; color: #1565c0; margin: 10px 0; }
+        .results-msg { color: #666; margin-bottom: 15px; }
+
+        .toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: #333; color: white; padding: 12px 24px; border-radius: 8px;
+            font-size: 14px; z-index: 999; opacity: 0; transition: opacity 0.3s; pointer-events: none;
+        }
+        .toast.visible { opacity: 1; }
+
+        /* Dark mode */
+        .dark-toggle {
+            position: fixed; top: 12px; right: 12px; z-index: 300;
+            background: rgba(255,255,255,0.9); border: 1px solid #ccc; border-radius: 20px;
+            padding: 6px 14px; cursor: pointer; font-size: 13px; font-weight: 600;
+            transition: all 0.2s; color: #333;
+        }
+        .dark-toggle:hover { background: #1565c0; color: white; border-color: #1565c0; }
+        body.dark-mode { background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%); }
+        body.dark-mode .container { background: #1e1e2e; }
+        body.dark-mode .content { color: #ddd; }
+        body.dark-mode .drill-card { background: #252535; border-color: #444; }
+        body.dark-mode .drill-card:hover { border-color: #42a5f5; }
+        body.dark-mode .drill-card.active { background: #1a2a4a; }
+        body.dark-mode .drill-name { color: #90caf9; }
+        body.dark-mode .drill-desc { color: #999; }
+        body.dark-mode .drill-header-bar { background: #1a2a4a; }
+        body.dark-mode .q-card { background: #252535; border-color: #444; color: #ddd; }
+        body.dark-mode .q-card.correct { background: #1b3320; border-color: #4caf50; }
+        body.dark-mode .q-card.incorrect { background: #3a1b1b; border-color: #f44336; }
+        body.dark-mode .q-option { background: #2a2a3a; border-color: #555; color: #ddd; }
+        body.dark-mode .q-option:hover { background: #1a2a4a; border-color: #42a5f5; }
+        body.dark-mode .q-explanation { background: #2d2520; color: #ddd; }
+        body.dark-mode .results-box { background: #1a2a4a; }
+        body.dark-mode .results-msg { color: #bbb; }
+        body.dark-mode .nav-link { color: #90caf9; border-color: #90caf9; }
+        body.dark-mode .nav-link:hover, body.dark-mode .nav-link.active { background: #1565c0; color: white; }
+        body.dark-mode .dark-toggle { background: rgba(30,30,46,0.9); color: #eee; border-color: #555; }
+
+        @media (max-width: 600px) { .drill-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <button class="dark-toggle" id="dark-toggle" onclick="toggleDarkMode()">Dark Mode</button>
+    <div class="container">
+        <div class="header">
+            <h1>News Writing Skill Drills</h1>
+            <p>Sharpen specific skills for the UIL News Writing contest</p>
+            <a href="./" class="back-link">&larr; Back to News Writing Trainer</a>
+        </div>
+        <div class="content">
+            <div class="nav-links">
+                <a href="./" class="nav-link">Practice</a>
+                <a href="tutorial.html" class="nav-link">Tutorial</a>
+                <a href="drills.html" class="nav-link active">Skill Drills</a>
+            </div>
+
+            <div id="drill-selector">
+                <div class="drill-grid">
+                    <div class="drill-card" onclick="startDrill('leads')">
+                        <div class="drill-icon">&#128240;</div>
+                        <div class="drill-name">Lead Writing</div>
+                        <div class="drill-desc">Identify the strongest, most timely lead for a given scenario</div>
+                        <div class="drill-best" id="best-leads"></div>
+                    </div>
+                    <div class="drill-card" onclick="startDrill('attribution')">
+                        <div class="drill-icon">&#128172;</div>
+                        <div class="drill-name">Attribution</div>
+                        <div class="drill-desc">Correct format: "Name said" vs "said Name," title placement, pronouns</div>
+                        <div class="drill-best" id="best-attribution"></div>
+                    </div>
+                    <div class="drill-card" onclick="startDrill('structure')">
+                        <div class="drill-icon">&#128203;</div>
+                        <div class="drill-name">Story Structure</div>
+                        <div class="drill-desc">Inverted pyramid order, LQTQ formula, transitions, stacked quotes</div>
+                        <div class="drill-best" id="best-structure"></div>
+                    </div>
+                    <div class="drill-card" onclick="startDrill('objectivity')">
+                        <div class="drill-icon">&#9878;</div>
+                        <div class="drill-name">Objectivity</div>
+                        <div class="drill-desc">Spot editorializing, first/second person errors, and opinion in news</div>
+                        <div class="drill-best" id="best-objectivity"></div>
+                    </div>
+                    <div class="drill-card" onclick="startDrill('quotes')">
+                        <div class="drill-icon">&#10078;</div>
+                        <div class="drill-name">Quote Mechanics</div>
+                        <div class="drill-desc">Punctuation inside/outside quotes, partial quotes, indirect quotes</div>
+                        <div class="drill-best" id="best-quotes"></div>
+                    </div>
+                    <div class="drill-card" onclick="startDrill('apstyle')">
+                        <div class="drill-icon">&#128214;</div>
+                        <div class="drill-name">AP Style for News</div>
+                        <div class="drill-desc">Numbers, dates, titles, abbreviations in news writing context</div>
+                        <div class="drill-best" id="best-apstyle"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="drill-area" id="drill-area">
+                <div class="drill-header-bar">
+                    <span class="drill-title" id="drill-title"></span>
+                    <span class="drill-score-bar">Score: <strong id="drill-score">0</strong> / <strong id="drill-total">10</strong></span>
+                </div>
+                <div id="questions-container"></div>
+                <div class="results-box" id="results-box">
+                    <h3>Drill Complete!</h3>
+                    <div class="results-score" id="final-score"></div>
+                    <div class="results-msg" id="final-msg"></div>
+                    <button class="btn" onclick="backToSelector()" style="margin-right:8px;">Try Another Drill</button>
+                    <button class="btn btn-sm" onclick="restartDrill()" style="background:linear-gradient(135deg,#43a047,#66bb6a);">Retry This Drill</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="toast" id="toast"></div>
+
+    <script>
+    var currentDrill = null;
+    var answered = 0;
+    var correct = 0;
+    var totalQ = 10;
+
+    // ========== DRILL DATA ==========
+    var drills = {
+        leads: {
+            name: 'Lead Writing',
+            questions: [
+                { q: 'A school board will vote Thursday on whether to approve a $2 million renovation of the gym. The proposal was made last month. Which is the best lead?',
+                  options: ['Last month, the school board received a proposal to renovate the gym.', 'The school board will vote Thursday on a $2 million proposal to renovate the gym.', 'The gym at Leaguetown High School is in need of major renovations.', 'On Thursday, there will be a school board meeting about the gym.'],
+                  answer: 1, explain: 'The best lead focuses on the FUTURE event (the vote Thursday) and includes specific details ($2 million). Starting with "Last month" buries the lead in the past.' },
+                { q: 'Superintendent Kim Davis announced Monday that the district will cut 50 teaching positions to close a $4 million budget gap. You are writing for the paper distributed Wednesday. Which lead is strongest?',
+                  options: ['Superintendent Kim Davis made a major announcement Monday about the district budget.', 'Fifty teaching positions will be eliminated to address a $4 million budget shortfall, Superintendent Kim Davis announced Monday.', 'Monday was a bad day for teachers in the district.', 'The district is facing a $4 million budget gap and needs to find solutions.'],
+                  answer: 1, explain: 'This lead puts the most impactful information first (50 positions eliminated) with the specific dollar amount and proper attribution. The others are vague or editorialize.' },
+                { q: 'The principal announced that starting next semester, students will be required to wear school uniforms. Which lead is strongest?',
+                  options: ['Starting next semester, students will be required to wear uniforms to school, Principal Martinez announced.', 'Principal Martinez made an announcement about uniforms.', 'Uniforms have been a controversial topic at schools across the country.', 'There are going to be changes to the dress code next semester at the school.'],
+                  answer: 0, explain: 'This lead answers Who (students), What (required to wear uniforms), When (next semester), and attributes the information. The others lack specifics.' },
+                { q: 'The city council will vote next Tuesday on whether to build a new park near the school. The park would cost $500,000. Residents have been debating it for months. Best lead?',
+                  options: ['For months, residents have been debating whether the city should build a new park.', 'The city council will vote Tuesday on a $500,000 proposal to build a new park near the school.', 'A new park could be built near the school if the city council approves it.', 'Tuesday night, the city council will hold a meeting.'],
+                  answer: 1, explain: 'Best lead: future-focused (vote Tuesday), specific (who, what, when, how much). Option A buries the lead in background. Options C and D lack specifics.' },
+                { q: 'The football team won the state championship Saturday 28-14. This is the first title in 30 years. Best lead?',
+                  options: ['The football team won the state championship Saturday, defeating Central High School 28-14 for the school\'s first title in 30 years.', 'Saturday was an exciting day for the school and community.', 'It had been 30 years since the football team last won a state championship.', 'The football team played in the state championship game Saturday.'],
+                  answer: 0, explain: 'This lead includes Who (football team), What (won state championship), When (Saturday), the score, the opponent, and the historical context — all concisely.' },
+                { q: 'The drama club will perform "Romeo and Juliet" this Friday and Saturday. It is the first Shakespeare play the school has produced in 10 years. Tickets are $5. Which is the weakest lead?',
+                  options: ['The drama club will perform "Romeo and Juliet" Friday and Saturday, the school\'s first Shakespeare production in a decade.', 'Tickets are $5 for the drama club\'s production of "Romeo and Juliet" this weekend.', '"Romeo and Juliet" will be performed by the drama club this Friday and Saturday at 7 p.m.', 'On Friday, there will be a play.'],
+                  answer: 3, explain: '"On Friday, there will be a play" is the weakest — it buries the lead by starting with "On Friday," lacks specifics (no title, no group), and is vague.' },
+                { q: 'The school board approved a plan to add 30 minutes to the school day starting next year to increase instructional time. Which lead is best?',
+                  options: ['The school day will be 30 minutes longer starting next year after the school board approved a plan to increase instructional time.', 'The school board met last night to discuss several items on the agenda.', 'Education experts say more instructional time leads to better student outcomes.', 'In a decision that will affect all students, the school board voted to add time to the school day.'],
+                  answer: 0, explain: 'This lead tells What (30 minutes longer), When (next year), Who decided (school board), and Why (increase instructional time) — all key W\'s answered concisely.' },
+                { q: 'Three teachers have been named finalists for the state Teacher of the Year award. The winners will be announced at a ceremony next month. Best lead?',
+                  options: ['Three teachers have been named finalists for the state Teacher of the Year award, with winners to be announced at a ceremony next month.', 'Being a teacher is a rewarding profession, and three local teachers are proving that.', 'Next month, there will be a ceremony for the Teacher of the Year award.', 'The state Teacher of the Year award is one of the most prestigious honors in education.'],
+                  answer: 0, explain: 'This lead has the most newsworthy info first (three teachers named finalists) plus the timely future element (ceremony next month).' },
+                { q: 'The cafeteria will begin offering vegetarian options daily after a student petition with 400 signatures was presented to the principal. Which lead focuses best on the news?',
+                  options: ['A student petition with 400 signatures was presented to the principal last week.', 'Many students at the school are vegetarian and have been asking for more food options.', 'The cafeteria will begin offering daily vegetarian meal options after a student petition with 400 signatures prompted the change.', 'Starting soon, there will be new food options available in the cafeteria.'],
+                  answer: 2, explain: 'This lead focuses on the outcome (cafeteria will offer vegetarian options) and includes the catalyst (400-signature petition). It\'s forward-looking and specific.' },
+                { q: 'A fire in the science building Monday caused $200,000 in damage. No one was injured. Classes were moved to temporary locations. The building will be closed for two months. Strongest lead?',
+                  options: ['A fire in the science building Monday caused $200,000 in damage and will close the building for two months, though no one was injured.', 'There was a fire at the school on Monday.', 'No one was injured in a fire Monday.', 'Monday morning, a fire broke out in the science building, causing damage to the school.'],
+                  answer: 0, explain: 'This lead packs the key facts: What (fire), Where (science building), When (Monday), impact ($200,000 damage, two months closed), and the critical detail (no injuries).' }
+            ]
+        },
+        attribution: {
+            name: 'Attribution',
+            questions: [
+                { q: 'Which attribution format is correct for UIL News Writing?',
+                  options: ['"This is a great program," said Principal Jones.', '"This is a great program," Principal Jones said.', '"This is a great program," according to Principal Jones.', '"This is a great program" (Principal Jones).'],
+                  answer: 1, explain: 'UIL requires "Name said" (noun then verb). "Said Name" is incorrect. Avoid "according to" when "said" works. Parenthetical attribution is not standard.' },
+                { q: 'How should you attribute a multi-sentence direct quote?',
+                  options: ['Put attribution before the quote: Principal Jones said, "First sentence. Second sentence."', 'Put attribution after the first sentence: "First sentence," Principal Jones said. "Second sentence."', 'Put attribution at the end: "First sentence. Second sentence," Principal Jones said.', 'Put attribution after every sentence.'],
+                  answer: 1, explain: 'In a multi-sentence quote, place attribution after the first sentence. This lets the reader know who is speaking early, then the quote flows naturally.' },
+                { q: 'Which is the correct way to attribute on second reference for an adult source?',
+                  options: ['"The program helps students," Jones said.', '"The program helps students," she said.', '"The program helps students," the principal said.', 'Any of these are acceptable on second reference.'],
+                  answer: 3, explain: 'On second reference for adults, you can use last name ("Jones said"), pronoun ("she said"), or title ("the principal said"). All are acceptable.' },
+                { q: 'Which sentence correctly introduces a source for the first time?',
+                  options: ['Smith said the program would begin next month.', 'English teacher Rebecca Smith said the program would begin next month.', 'Rebecca said the program would begin next month.', 'Ms. Smith said the program would begin next month.'],
+                  answer: 1, explain: 'First reference requires full name AND title/identification: "English teacher Rebecca Smith said." Don\'t use courtesy titles (Ms., Mr.) in AP style news writing.' },
+                { q: 'What is wrong with this passage? "We need more funding," the superintendent said. "Our students deserve better," PTA president Linda Clark said.',
+                  options: ['Nothing is wrong.', 'The quotes are stacked — two different sources quoted back-to-back without a transition.', 'The attribution should say "said the superintendent."', 'You can\'t quote two people in the same story.'],
+                  answer: 1, explain: 'Stacking quotes (two quotes from different sources without a transition between them) is a major error. Always include a transition paragraph between different speakers.' },
+                { q: 'Which is the correct way to use an indirect quote (paraphrase)?',
+                  options: ['Coach Williams said that "the team has been working hard this season."', 'Coach Williams said the team has been working hard this season.', '"The team has been working hard this season," Coach Williams said he thinks.', 'The team has been working hard this season.'],
+                  answer: 1, explain: 'An indirect quote paraphrases without quotation marks. Don\'t mix quotation marks with paraphrasing. Always attribute — option D is unattributed.' },
+                { q: 'Which verb should you primarily use for attribution in news writing?',
+                  options: ['Stated', 'Exclaimed', 'Said', 'Noted'],
+                  answer: 2, explain: '"Said" is the standard attribution verb in news writing. It is neutral and can be used repeatedly. Avoid "stated," "exclaimed," "noted," "expressed," etc.' },
+                { q: 'How do you handle a quote with a partial quote followed by a full quote?',
+                  options: ['Johnson called the policy "unfair." \n"We need to reconsider this decision," Johnson said.', 'Johnson called the policy "unfair," and said, "We need to reconsider this decision."', 'Johnson called the policy unfair. "We need to reconsider this decision," Johnson said.', 'Both A and B are acceptable approaches.'],
+                  answer: 3, explain: 'Both approaches work. You can use a partial quote in one paragraph and a full direct quote in the next, or combine them. The key is proper punctuation and attribution.' },
+                { q: 'Which is the INCORRECT use of attribution for a student?',
+                  options: ['Sophomore Jake Miller said he was excited about the change.', '"I\'m excited about the change," sophomore Jake Miller said.', '"I\'m excited about the change," Miller said. (second reference)', '"I\'m excited about the change," said Jake Miller, a sophomore.'],
+                  answer: 3, explain: '"Said Jake Miller" uses the wrong order — it should be "Jake Miller said" (noun before verb). The "said Name" format is not acceptable in UIL.' },
+                { q: 'When should you use "according to" instead of "said"?',
+                  options: ['When quoting a principal or superintendent.', 'When referencing written documents, reports, or data rather than spoken statements.', 'When you want to vary your attribution verbs for better writing.', 'Never — always use "said."'],
+                  answer: 1, explain: '"According to" is appropriate for written sources (reports, documents, data). For spoken quotes from people, use "said." Don\'t use "according to" just for variety.' }
+            ]
+        },
+        structure: {
+            name: 'Story Structure',
+            questions: [
+                { q: 'In the inverted pyramid, what comes first?',
+                  options: ['Background and context', 'The most important and timely information', 'An interesting anecdote or hook', 'A thesis statement'],
+                  answer: 1, explain: 'The inverted pyramid puts the most important, timely information first (the lead), followed by supporting details in decreasing order of importance.' },
+                { q: 'What does "LQTQ" stand for in news writing?',
+                  options: ['Lead, Query, Thesis, Quote', 'Lead, Quote, Transition, Quote', 'Lead, Question, Topic, Quote', 'Length, Quality, Timeliness, Quotation'],
+                  answer: 1, explain: 'LQTQ = Lead, Quote, Transition, Quote. After the lead, you alternate between direct quotes and transitions that provide new information.' },
+                { q: 'What should a transition paragraph do between two quotes?',
+                  options: ['Repeat what the previous quote said in your own words.', 'Provide new information or context that connects the two quotes.', 'Express your opinion about what the source said.', 'Simply state "Another person had a different perspective."'],
+                  answer: 1, explain: 'Transitions should provide NEW information — facts, context, or background — that bridges between quotes and keeps the story flowing forward.' },
+                { q: 'Which is the best way to end a news story?',
+                  options: ['With a summary paragraph restating the main points.', 'With your personal conclusion about the issue.', 'With a strong, forward-looking quote.', 'With the least important background information.'],
+                  answer: 2, explain: 'A strong closing quote is the preferred ending. It leaves the reader with a human voice and often looks toward the future or sums up the situation naturally.' },
+                { q: 'What is "stacking quotes"?',
+                  options: ['Using more than three quotes in a story.', 'Placing two direct quotes from different sources back-to-back without a transition.', 'Using very long quotes from a single source.', 'Placing a quote at both the beginning and end of a story.'],
+                  answer: 1, explain: 'Stacking quotes means two quotes from different speakers appear back-to-back without a transition between them. This is a significant error in news writing.' },
+                { q: 'How long should paragraphs be in a news story?',
+                  options: ['3-5 sentences, like an academic essay.', '1-2 sentences — short and focused.', 'As long as needed to complete the thought.', 'Exactly one sentence each.'],
+                  answer: 1, explain: 'Journalistic paragraphs are typically 1-2 sentences. Short paragraphs improve readability and match the inverted pyramid style. Each direct quote gets its own paragraph.' },
+                { q: 'After the lead, what should typically come next?',
+                  options: ['The least important background details.', 'A direct quote from the most important source.', 'Additional important context or a brief explanation expanding on the lead.', 'Your analysis of the situation.'],
+                  answer: 2, explain: 'After the lead, provide additional context or important information that wasn\'t in the lead (the "nut graf"). This sets up the first quote, which should come soon after.' },
+                { q: 'A well-structured inverted pyramid story should be able to be cut from where?',
+                  options: ['The top — remove the first paragraph and start with the second.', 'The middle — remove any middle paragraphs.', 'The bottom — remove the last few paragraphs without losing essential meaning.', 'It should not be cuttable at all.'],
+                  answer: 2, explain: 'The inverted pyramid is designed so editors can cut from the bottom up. The least important information is at the end, so removing it doesn\'t damage the story.' },
+                { q: 'Which sequence follows the LQTQ formula correctly?',
+                  options: ['Lead → Quote from Source A → Quote from Source B → Background', 'Lead → Background → Quote from Source A → Transition → Quote from Source B', 'Quote from Source A → Lead → Transition → Quote from Source B', 'Lead → Background → Transition → Background → Quote'],
+                  answer: 1, explain: 'LQTQ: Lead first, then context/background, then a quote, then a transition with new info, then another quote from a different source. Don\'t stack quotes (option A).' },
+                { q: 'Where in the story should you introduce the MOST important source?',
+                  options: ['Save the most important source for the closing quote.', 'Early in the story — the first or second quote.', 'In the middle, after you\'ve established all the background.', 'It doesn\'t matter what order sources appear.'],
+                  answer: 1, explain: 'The most important source (usually the key decision-maker like the superintendent or principal) should appear early in the story — typically as the first or second quoted source.' }
+            ]
+        },
+        objectivity: {
+            name: 'Objectivity',
+            questions: [
+                { q: 'Which sentence contains editorializing?',
+                  options: ['The school board voted 5-2 to approve the new policy.', 'Unfortunately, the school board voted to cut the music program.', 'Three parents spoke against the policy at Tuesday\'s meeting.', 'The proposal would cost the district $1.2 million.'],
+                  answer: 1, explain: '"Unfortunately" is an editorial word — it reveals the writer\'s opinion. News stories must be objective. Remove words like unfortunately, hopefully, sadly, luckily, amazingly.' },
+                { q: 'Which sentence incorrectly uses first person in a news story?',
+                  options: ['"We need more funding for our programs," Superintendent Davis said.', 'Our school\'s enrollment has increased by 15% this year.', 'The students said they were excited about the new program.', 'The proposal would affect all students in the district.'],
+                  answer: 1, explain: '"Our school\'s" uses first person possessive outside of a quote. In news writing, use "the school\'s" instead. First person is only acceptable INSIDE direct quotes.' },
+                { q: 'Which sentence is an unattributed opinion?',
+                  options: ['The cafeteria serves lunch to about 800 students daily.', 'The new schedule will be difficult for students to adjust to.', 'Principal Martinez said the new schedule may require an adjustment period.', 'The schedule change will take effect Aug. 15.'],
+                  answer: 1, explain: '"Will be difficult to adjust to" is an opinion presented as fact. If someone says this, attribute it: "Principal Martinez said the change may be difficult." Otherwise, it\'s editorializing.' },
+                { q: 'Which sentence correctly handles a controversial topic with objectivity?',
+                  options: ['The terrible new dress code policy has angered students.', 'The new dress code policy, which students have criticized, takes effect Monday.', 'Students are right to be upset about the unfair dress code changes.', 'The dress code changes are clearly unnecessary and should be reversed.'],
+                  answer: 1, explain: 'Option B is objective — it states a fact (students have criticized it) without taking sides. The others use loaded language ("terrible," "right," "unfair," "clearly").' },
+                { q: 'Which use of "you" is acceptable in a news story?',
+                  options: ['You can expect longer school days starting next year.', 'If you are a student athlete, the new policy affects you.', '"You have to understand the financial situation we\'re in," Davis said.', 'You should contact the school office for more information.'],
+                  answer: 2, explain: '"You" is only acceptable inside a direct quote. Outside of quotes, news stories must use third person. All the other options use "you" in the reporter\'s own writing.' },
+                { q: 'Which sentence shows bias?',
+                  options: ['The plan would save the district $3 million over five years.', 'Opponents of the plan spoke at Tuesday\'s meeting.', 'The innovative plan would modernize the district\'s approach to education.', 'The plan was proposed by Superintendent Kim in October.'],
+                  answer: 2, explain: '"Innovative" and "modernize" are positive loaded words that show bias in favor of the plan. A news story should describe the plan without promotional language.' },
+                { q: 'How should a news writer handle their own opinion about a story topic?',
+                  options: ['Include it in the final paragraph as a conclusion.', 'Attribute it to a source who shares the same view.', 'Keep it out of the story entirely — news is objective.', 'Include it but label it as "Reporter\'s Note."'],
+                  answer: 2, explain: 'A reporter\'s personal opinion has NO place in a news story. News writing is objective. Opinions belong in editorials and opinion columns, not news stories.' },
+                { q: 'Which word is an example of loaded language that should be removed from a news story?',
+                  options: ['Proposed', 'Devastating', 'Approved', 'Announced'],
+                  answer: 1, explain: '"Devastating" is a subjective, emotional word that implies judgment. Use neutral language: instead of "devastating cuts," write "The district proposed cutting 50 positions."' },
+                { q: 'Which is the correct way to present opposing views in a news story?',
+                  options: ['Present the side you agree with more prominently.', 'Only include the majority view to avoid confusion.', 'Present both sides fairly using attributed quotes and let readers decide.', 'Tell readers which side is correct at the end of the story.'],
+                  answer: 2, explain: 'News stories present multiple viewpoints fairly through attributed quotes. The reporter does not take sides or tell readers which view is correct.' },
+                { q: 'What is wrong with this sentence in a news story? "The school board made the right decision to fund the new lab."',
+                  options: ['It should say "correct decision" instead of "right decision."', 'It contains an unattributed opinion — "right decision" is the writer\'s judgment.', 'It\'s missing attribution for who said it was the right decision.', 'Both B and C — the opinion needs to be either removed or attributed.'],
+                  answer: 3, explain: '"The right decision" is the writer\'s opinion. It must either be removed entirely or attributed to a source: "Board member Smith called it the right decision."' }
+            ]
+        },
+        quotes: {
+            name: 'Quote Mechanics',
+            questions: [
+                { q: 'Where do commas and periods go in relation to quotation marks?',
+                  options: ['Always outside: "This is great".', 'Always inside: "This is great."', 'It depends on the sentence.', 'Periods inside, commas outside.'],
+                  answer: 1, explain: 'In American English and AP style, commas and periods ALWAYS go inside quotation marks: "This is great," she said. "This is great."' },
+                { q: 'Which correctly punctuates a quote with attribution?',
+                  options: ['"We need to act now." Martinez said.', '"We need to act now", Martinez said.', '"We need to act now," Martinez said.', '"We need to act now" Martinez said.'],
+                  answer: 2, explain: 'When attribution follows a quote, use a comma (not a period) before the closing quotation mark, then the attribution: "Quote," Name said.' },
+                { q: 'How do you punctuate a multi-sentence quote with attribution after the first sentence?',
+                  options: ['"The plan is solid," Davis said, "we expect it to save $2 million."', '"The plan is solid," Davis said. "We expect it to save $2 million."', '"The plan is solid." Davis said, "We expect it to save $2 million."', '"The plan is solid" Davis said. "We expect it to save $2 million."'],
+                  answer: 1, explain: 'Comma after the first sentence, then attribution, then period. The second sentence starts with a new opening quotation mark and capital letter.' },
+                { q: 'Which is the correct use of a partial (fragment) quote?',
+                  options: ['The principal called the results "very encouraging."', 'The principal called the results very "encouraging."', 'The principal "called the results very encouraging."', 'The principal called "the results very encouraging."'],
+                  answer: 0, explain: 'Partial quotes should capture a distinctive phrase: "very encouraging." Don\'t put quotes around single ordinary words or awkward fragments.' },
+                { q: 'When should you use an indirect quote instead of a direct quote?',
+                  options: ['When the exact words aren\'t interesting or distinctive enough to quote directly.', 'Never — always use direct quotes in news writing.', 'When you want to change what someone said.', 'When the source is not important.'],
+                  answer: 0, explain: 'Use indirect quotes (paraphrases) when the speaker\'s exact words aren\'t distinctive. Direct quotes should be reserved for impactful, emotional, or specific statements.' },
+                { q: 'What is wrong with this sentence? "I am really excited about this opportunity," she exclaimed.',
+                  options: ['Nothing is wrong.', '"She" should be replaced with the person\'s name.', '"Exclaimed" should be "said" — use neutral attribution verbs.', 'The comma should be a period.'],
+                  answer: 2, explain: 'In news writing, always use "said" for attribution. Avoid "exclaimed," "stated," "noted," "expressed," etc. "Said" is neutral and preferred by AP style.' },
+                { q: 'How do you handle a quote within a quote?',
+                  options: ['Use double quotation marks for both.', 'Use single quotation marks inside double: "She said \'hello\' to everyone."', 'Use no quotation marks for the inner quote.', 'Avoid quotes within quotes — paraphrase instead.'],
+                  answer: 1, explain: 'For a quote within a quote, use single quotation marks inside double: "She told me \'this is important,\'" he said.' },
+                { q: 'Which sentence correctly begins a story with a quote? (Is this acceptable?)',
+                  options: ['Starting with a quote is a strong technique and should be used often.', 'Starting with a quote is acceptable but generally discouraged in UIL news writing.', 'Starting with a quote is required in the LQTQ formula.', 'Starting with a quote is always wrong.'],
+                  answer: 1, explain: 'Starting with a direct quote is discouraged. The reader doesn\'t know who is speaking yet. Lead with facts first, then introduce quotes. The LQTQ formula starts with a Lead, not a Quote.' },
+                { q: 'Which handles the end of a quote correctly when the quote ends with a question?',
+                  options: ['"Do you think this will work," Davis asked?', '"Do you think this will work?," Davis asked.', '"Do you think this will work?" Davis asked.', '"Do you think this will work?" Davis said.'],
+                  answer: 2, explain: 'The question mark goes inside the quotation marks and replaces the comma. No comma is needed after the question mark. "Asked" is appropriate here since it\'s a question.' },
+                { q: 'What is wrong with this passage? Davis said he was happy with the results. "I think we did a great job."',
+                  options: ['Nothing — this mixes indirect and direct quotes properly.', 'The direct quote needs attribution — who said "I think we did a great job"?', 'You can\'t mix indirect and direct quotes from the same source.', 'The indirect quote needs quotation marks too.'],
+                  answer: 1, explain: 'The direct quote "I think we did a great job" lacks attribution. It should be: "I think we did a great job," Davis said. OR: "I think we did a great job," he said.' }
+            ]
+        },
+        apstyle: {
+            name: 'AP Style for News',
+            questions: [
+                { q: 'How should you write a person\'s title in AP style on first reference?',
+                  options: ['superintendent John Davis', 'Superintendent John Davis', 'John Davis, superintendent', 'Both B and C are correct depending on placement.'],
+                  answer: 3, explain: 'Capitalize titles BEFORE names: "Superintendent John Davis." Lowercase titles AFTER names: "John Davis, superintendent." Both placements are acceptable.' },
+                { q: 'Which is the correct AP style for the following date? January 15, 2025',
+                  options: ['January 15, 2025', 'Jan. 15, 2025', 'Jan 15, 2025', 'January 15th, 2025'],
+                  answer: 1, explain: 'AP style abbreviates Jan., Feb., Aug., Sept., Oct., Nov., Dec. when used with a date. Use a period after the abbreviation. Never use "th" or "st" with dates.' },
+                { q: 'How should you write "12 oclock in the afternoon" in AP style?',
+                  options: ['12:00 p.m.', '12 p.m.', 'noon', '12 PM'],
+                  answer: 2, explain: 'AP style uses "noon" (not "12 p.m.") and "midnight" (not "12 a.m."). These are clearer and avoid the ambiguity of a.m./p.m. at 12.' },
+                { q: 'Which is correct AP style for this number? The team won by 7 points.',
+                  options: ['The team won by 7 points.', 'The team won by seven points.', 'The team won by Seven points.', 'The team won by 07 points.'],
+                  answer: 1, explain: 'Spell out numbers one through nine. Use figures for 10 and above. "Seven" is correct. Exception: use figures for ages, scores, addresses, and percentages.' },
+                { q: 'Which sentence uses AP style correctly for a score?',
+                  options: ['The team won twenty-eight to fourteen.', 'The team won 28-14.', 'The team won 28 to 14.', 'The team won 28:14.'],
+                  answer: 1, explain: 'In AP style, scores use figures with a hyphen: 28-14. Don\'t spell out numbers in scores, and use a hyphen (not "to" or a colon) between scores.' },
+                { q: 'How should class levels be written in AP style?',
+                  options: ['Sophomore Jake Miller', 'sophomore Jake Miller', 'Jake Miller, a Sophomore', 'Soph. Jake Miller'],
+                  answer: 1, explain: 'Class levels (freshman, sophomore, junior, senior) are lowercase in AP style. They are not formal titles, so they are not capitalized even before a name.' },
+                { q: 'Which is the correct AP style for time?',
+                  options: ['The meeting starts at 7:00 PM.', 'The meeting starts at 7:00 p.m.', 'The meeting starts at 7 p.m.', 'The meeting starts at seven p.m.'],
+                  answer: 2, explain: 'AP style: Use figures, lowercase a.m./p.m. with periods, and omit :00 for on-the-hour times. "7 p.m." is correct. Don\'t spell out numbers in times.' },
+                { q: 'How should you refer to a state in AP style within a story?',
+                  options: ['She moved from Austin, TX last year.', 'She moved from Austin, Tex. last year.', 'She moved from Austin, Texas, last year.', 'She moved from Austin, Texas last year.'],
+                  answer: 2, explain: 'Spell out state names when they appear with a city name in text. Use a comma after the state. AP no longer uses state abbreviations in text (changed in 2014).' },
+                { q: 'Which use of the Oxford comma follows AP style?',
+                  options: ['The team includes guards, forwards, and centers.', 'The team includes guards, forwards and centers.', 'The team includes guards forwards and centers.', 'The team includes: guards, forwards, and centers.'],
+                  answer: 1, explain: 'AP style does NOT use the Oxford comma (serial comma). No comma before "and" in a simple series: "guards, forwards and centers."' },
+                { q: 'Which correctly formats a dollar amount in AP style?',
+                  options: ['The project will cost $2,000,000.', 'The project will cost $2 million.', 'The project will cost 2 million dollars.', 'The project will cost two million dollars.'],
+                  answer: 1, explain: 'AP style: Use $ and figures with "million" or "billion" for large amounts: "$2 million." Don\'t spell out "dollars" or write out all the zeros.' }
+            ]
+        }
+    };
+
+    function shuffle(arr) {
+        for (var i = arr.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+        }
+        return arr;
+    }
+
+    function loadBestScores() {
+        try {
+            var data = JSON.parse(localStorage.getItem('uil-news-drills') || '{}');
+            for (var key in drills) {
+                var el = document.getElementById('best-' + key);
+                if (el && data[key]) el.textContent = 'Best: ' + data[key] + '/10';
+            }
+        } catch (e) {}
+    }
+
+    function saveBestScore(drill, score) {
+        try {
+            var data = JSON.parse(localStorage.getItem('uil-news-drills') || '{}');
+            if (!data[drill] || score > data[drill]) data[drill] = score;
+            localStorage.setItem('uil-news-drills', JSON.stringify(data));
+        } catch (e) {}
+    }
+
+    function startDrill(drill) {
+        currentDrill = drill;
+        answered = 0; correct = 0;
+        var d = drills[drill];
+
+        document.getElementById('drill-title').textContent = d.name;
+        document.getElementById('drill-score').textContent = '0';
+        document.getElementById('drill-total').textContent = '10';
+        document.getElementById('drill-selector').style.display = 'none';
+        document.getElementById('drill-area').classList.add('visible');
+        document.getElementById('results-box').style.display = 'none';
+
+        // Shuffle questions and pick 10
+        var qs = shuffle(d.questions.slice()).slice(0, 10);
+        totalQ = qs.length;
+        document.getElementById('drill-total').textContent = totalQ;
+
+        var container = document.getElementById('questions-container');
+        container.innerHTML = '';
+
+        qs.forEach(function(q, i) {
+            // Shuffle options but track correct answer
+            var optionIndices = q.options.map(function(_, idx) { return idx; });
+            shuffle(optionIndices);
+            var newAnswer = optionIndices.indexOf(q.answer);
+
+            var html = '<div class="q-card" id="q-' + i + '">';
+            html += '<div class="q-number">Question ' + (i + 1) + ' of ' + totalQ + '</div>';
+            html += '<div class="q-text">' + q.q + '</div>';
+            html += '<div class="q-options">';
+            optionIndices.forEach(function(origIdx, optIdx) {
+                html += '<div class="q-option" data-q="' + i + '" data-opt="' + optIdx + '" data-correct="' + newAnswer + '" onclick="selectAnswer(this)">' + q.options[origIdx] + '</div>';
+            });
+            html += '</div>';
+            html += '<div class="q-explanation" id="exp-' + i + '">' + q.explain + '</div>';
+            html += '</div>';
+            container.innerHTML += html;
+        });
+    }
+
+    function selectAnswer(el) {
+        var qIdx = el.getAttribute('data-q');
+        var optIdx = parseInt(el.getAttribute('data-opt'));
+        var correctIdx = parseInt(el.getAttribute('data-correct'));
+        var card = document.getElementById('q-' + qIdx);
+
+        // Prevent re-answering
+        if (card.classList.contains('correct') || card.classList.contains('incorrect')) return;
+
+        answered++;
+        var isCorrect = optIdx === correctIdx;
+
+        if (isCorrect) {
+            correct++;
+            el.classList.add('correct-answer');
+            card.classList.add('correct');
+        } else {
+            el.classList.add('wrong-answer');
+            card.classList.add('incorrect');
+            // Highlight the correct answer
+            var options = card.querySelectorAll('.q-option');
+            options[correctIdx].classList.add('correct-answer');
+        }
+
+        // Show explanation
+        document.getElementById('exp-' + qIdx).classList.add('visible');
+
+        // Disable all options for this question
+        var opts = card.querySelectorAll('.q-option');
+        opts.forEach(function(o) { o.style.pointerEvents = 'none'; });
+
+        // Update score
+        document.getElementById('drill-score').textContent = correct;
+
+        // Check if drill is complete
+        if (answered >= totalQ) {
+            setTimeout(showResults, 600);
+        }
+    }
+
+    function showResults() {
+        var pct = Math.round((correct / totalQ) * 100);
+        var msg = pct >= 90 ? 'Outstanding! You\'ve mastered this skill!' :
+                  pct >= 70 ? 'Good job! A little more practice and you\'ll nail it.' :
+                  pct >= 50 ? 'Getting there. Review the explanations and try again.' :
+                  'Keep practicing! Read the tutorial for tips on this topic.';
+
+        document.getElementById('final-score').textContent = correct + '/' + totalQ + ' (' + pct + '%)';
+        document.getElementById('final-msg').textContent = msg;
+        document.getElementById('results-box').style.display = 'block';
+        document.getElementById('results-box').scrollIntoView({ behavior: 'smooth' });
+
+        saveBestScore(currentDrill, correct);
+        loadBestScores();
+    }
+
+    function backToSelector() {
+        document.getElementById('drill-area').classList.remove('visible');
+        document.getElementById('drill-selector').style.display = '';
+        document.getElementById('questions-container').innerHTML = '';
+    }
+
+    function restartDrill() {
+        document.getElementById('results-box').style.display = 'none';
+        startDrill(currentDrill);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showToast(m) { var t = document.getElementById('toast'); t.textContent = m; t.classList.add('visible'); setTimeout(function() { t.classList.remove('visible'); }, 2500); }
+
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+        var isDark = document.body.classList.contains('dark-mode');
+        document.getElementById('dark-toggle').textContent = isDark ? 'Light Mode' : 'Dark Mode';
+        try { localStorage.setItem('uil-dark-mode', isDark ? '1' : '0'); } catch (e) {}
+    }
+
+    // Init
+    document.addEventListener('DOMContentLoaded', function() {
+        try { if (localStorage.getItem('uil-dark-mode') === '1') { document.body.classList.add('dark-mode'); document.getElementById('dark-toggle').textContent = 'Light Mode'; } } catch (e) {}
+        loadBestScores();
+    });
+    </script>
+</body>
+</html>
