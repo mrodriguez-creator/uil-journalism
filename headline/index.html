@@ -1092,7 +1092,9 @@
         let currentStories = []; // Array of 6 stories
         let headlines = [];
 
-        var loadingMessages = ['Analyzing your headlines...', 'Checking UIL rule compliance...', 'Evaluating clarity and impact...', 'Scoring each headline...', 'Almost done...'];
+        var generateMessages = ['Generating your stories...', 'Building news scenarios...', 'Crafting source quotes and details...', 'Almost ready...'];
+        var evaluateMessages = ['Analyzing your headlines...', 'Checking UIL rule compliance...', 'Evaluating clarity and impact...', 'Scoring each headline...', 'Almost done...'];
+        var loadingMessages = generateMessages;
         var loadingIdx = 0;
         var loadingTimer = null;
         function cycleLoadingText() {
@@ -1100,7 +1102,7 @@
             var el = document.getElementById('loading-text');
             if (el) el.textContent = loadingMessages[loadingIdx];
         }
-        function startLoadingCycle() { loadingIdx = 0; loadingTimer = setInterval(cycleLoadingText, 4000); }
+        function startLoadingCycle(msgs) { loadingMessages = msgs || generateMessages; loadingIdx = 0; var el = document.getElementById('loading-text'); if (el) el.textContent = loadingMessages[0]; loadingTimer = setInterval(cycleLoadingText, 4000); }
         function stopLoadingCycle() { clearInterval(loadingTimer); loadingTimer = null; }
 
         var hlColor = 'off';
@@ -1717,6 +1719,11 @@
             startBtn.disabled = true;
             var count = selectedStoryCount;
             startBtn.textContent = 'Generating ' + count + ' stor' + (count === 1 ? 'y' : 'ies') + '...';
+            document.getElementById('start-section').style.display = 'none';
+            document.getElementById('mode-selector').style.display = 'none';
+            document.getElementById('story-count-selector').style.display = 'none';
+            document.getElementById('loading').style.display = 'block';
+            startLoadingCycle(generateMessages);
 
             try {
                 var response = await fetch('/api/headline/generate-story', {
@@ -1731,6 +1738,8 @@
                 if (data.stories && data.stories.length === 6) {
                     // Use only the selected number of stories
                     currentStories = data.stories.slice(0, count);
+                    stopLoadingCycle();
+                    document.getElementById('loading').style.display = 'none';
                     displayStories();
 
                     // Start timer for timed or mock modes
@@ -1738,8 +1747,6 @@
                         startTimer();
                     }
 
-                    document.getElementById('mode-selector').style.display = 'none';
-                    document.getElementById('story-count-selector').style.display = 'none';
                     document.getElementById('archive-section').innerHTML = '';
                 } else {
                     throw new Error('Failed to parse stories');
@@ -1747,6 +1754,11 @@
             } catch (error) {
                 console.error('Error:', error);
                 alert('Error generating stories. Please try again.');
+                stopLoadingCycle();
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('start-section').style.display = 'block';
+                document.getElementById('mode-selector').style.display = 'flex';
+                document.getElementById('story-count-selector').style.display = 'flex';
                 startBtn.disabled = false;
                 startBtn.textContent = 'Generate New Stories';
             }
@@ -1965,7 +1977,7 @@
             document.getElementById('submit-btn').disabled = true;
             document.getElementById('story-section').style.display = 'none';
             document.getElementById('loading').style.display = 'block';
-            startLoadingCycle();
+            startLoadingCycle(evaluateMessages);
 
             try {
                 await evaluateHeadlines();
