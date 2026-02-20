@@ -74,7 +74,7 @@ OFFICIAL UIL GRADING RUBRIC (0-4 POINTS):
 - A, an, the (comma/period replace 'and') unless in book/movie titles
 - Opinion (adjectives/adverbs) - red car is OK; sloppy is NOT
 - 2-line or 3-line headline that doesn't read as 1 sentence
-- First & last names together (use 1 name, NOT both)
+- First & last names used together in headline (e.g. "John Smith" instead of just "Smith") — use only the LAST name
 - No text words, no slang, no say kids
 - Don't confuse labels or titles with headlines (headlines have subject & present tense verb)
 - Acronyms not used in story
@@ -82,7 +82,7 @@ OFFICIAL UIL GRADING RUBRIC (0-4 POINTS):
 
 **Give 2 POINTS:**
 - Headline misses main idea
-- First names used (with/out last name) - Exception: 2 people w/same last name
+- First name only used (e.g. "John" instead of "Smith") - Exception: 2 people w/same last name in the story
 - Bad word splits, especially line 1 to line 2 (infinitive 'to' should not split from its object, nor a preposition from its object on 1 line with noun on next line)
 - Per AP, word splits from line 2 to line 3 are acceptable, but from lines 1 to 2 are not
 - JUDgiNG NOTE: In ties, bad word splits lose
@@ -115,7 +115,7 @@ CRITICAL RULES TO ENFORCE:
 7. Use commas for 'and' - semicolons separate 2 complete clauses
 8. No abbreviations unless in the story
 9. Facts must match the specific story each headline is paired with
-10. Use LAST names only (not first, not both)
+10. Use LAST NAMES only (not first names, not both names together). IMPORTANT: When a story mentions "John Smith", the LAST name is "Smith" and the FIRST name is "John". If the student writes "Smith" in their headline, that is CORRECT (last name only). If the student writes "John" that is WRONG (first name). If the student writes "John Smith" that is WRONG (both names). Always carefully check which name the student actually used against the full names in the story before penalizing.
 
 ADDITIONAL RULES (from official UIL contest tips):
 - Avoid starting the headline with a verb
