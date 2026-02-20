@@ -98,6 +98,47 @@
             font-size: 1.05em;
         }
 
+        /* Highlighter toolbar */
+        .hl-toolbar {
+            display: flex; align-items: center; gap: 6px; margin-bottom: 10px;
+            padding: 8px 12px; background: #e8eaf6; border-radius: 6px;
+            border: 1px solid #c5cae9;
+        }
+        .hl-label { font-size: 0.8em; font-weight: 600; color: #666; margin-right: 4px; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+        .hl-btn {
+            width: 22px; height: 22px; border-radius: 50%; border: 2px solid transparent;
+            cursor: pointer; transition: transform 0.15s, border-color 0.15s;
+        }
+        .hl-btn:hover { transform: scale(1.15); }
+        .hl-btn.active { border-color: #333; box-shadow: 0 0 0 2px rgba(0,0,0,0.2); }
+        .hl-btn.yellow { background: #fff176; }
+        .hl-btn.green { background: #a5d6a7; }
+        .hl-btn.blue { background: #90caf9; }
+        .hl-btn.pink { background: #f48fb1; }
+        .hl-btn.orange { background: #ffcc80; }
+        .hl-eraser {
+            padding: 3px 10px; border: 1px solid #ccc; border-radius: 4px;
+            font-size: 0.78em; font-weight: 600; cursor: pointer; background: #f8f9fa;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; color: #666; transition: all 0.15s;
+        }
+        .hl-eraser:hover { background: #f44336; color: white; border-color: #f44336; }
+        .hl-eraser.active { background: #f44336; color: white; border-color: #f44336; }
+        .hl-off {
+            padding: 3px 10px; border: 1px solid #ccc; border-radius: 4px;
+            font-size: 0.78em; font-weight: 600; cursor: pointer; background: #f8f9fa;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; color: #666; transition: all 0.15s;
+        }
+        .hl-off:hover { background: #eee; }
+        .hl-off.active { background: #667eea; color: white; border-color: #667eea; }
+        .story-text.hl-mode { cursor: crosshair; }
+        .story-text.hl-erase-mode { cursor: not-allowed; }
+        .story-text .hl-mark { border-radius: 2px; padding: 0 1px; }
+        .story-text .hl-mark.hl-yellow { background: rgba(255,241,118,0.6); }
+        .story-text .hl-mark.hl-green { background: rgba(165,214,167,0.6); }
+        .story-text .hl-mark.hl-blue { background: rgba(144,202,249,0.6); }
+        .story-text .hl-mark.hl-pink { background: rgba(244,143,177,0.5); }
+        .story-text .hl-mark.hl-orange { background: rgba(255,204,128,0.6); }
+
         .headline-input-section {
             background: white;
             border-radius: 8px;
@@ -735,7 +776,7 @@
             .header h1 { font-size: 1.5em; }
             .timer-bar, .mode-selector, #mode-descriptions, #start-section, .submit-section,
             .try-again-btn, .dark-toggle, .story-count-selector, #archive-section,
-            .dashboard-actions, .clear-data-btn, .print-btn-container { display: none !important; }
+            .dashboard-actions, .clear-data-btn, .print-btn-container, .hl-toolbar { display: none !important; }
             .feedback-section { display: block !important; }
             .feedback-card { break-inside: avoid; box-shadow: none !important; border: 1px solid #ccc; margin-bottom: 15px; }
             .score { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
@@ -837,6 +878,15 @@
         body.dark-mode .info-box a { color: #64b5f6; }
         body.dark-mode .story-section { background: #252540; border-left-color: #667eea; }
         body.dark-mode .story-text { color: #ccc; }
+        body.dark-mode .hl-toolbar { background: #2a2a3e; border-color: #444; }
+        body.dark-mode .hl-label { color: #aaa; }
+        body.dark-mode .hl-eraser { background: #333; border-color: #555; color: #ccc; }
+        body.dark-mode .hl-off { background: #333; border-color: #555; color: #ccc; }
+        body.dark-mode .story-text .hl-mark.hl-yellow { background: rgba(255,241,118,0.3); }
+        body.dark-mode .story-text .hl-mark.hl-green { background: rgba(165,214,167,0.3); }
+        body.dark-mode .story-text .hl-mark.hl-blue { background: rgba(144,202,249,0.3); }
+        body.dark-mode .story-text .hl-mark.hl-pink { background: rgba(244,143,177,0.3); }
+        body.dark-mode .story-text .hl-mark.hl-orange { background: rgba(255,204,128,0.3); }
         body.dark-mode .headline-input-section { background: #2a2a3e; border-color: #444; }
         body.dark-mode .headline-input { background: #1e1e2e; color: #e0e0e0; border-color: #444; }
         body.dark-mode .headline-input:focus { border-color: #667eea; }
@@ -1030,6 +1080,61 @@
     <script>
         let currentStories = []; // Array of 6 stories
         let headlines = [];
+        var hlColor = 'off';
+
+        // ===== HIGHLIGHTER =====
+        function setHighlighter(color) {
+            hlColor = color;
+            document.querySelectorAll('.hl-btn, .hl-eraser, .hl-off').forEach(function(b) { b.classList.remove('active'); });
+            if (color === 'off') {
+                document.querySelectorAll('.hl-off').forEach(function(b) { b.classList.add('active'); });
+            } else if (color === 'erase') {
+                document.querySelectorAll('.hl-eraser').forEach(function(b) { b.classList.add('active'); });
+            } else {
+                document.querySelectorAll('.hl-btn.' + color).forEach(function(b) { b.classList.add('active'); });
+            }
+            document.querySelectorAll('.story-text').forEach(function(el) {
+                el.classList.remove('hl-mode', 'hl-erase-mode');
+                if (color !== 'off' && color !== 'erase') el.classList.add('hl-mode');
+                if (color === 'erase') el.classList.add('hl-erase-mode');
+            });
+        }
+
+        document.addEventListener('mouseup', function(e) {
+            if (hlColor === 'off') return;
+            var storyText = e.target.closest('.story-text');
+            if (!storyText) return;
+            if (hlColor === 'erase') {
+                var target = e.target;
+                if (target.classList && target.classList.contains('hl-mark')) {
+                    var parent = target.parentNode;
+                    while (target.firstChild) parent.insertBefore(target.firstChild, target);
+                    parent.removeChild(target);
+                    parent.normalize();
+                }
+                return;
+            }
+            var sel = window.getSelection();
+            if (!sel || sel.isCollapsed || !sel.rangeCount) return;
+            var range = sel.getRangeAt(0);
+            if (!storyText.contains(range.commonAncestorContainer)) return;
+            var text = sel.toString().trim();
+            if (!text) return;
+            try {
+                var span = document.createElement('span');
+                span.className = 'hl-mark hl-' + hlColor;
+                range.surroundContents(span);
+            } catch (ex) {
+                try {
+                    var fragment = range.extractContents();
+                    var span2 = document.createElement('span');
+                    span2.className = 'hl-mark hl-' + hlColor;
+                    span2.appendChild(fragment);
+                    range.insertNode(span2);
+                } catch (ex2) {}
+            }
+            sel.removeAllRanges();
+        });
 
         // Mode state: 'practice', 'timed', or 'mock'
         let currentMode = 'practice';
@@ -1648,6 +1753,16 @@
                 storyBlock.innerHTML =
                     '<div class="story-header">' +
                         '<div class="story-title">Story ' + (index + 1) + '</div>' +
+                    '</div>' +
+                    '<div class="hl-toolbar">' +
+                        '<span class="hl-label">Highlighter:</span>' +
+                        '<button class="hl-btn yellow" onclick="setHighlighter(\'yellow\')" title="Yellow"></button>' +
+                        '<button class="hl-btn green" onclick="setHighlighter(\'green\')" title="Green"></button>' +
+                        '<button class="hl-btn blue" onclick="setHighlighter(\'blue\')" title="Blue"></button>' +
+                        '<button class="hl-btn pink" onclick="setHighlighter(\'pink\')" title="Pink"></button>' +
+                        '<button class="hl-btn orange" onclick="setHighlighter(\'orange\')" title="Orange"></button>' +
+                        '<button class="hl-eraser" onclick="setHighlighter(\'erase\')" title="Remove highlights">Eraser</button>' +
+                        '<button class="hl-off active" onclick="setHighlighter(\'off\')" title="Turn off highlighter">Off</button>' +
                     '</div>' +
                     '<div class="story-text">' + storyText + '</div>';
                 pairsDiv.appendChild(storyBlock);
