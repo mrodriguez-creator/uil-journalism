@@ -221,20 +221,26 @@
             padding: 40px;
         }
 
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
+        .buffer-circle {
+            width: 70px; height: 70px; margin: 0 auto 20px; position: relative;
         }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .buffer-circle svg { width: 70px; height: 70px; animation: buffer-rotate 2s linear infinite; }
+        .buffer-circle circle {
+            fill: none; stroke-width: 4; stroke-linecap: round;
+            stroke-dasharray: 150, 200; stroke-dashoffset: 0;
+            animation: buffer-dash 1.5s ease-in-out infinite;
         }
+        .buffer-circle .track { stroke: #f3f3f3; stroke-dasharray: none; animation: none; }
+        .buffer-circle .bar { stroke: #667eea; }
+        @keyframes buffer-rotate { 100% { transform: rotate(360deg); } }
+        @keyframes buffer-dash {
+            0% { stroke-dasharray: 1, 200; stroke-dashoffset: 0; }
+            50% { stroke-dasharray: 100, 200; stroke-dashoffset: -15; }
+            100% { stroke-dasharray: 100, 200; stroke-dashoffset: -125; }
+        }
+        .loading-text { font-size: 1em; color: #5c6bc0; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+        .loading-subtext { font-size: 0.85em; color: #888; margin-top: 8px; font-family: -apple-system, BlinkMacSystemFont, sans-serif; animation: loading-pulse 2s ease-in-out infinite; }
+        @keyframes loading-pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
 
         .feedback-section {
             display: none;
@@ -887,6 +893,8 @@
         body.dark-mode .story-text .hl-mark.hl-blue { background: rgba(144,202,249,0.3); }
         body.dark-mode .story-text .hl-mark.hl-pink { background: rgba(244,143,177,0.3); }
         body.dark-mode .story-text .hl-mark.hl-orange { background: rgba(255,204,128,0.3); }
+        body.dark-mode .loading-text { color: #9fa8da; }
+        body.dark-mode .loading-subtext { color: #888; }
         body.dark-mode .headline-input-section { background: #2a2a3e; border-color: #444; }
         body.dark-mode .headline-input { background: #1e1e2e; color: #e0e0e0; border-color: #444; }
         body.dark-mode .headline-input:focus { border-color: #667eea; }
@@ -1021,8 +1029,11 @@
             </div>
 
             <div class="loading" id="loading">
-                <div class="spinner"></div>
-                <p>Analyzing your 6 headlines...</p>
+                <div class="buffer-circle">
+                    <svg viewBox="0 0 50 50"><circle class="track" cx="25" cy="25" r="20"/><circle class="bar" cx="25" cy="25" r="20"/></svg>
+                </div>
+                <p class="loading-text" id="loading-text">Analyzing your headlines...</p>
+                <p class="loading-subtext">This may take up to a minute</p>
             </div>
 
             <div class="feedback-section" id="feedback-section">
@@ -1080,6 +1091,18 @@
     <script>
         let currentStories = []; // Array of 6 stories
         let headlines = [];
+
+        var loadingMessages = ['Analyzing your headlines...', 'Checking UIL rule compliance...', 'Evaluating clarity and impact...', 'Scoring each headline...', 'Almost done...'];
+        var loadingIdx = 0;
+        var loadingTimer = null;
+        function cycleLoadingText() {
+            loadingIdx = (loadingIdx + 1) % loadingMessages.length;
+            var el = document.getElementById('loading-text');
+            if (el) el.textContent = loadingMessages[loadingIdx];
+        }
+        function startLoadingCycle() { loadingIdx = 0; loadingTimer = setInterval(cycleLoadingText, 4000); }
+        function stopLoadingCycle() { clearInterval(loadingTimer); loadingTimer = null; }
+
         var hlColor = 'off';
 
         // ===== HIGHLIGHTER =====
@@ -1942,11 +1965,13 @@
             document.getElementById('submit-btn').disabled = true;
             document.getElementById('story-section').style.display = 'none';
             document.getElementById('loading').style.display = 'block';
+            startLoadingCycle();
 
             try {
                 await evaluateHeadlines();
             } catch (error) {
                 alert('Error evaluating headlines. Please try again.');
+                stopLoadingCycle();
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('story-section').style.display = 'block';
                 document.getElementById('submit-btn').disabled = false;
@@ -1982,6 +2007,7 @@
 
         function displayFeedback(evaluation) {
             lastEvaluation = evaluation; // Store for copy/export/share
+            stopLoadingCycle();
             document.getElementById('loading').style.display = 'none';
             document.getElementById('feedback-section').style.display = 'block';
 

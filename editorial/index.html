@@ -72,11 +72,26 @@
         .mode-btn.active { background: #0288d1; color: white; border-color: #0288d1; }
 
         .loading { text-align: center; padding: 60px 20px; display: none; }
-        .spinner {
-            width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #0288d1;
-            border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;
+        .buffer-circle {
+            width: 70px; height: 70px; margin: 0 auto 20px; position: relative;
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .buffer-circle svg { width: 70px; height: 70px; animation: buffer-rotate 2s linear infinite; }
+        .buffer-circle circle {
+            fill: none; stroke-width: 4; stroke-linecap: round;
+            stroke-dasharray: 150, 200; stroke-dashoffset: 0;
+            animation: buffer-dash 1.5s ease-in-out infinite;
+        }
+        .buffer-circle .track { stroke: #f3f3f3; stroke-dasharray: none; animation: none; }
+        .buffer-circle .bar { stroke: #0288d1; }
+        @keyframes buffer-rotate { 100% { transform: rotate(360deg); } }
+        @keyframes buffer-dash {
+            0% { stroke-dasharray: 1, 200; stroke-dashoffset: 0; }
+            50% { stroke-dasharray: 100, 200; stroke-dashoffset: -15; }
+            100% { stroke-dasharray: 100, 200; stroke-dashoffset: -125; }
+        }
+        .loading-text { font-size: 1em; color: #01579b; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+        .loading-subtext { font-size: 0.85em; color: #888; margin-top: 8px; font-family: -apple-system, BlinkMacSystemFont, sans-serif; animation: loading-pulse 2s ease-in-out infinite; }
+        @keyframes loading-pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
 
         /* Fact sheet */
         .writing-section { display: none; }
@@ -305,6 +320,8 @@
         body.dark-mode .nav-link { color: #4fc3f7; border-color: #4fc3f7; }
         body.dark-mode .nav-link:hover, body.dark-mode .nav-link.active { background: #0288d1; color: white; }
         body.dark-mode .dark-toggle { background: rgba(30,30,30,0.9); color: #eee; border-color: #555; }
+        body.dark-mode .loading-text { color: #4fc3f7; }
+        body.dark-mode .loading-subtext { color: #888; }
 
         @media print {
             body { background: white !important; padding: 0 !important; }
@@ -350,8 +367,11 @@
             </div>
 
             <div class="loading" id="loading">
-                <div class="spinner"></div>
-                <p>Generating your fact sheet...</p>
+                <div class="buffer-circle">
+                    <svg viewBox="0 0 50 50"><circle class="track" cx="25" cy="25" r="20"/><circle class="bar" cx="25" cy="25" r="20"/></svg>
+                </div>
+                <p class="loading-text" id="loading-text">Generating your fact sheet...</p>
+                <p class="loading-subtext">This may take up to a minute</p>
             </div>
 
             <div class="writing-section" id="writing-section">
@@ -431,6 +451,17 @@ End with a specific solution." oninput="updateWordCount()"></textarea>
     </div>
 
     <script>
+        var loadingMessages = ['Generating your fact sheet...', 'Building a school policy scenario...', 'Crafting source quotes and data...', 'Almost ready...'];
+        var loadingIdx = 0;
+        var loadingTimer = null;
+        function cycleLoadingText() {
+            loadingIdx = (loadingIdx + 1) % loadingMessages.length;
+            var el = document.getElementById('loading-text');
+            if (el) el.textContent = loadingMessages[loadingIdx];
+        }
+        function startLoadingCycle() { loadingIdx = 0; loadingTimer = setInterval(cycleLoadingText, 4000); }
+        function stopLoadingCycle() { clearInterval(loadingTimer); loadingTimer = null; }
+
         var currentMode = 'practice';
         var promptData = null;
         var timerInterval = null;
@@ -628,6 +659,7 @@ End with a specific solution." oninput="updateWordCount()"></textarea>
             var btn = document.getElementById('generate-btn');
             btn.disabled = true; btn.textContent = 'Generating prompt...';
             document.getElementById('loading').style.display = 'block';
+            startLoadingCycle();
             document.getElementById('mode-selector').style.display = 'none';
             try {
                 var resp = await fetch('/api/editorial/generate-prompt', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
@@ -635,6 +667,7 @@ End with a specific solution." oninput="updateWordCount()"></textarea>
                 if (data.error) throw new Error(data.error);
                 promptData = data;
                 renderFactSheet();
+                stopLoadingCycle();
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('start-section').style.display = 'none';
                 document.getElementById('writing-section').style.display = 'block';
@@ -642,6 +675,7 @@ End with a specific solution." oninput="updateWordCount()"></textarea>
                 document.getElementById('writing-checks').style.display = currentMode === 'mock' ? 'none' : '';
                 if (currentMode !== 'practice') startTimer();
             } catch (e) {
+                stopLoadingCycle();
                 document.getElementById('loading').style.display = 'none';
                 btn.disabled = false; btn.textContent = 'Generate Editorial Prompt';
                 document.getElementById('mode-selector').style.display = 'flex';

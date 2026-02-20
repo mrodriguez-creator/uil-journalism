@@ -61,11 +61,26 @@
         .mode-btn.active { background: #e91e63; color: white; border-color: #e91e63; }
 
         .loading { text-align: center; padding: 60px 20px; display: none; }
-        .spinner {
-            width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #e91e63;
-            border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;
+        .buffer-circle {
+            width: 70px; height: 70px; margin: 0 auto 20px; position: relative;
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .buffer-circle svg { width: 70px; height: 70px; animation: buffer-rotate 2s linear infinite; }
+        .buffer-circle circle {
+            fill: none; stroke-width: 4; stroke-linecap: round;
+            stroke-dasharray: 150, 200; stroke-dashoffset: 0;
+            animation: buffer-dash 1.5s ease-in-out infinite;
+        }
+        .buffer-circle .track { stroke: #f3f3f3; stroke-dasharray: none; animation: none; }
+        .buffer-circle .bar { stroke: #e91e63; }
+        @keyframes buffer-rotate { 100% { transform: rotate(360deg); } }
+        @keyframes buffer-dash {
+            0% { stroke-dasharray: 1, 200; stroke-dashoffset: 0; }
+            50% { stroke-dasharray: 100, 200; stroke-dashoffset: -15; }
+            100% { stroke-dasharray: 100, 200; stroke-dashoffset: -125; }
+        }
+        .loading-text { font-size: 1em; color: #ad1457; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+        .loading-subtext { font-size: 0.85em; color: #888; margin-top: 8px; font-family: -apple-system, BlinkMacSystemFont, sans-serif; animation: loading-pulse 2s ease-in-out infinite; }
+        @keyframes loading-pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
 
         .test-section { display: none; }
 
@@ -222,6 +237,49 @@
         }
         .toast.visible { opacity: 1; }
 
+        /* Highlighter */
+        .hl-toolbar {
+            display: flex; align-items: center; gap: 6px; margin-bottom: 10px;
+            padding: 8px 12px; background: #fce4ec; border-radius: 6px;
+            flex-wrap: wrap; border: 1px solid #f8bbd0;
+        }
+        .hl-label { font-size: 0.8em; font-weight: 600; color: #666; margin-right: 4px; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+        .hl-btn {
+            width: 26px; height: 26px; border-radius: 50%; border: 2px solid transparent;
+            cursor: pointer; transition: all 0.15s; position: relative;
+        }
+        .hl-btn:hover { transform: scale(1.15); }
+        .hl-btn.active { border-color: #333; box-shadow: 0 0 0 2px rgba(0,0,0,0.2); }
+        .hl-btn.yellow { background: #fff176; }
+        .hl-btn.green { background: #a5d6a7; }
+        .hl-btn.blue { background: #90caf9; }
+        .hl-btn.pink { background: #f48fb1; }
+        .hl-btn.orange { background: #ffcc80; }
+        .hl-eraser {
+            padding: 4px 10px; border: 1px solid #ccc; border-radius: 4px;
+            background: white; cursor: pointer; font-size: 0.78em; font-weight: 600;
+            color: #666; transition: all 0.15s; margin-left: 4px;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .hl-eraser:hover { background: #f44336; color: white; border-color: #f44336; }
+        .hl-eraser.active { background: #f44336; color: white; border-color: #f44336; }
+        .hl-off {
+            padding: 4px 10px; border: 1px solid #ccc; border-radius: 4px;
+            background: white; cursor: pointer; font-size: 0.78em; font-weight: 600;
+            color: #666; transition: all 0.15s;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .hl-off:hover { background: #eee; }
+        .hl-off.active { background: #e91e63; color: white; border-color: #e91e63; }
+        .hl-target.hl-mode { cursor: crosshair; }
+        .hl-target.hl-erase-mode { cursor: not-allowed; }
+        .hl-target .hl-mark { border-radius: 2px; padding: 0 1px; }
+        .hl-target .hl-mark.hl-yellow { background: rgba(255,241,118,0.6); }
+        .hl-target .hl-mark.hl-green { background: rgba(165,214,167,0.6); }
+        .hl-target .hl-mark.hl-blue { background: rgba(144,202,249,0.6); }
+        .hl-target .hl-mark.hl-pink { background: rgba(244,143,177,0.5); }
+        .hl-target .hl-mark.hl-orange { background: rgba(255,204,128,0.6); }
+
         /* Dark mode */
         .dark-toggle {
             position: fixed; top: 12px; right: 12px; z-index: 300;
@@ -257,11 +315,19 @@
         body.dark-mode .mode-btn.active { background: #e91e63; color: white; border-color: #e91e63; }
         body.dark-mode .dark-toggle { background: rgba(30,30,30,0.9); color: #eee; border-color: #555; }
         body.dark-mode .tiebreaker-warning { background: #2d2520; color: #ffb74d; }
+        body.dark-mode .hl-toolbar { background: #2d2030; border-color: #444; }
+        body.dark-mode .hl-target .hl-mark.hl-yellow { background: rgba(255,241,118,0.3); }
+        body.dark-mode .hl-target .hl-mark.hl-green { background: rgba(165,214,167,0.3); }
+        body.dark-mode .hl-target .hl-mark.hl-blue { background: rgba(144,202,249,0.3); }
+        body.dark-mode .hl-target .hl-mark.hl-pink { background: rgba(244,143,177,0.3); }
+        body.dark-mode .hl-target .hl-mark.hl-orange { background: rgba(255,204,128,0.3); }
+        body.dark-mode .loading-text { color: #f48fb1; }
+        body.dark-mode .loading-subtext { color: #888; }
 
         @media print {
             body { background: white !important; padding: 0 !important; }
             .container { box-shadow: none !important; }
-            .timer-bar, .mode-selector, #start-section, .submit-section, .try-again-btn, .dark-toggle, .action-bar, .part-tabs { display: none !important; }
+            .timer-bar, .mode-selector, #start-section, .submit-section, .try-again-btn, .dark-toggle, .action-bar, .part-tabs, .hl-toolbar { display: none !important; }
             .feedback-section { display: block !important; }
             .feedback-card { break-inside: avoid; box-shadow: none !important; border: 1px solid #ccc; }
             .score { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
@@ -305,8 +371,11 @@
             </div>
 
             <div class="loading" id="loading">
-                <div class="spinner"></div>
-                <p>Generating your copy editing test...</p>
+                <div class="buffer-circle">
+                    <svg viewBox="0 0 50 50"><circle class="track" cx="25" cy="25" r="20"/><circle class="bar" cx="25" cy="25" r="20"/></svg>
+                </div>
+                <p class="loading-text" id="loading-text">Generating your copy editing test...</p>
+                <p class="loading-subtext">This may take up to a minute</p>
             </div>
 
             <div class="test-section" id="test-section">
@@ -356,12 +425,78 @@
     </div>
 
     <script>
+        var hlColor = 'off';
+
+        // ===== HIGHLIGHTER =====
+        function setHighlighter(color) {
+            hlColor = color;
+            document.querySelectorAll('.hl-btn, .hl-eraser, .hl-off').forEach(function(b) { b.classList.remove('active'); });
+            if (color === 'off') {
+                document.querySelectorAll('.hl-off').forEach(function(b) { b.classList.add('active'); });
+            } else if (color === 'erase') {
+                document.querySelectorAll('.hl-eraser').forEach(function(b) { b.classList.add('active'); });
+            } else {
+                document.querySelectorAll('.hl-btn.' + color).forEach(function(b) { b.classList.add('active'); });
+            }
+            document.querySelectorAll('.hl-target').forEach(function(el) {
+                el.classList.remove('hl-mode', 'hl-erase-mode');
+                if (color !== 'off' && color !== 'erase') el.classList.add('hl-mode');
+                if (color === 'erase') el.classList.add('hl-erase-mode');
+            });
+        }
+
+        document.addEventListener('mouseup', function(e) {
+            if (hlColor === 'off') return;
+            var target = e.target.closest('.hl-target');
+            if (!target) return;
+            if (hlColor === 'erase') {
+                if (e.target.classList && e.target.classList.contains('hl-mark')) {
+                    var parent = e.target.parentNode;
+                    while (e.target.firstChild) parent.insertBefore(e.target.firstChild, e.target);
+                    parent.removeChild(e.target);
+                    parent.normalize();
+                }
+                return;
+            }
+            var sel = window.getSelection();
+            if (!sel || sel.isCollapsed || !sel.rangeCount) return;
+            var range = sel.getRangeAt(0);
+            if (!target.contains(range.commonAncestorContainer)) return;
+            var text = sel.toString().trim();
+            if (!text) return;
+            try {
+                var span = document.createElement('span');
+                span.className = 'hl-mark hl-' + hlColor;
+                range.surroundContents(span);
+            } catch (ex) {
+                try {
+                    var fragment = range.extractContents();
+                    var span2 = document.createElement('span');
+                    span2.className = 'hl-mark hl-' + hlColor;
+                    span2.appendChild(fragment);
+                    range.insertNode(span2);
+                } catch (ex2) {}
+            }
+            sel.removeAllRanges();
+        });
+
         var currentMode = 'practice';
         var testData = null;
         var part1Answers = {};
         var timerInterval = null;
         var timeRemaining = 900;
         var lastEvaluation = null;
+
+        var loadingMessages = ['Generating your copy editing test...', 'Crafting 15 multiple-choice questions...', 'Building sentence editing challenges...', 'Creating the news brief...', 'Almost there...'];
+        var loadingIdx = 0;
+        var loadingTimer = null;
+        function cycleLoadingText() {
+            loadingIdx = (loadingIdx + 1) % loadingMessages.length;
+            var el = document.getElementById('loading-text');
+            if (el) el.textContent = loadingMessages[loadingIdx];
+        }
+        function startLoadingCycle() { loadingIdx = 0; loadingTimer = setInterval(cycleLoadingText, 4000); }
+        function stopLoadingCycle() { clearInterval(loadingTimer); loadingTimer = null; }
 
         function setMode(mode) {
             currentMode = mode;
@@ -400,6 +535,7 @@
             btn.disabled = true; btn.textContent = 'Generating test...';
             document.getElementById('loading').style.display = 'block';
             document.getElementById('mode-selector').style.display = 'none';
+            startLoadingCycle();
             try {
                 var resp = await fetch('/api/copyedit/generate-test', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
                 var data = await resp.json();
@@ -407,11 +543,13 @@
                 testData = data;
                 part1Answers = {};
                 renderTest();
+                stopLoadingCycle();
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('start-section').style.display = 'none';
                 document.getElementById('test-section').style.display = 'block';
                 if (currentMode !== 'practice') startTimer();
             } catch (e) {
+                stopLoadingCycle();
                 document.getElementById('loading').style.display = 'none';
                 btn.disabled = false; btn.textContent = 'Generate Copy Editing Test';
                 document.getElementById('mode-selector').style.display = 'flex';
@@ -424,10 +562,22 @@
             document.getElementById('pub-date-banner').textContent =
                 'You are editing material for the Leaguetown High School (Texas) Press, ' + (testData.publicationDate || 'upcoming issue') + '.';
 
+            // Highlighter toolbar template
+            var hlToolbar = '<div class="hl-toolbar">' +
+                '<span class="hl-label">Highlighter:</span>' +
+                '<button class="hl-btn yellow" onclick="setHighlighter(\'yellow\')" title="Yellow"></button>' +
+                '<button class="hl-btn green" onclick="setHighlighter(\'green\')" title="Green"></button>' +
+                '<button class="hl-btn blue" onclick="setHighlighter(\'blue\')" title="Blue"></button>' +
+                '<button class="hl-btn pink" onclick="setHighlighter(\'pink\')" title="Pink"></button>' +
+                '<button class="hl-btn orange" onclick="setHighlighter(\'orange\')" title="Orange"></button>' +
+                '<button class="hl-eraser" onclick="setHighlighter(\'erase\')" title="Remove highlights">Eraser</button>' +
+                '<button class="hl-off active" onclick="setHighlighter(\'off\')" title="Turn off highlighter">Off</button>' +
+                '</div>';
+
             // Part 1: Inline options
-            var h = '<div class="part-header"><h2>Part 1 — Circle the Correct Response</h2><p>Select the correct option in each sentence. (15 questions, 1 point each = 15 points)</p></div>';
+            var h = '<div class="part-header"><h2>Part 1 — Circle the Correct Response</h2><p>Select the correct option in each sentence. (15 questions, 1 point each = 15 points)</p></div>' + hlToolbar;
             testData.part1.forEach(function(q, qi) {
-                h += '<div class="mc-question" id="mc-q-' + qi + '"><div class="mc-number">Q' + (qi + 1) + '</div>';
+                h += '<div class="mc-question hl-target" id="mc-q-' + qi + '"><div class="mc-number">Q' + (qi + 1) + '</div>';
                 // Build sentence with clickable inline options
                 var parts = q.sentence.split(/\s*\/\s*/);
                 // The sentence might have text before/after the options
@@ -463,12 +613,12 @@
             document.getElementById('part-1-content').innerHTML = h;
 
             // Part 2: Sentence editing (4 pts each = 20 total)
-            var p2 = '<div class="part-header"><h2>Part 2 — Edit the Sentences</h2><p>Each sentence contains EXACTLY 4 errors in AP style, grammar, spelling, or punctuation. Rewrite each sentence with all errors corrected. (5 sentences, 4 points each = 20 points)</p></div>';
+            var p2 = '<div class="part-header"><h2>Part 2 — Edit the Sentences</h2><p>Each sentence contains EXACTLY 4 errors in AP style, grammar, spelling, or punctuation. Rewrite each sentence with all errors corrected. (5 sentences, 4 points each = 20 points)</p></div>' + hlToolbar;
             testData.part2.forEach(function(s, i) {
                 p2 += '<div class="sentence-block">' +
                     '<div class="sentence-number"><span>Sentence ' + (i + 1) + '</span><span class="sentence-points">4 pts</span></div>' +
                     '<div class="sentence-label">Original (contains 4 errors):</div>' +
-                    '<div class="sentence-original">' + s.original + '</div>' +
+                    '<div class="sentence-original hl-target">' + s.original + '</div>' +
                     '<div class="sentence-label">Your corrected version:</div>' +
                     '<textarea class="sentence-input" id="sent-' + i + '" placeholder="Type your corrected sentence here..." oninput="updateProgress()"></textarea>' +
                     '<div class="error-hint">Find and fix all 4 errors: AP style, grammar, spelling, punctuation, or wordiness.</div>' +
@@ -479,8 +629,9 @@
             // Part 3: News brief (tiebreaker)
             var p3 = '<div class="part-header"><h2>Part 3 — Edit the News Brief</h2><p>Edit this news brief for publication. Fix all errors in AP style, grammar, spelling, punctuation, and wordiness.</p></div>' +
                 '<div class="tiebreaker-warning"><strong>TIEBREAKER ONLY:</strong> Part 3 is used only to break ties in Parts 1 & 2, but it is <strong>required</strong>. If you do not attempt Part 3, your entire entry may be disqualified.</div>' +
+                hlToolbar +
                 '<div class="sentence-label">News brief (contains ' + testData.part3.errorCount + ' errors):</div>' +
-                '<div class="brief-original">' + testData.part3.original.replace(/\n/g, '<br>') + '</div>' +
+                '<div class="brief-original hl-target">' + testData.part3.original.replace(/\n/g, '<br>') + '</div>' +
                 '<div class="sentence-label">Your corrected version:</div>' +
                 '<textarea class="brief-input" id="brief-input" placeholder="Rewrite the corrected news brief here..." oninput="updateProgress()"></textarea>';
             document.getElementById('part-3-content').innerHTML = p3;
