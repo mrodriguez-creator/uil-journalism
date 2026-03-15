@@ -139,7 +139,7 @@ For each headline, provide:
 - Score (0-4 using rubric above)
 - What works well (if any)
 - Specific improvements with rubric justification
-- Suggested revision (if score < 4)
+- Suggested revision (if score < 4). CRITICAL: The suggested revision MUST use the EXACT SAME format and character count constraints as the student's assignment. If the student was assigned a 3-line headline with lines of 20-26 characters each, your revision must also be 3 lines with each line between 20-26 characters. If it is a main+secondary format, your revision must have a main headline line AND secondary headline lines, each within their assigned character ranges. Use " / " to separate lines in your revision. Count characters carefully — each line must fit within the min-max range shown in the assignment.
 
 Format as JSON:
 {
@@ -149,7 +149,7 @@ Format as JSON:
       "score": 0-4,
       "strengths": ["strength1", "strength2"],
       "improvements": ["improvement1 (cite rubric category)", "improvement2"],
-      "suggestedRevision": "better headline" or null,
+      "suggestedRevision": "Line 1 text / Line 2 text / Line 3 text" or null,
       "feedback": "detailed explanation citing rubric"
     }
   ],
